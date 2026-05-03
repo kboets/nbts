@@ -13,3 +13,6 @@ api/target/
 # OS
 .DS_Store
 Thumbs.db
+
+# other
+api/secret.env

@@ -13,19 +13,6 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name/>
 	<description/>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
 	<properties>
 		<java.version>25</java.version>
 		<spring-modulith.version>2.0.5</spring-modulith.version>
@@ -39,10 +26,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jdbc</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-mongodb</artifactId>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-data-mongodb</artifactId>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-flyway</artifactId>
@@ -52,10 +39,6 @@
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-database-postgresql</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.modulith</groupId>
 			<artifactId>spring-modulith-starter-core</artifactId>
 		</dependency>
@@ -63,16 +46,10 @@
 			<groupId>org.springframework.modulith</groupId>
 			<artifactId>spring-modulith-starter-jdbc</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.modulith</groupId>
-			<artifactId>spring-modulith-starter-mongodb</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<scope>runtime</scope>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.modulith</groupId>-->
+<!--			<artifactId>spring-modulith-starter-mongodb</artifactId>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.modulith</groupId>
 			<artifactId>spring-modulith-actuator</artifactId>
@@ -89,10 +66,28 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-docker-compose</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<!-- end spring boot dependencies -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-database-postgresql</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+
+		<!-- TEST dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator-test</artifactId>
@@ -103,11 +98,11 @@
 			<artifactId>spring-boot-starter-data-jdbc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-mongodb-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-data-mongodb-test</artifactId>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-flyway-test</artifactId>
@@ -157,6 +152,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>nbts</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -173,36 +169,42 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/*IntegrationTest*</exclude>
+						<exclude>**/*IT.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+					<classesDirectory>${project.build.outputDirectory}</classesDirectory>
+					<includes>
+						<include>**/*IntegrationTest*</include>
+						<include>**/*IT.java</include>
+					</includes>
+				</configuration>
 				<executions>
 					<execution>
-						<id>default-compile</id>
-						<phase>compile</phase>
 						<goals>
-							<goal>compile</goal>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
 						</goals>
-						<configuration>
-							<annotationProcessorPaths>
-								<path>
-									<groupId>org.projectlombok</groupId>
-									<artifactId>lombok</artifactId>
-								</path>
-							</annotationProcessorPaths>
-						</configuration>
-					</execution>
-					<execution>
-						<id>default-testCompile</id>
-						<phase>test-compile</phase>
-						<goals>
-							<goal>testCompile</goal>
-						</goals>
-						<configuration>
-							<annotationProcessorPaths>
-								<path>
-									<groupId>org.projectlombok</groupId>
-									<artifactId>lombok</artifactId>
-								</path>
-							</annotationProcessorPaths>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>

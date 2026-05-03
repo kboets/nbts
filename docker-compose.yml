@@ -1,0 +1,57 @@
+services:
+  db:
+    container_name: nbts-postgres
+    image: postgres:18-alpine3.23
+    env_file:
+      - api/secret.env
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: nbts
+      PGDATA: /data/nbts
+    volumes:
+      - db:/data/nbts
+    ports:
+      - "5435:5432"
+    networks:
+      - nbts-network
+    restart: unless-stopped
+
+  api:
+    container_name: nbts-api
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    image: kubo1601/nbts-api
+    env_file:
+      - api/secret.env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/nbts
+    ports:
+      - "8090:8080"
+    networks:
+      - nbts-network
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  frontend:
+    container_name: nbts-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: kubo1601/nbts-frontend
+    ports:
+      - "85:80"
+    networks:
+      - nbts-network
+    depends_on:
+      - api
+    restart: unless-stopped
+
+networks:
+  nbts-network:
+    driver: bridge
+
+volumes:
+  db:

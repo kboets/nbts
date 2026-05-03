@@ -1,3 +1,32 @@
 spring:
+  main:
+    web-application-type: servlet
+  datasource:
+    url: jdbc:postgresql://localhost:5432/nbts?createDatabaseIfNotExist=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   application:
     name: nbts
+    version: @project.version@
+  flyway:
+    enabled: true
+    encoding: UTF-8
+    #schemas: nbts
+    #create-schemas: true
+    #default-schema: nbts
+  docker:
+    compose:
+      file: ./docker-compose.yml
+
+
+server:
+  servlet:
+    context-path: /nbts
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    be.boets: DEBUG
+    org.flywaydb: DEBUG
+    org.springframework.boot.autoconfigure.flyway: DEBUG
