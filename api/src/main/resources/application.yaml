@@ -2,7 +2,7 @@ spring:
   main:
     web-application-type: servlet
   datasource:
-    url: jdbc:postgresql://localhost:5432/nbts?createDatabaseIfNotExist=true
+    url: jdbc:postgresql://localhost:5435/nbts
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   application:
