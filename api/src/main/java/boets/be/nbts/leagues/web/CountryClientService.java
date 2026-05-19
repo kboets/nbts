@@ -15,12 +15,13 @@ public class CountryClientService {
     private final RestClient restClient;
 
     public CountryClientService(RestClient.Builder restClientBuilder) {
-        this.restClient = restClientBuilder.baseUrl("https://restcountries.com/v3.1/region/Europe?fields=name,flags,translations,cca2")
+        this.restClient = restClientBuilder.baseUrl("https://restcountries.com/v3.1")
                 .build();
     }
 
-    public List<CountryResponse> getEuropeanCountries() {
+    public List<CountryResponse> getCountriesByRegion(String region) {
         return restClient.get()
+                .uri("/region/{region}?fields=name,flags,translations,cca2", region)
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {
                 });

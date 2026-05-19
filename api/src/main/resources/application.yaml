@@ -2,7 +2,7 @@ spring:
   main:
     web-application-type: servlet
   datasource:
-    url: jdbc:postgresql://localhost:5435/nbts
+    url: jdbc:postgresql://localhost:5435/nbts?currentSchema=leagues
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   application:
@@ -11,9 +11,8 @@ spring:
   flyway:
     enabled: true
     encoding: UTF-8
-    #schemas: nbts
+    locations: classpath:db/migration/leagues
     #create-schemas: true
-    #default-schema: nbts
   docker:
     compose:
       file: ./docker-compose.yml

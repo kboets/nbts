@@ -22,7 +22,7 @@ class CountryClientServiceTest {
     private MockRestServiceServer server;
 
     @Test
-    void getEuropeanCountries_shouldMapCorrectly() {
+    void getCountriesByRegion_shouldMapCorrectlyForEurope() {
         String jsonResponse = """
                 [
                     {
@@ -67,7 +67,7 @@ class CountryClientServiceTest {
         this.server.expect(requestTo("https://restcountries.com/v3.1/region/Europe?fields=name,flags,translations,cca2"))
                 .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
 
-        List<CountryResponse> countries = countryClientService.getEuropeanCountries();
+        List<CountryResponse> countries = countryClientService.getCountriesByRegion("Europe");
 
         assertThat(countries).hasSize(2);
         
@@ -90,5 +90,41 @@ class CountryClientServiceTest {
         assertThat(sweden.flags().alt()).isEqualTo("The flag of Sweden...");
         assertThat(sweden.translations().nld().common()).isEqualTo("Zweden");
         assertThat(sweden.translations().nld().official()).isEqualTo("Koninkrijk Zweden");
+    }
+
+    @Test
+    void getCountriesByRegion_shouldMapCorrectlyForAmericas() {
+        String jsonResponse = """
+                [
+                    {
+                        "flags": {
+                            "png": "https://flagcdn.com/w320/br.png",
+                            "svg": "https://flagcdn.com/br.svg",
+                            "alt": "The flag of Brazil..."
+                        },
+                        "name": {
+                            "common": "Brazil",
+                            "official": "Federative Republic of Brazil"
+                        },
+                        "translations": {
+                            "nld": {
+                                "official": "Federale Republiek Brazilië",
+                                "common": "Brazilië"
+                            }
+                        },
+                        "cca2": "BR"
+                    }
+                ]
+                """;
+
+        this.server.expect(requestTo("https://restcountries.com/v3.1/region/Americas?fields=name,flags,translations,cca2"))
+                .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
+
+        List<CountryResponse> countries = countryClientService.getCountriesByRegion("Americas");
+
+        assertThat(countries).hasSize(1);
+        CountryResponse brazil = countries.getFirst();
+        assertThat(brazil.name().common()).isEqualTo("Brazil");
+        assertThat(brazil.cca2()).isEqualTo("BR");
     }
 }

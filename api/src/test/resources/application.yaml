@@ -1,0 +1,10 @@
+spring:
+
+  flyway:
+    enabled: true
+    default-schema: leagues
+    schemas: leagues
+    create-schemas: true
+    clean-disabled: false
+    locations:
+      - classpath:db/migration/leagues

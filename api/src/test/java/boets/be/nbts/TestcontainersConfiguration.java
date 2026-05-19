@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@TestConfiguration(proxyBeanMethods = false)
-class TestcontainersConfiguration {
+//@TestConfiguration(proxyBeanMethods = false)
+public class TestcontainersConfiguration {
 
 //	@Bean
 //	@ServiceConnection
@@ -15,10 +15,10 @@ class TestcontainersConfiguration {
 //		return new MongoDBContainer(DockerImageName.parse("mongo:latest"));
 //	}
 
-	@Bean
-	@ServiceConnection
-	PostgreSQLContainer postgresContainer() {
-		return new PostgreSQLContainer(DockerImageName.parse("postgres:latest"));
-	}
+//	@Bean
+//	@ServiceConnection
+//	PostgreSQLContainer postgresContainer() {
+//		return new PostgreSQLContainer(DockerImageName.parse("postgres:latest"));
+//	}
 
 }
