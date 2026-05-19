@@ -1,7 +1,7 @@
 package boets.be.nbts.leagues.domain;
 
 import boets.be.nbts.CleanFlywayTestConfiguration;
-import boets.be.nbts.SharedPostgressContainer;
+import boets.be.nbts.SharedPostgresContainer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jdbc.test.autoconfigure.DataJdbcTest;
@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class CountryRepositoryIntegrationTest {
 
     @Container
-    @ServiceConnection
-    private static final SharedPostgressContainer POSTGRES_CONTAINER = SharedPostgressContainer.getInstance();
+    @ServiceConnection(name = "postgres")
+    private static final SharedPostgresContainer POSTGRES_CONTAINER = SharedPostgresContainer.getInstance();
 
     @Autowired
     private CountryRepository countryRepository;
