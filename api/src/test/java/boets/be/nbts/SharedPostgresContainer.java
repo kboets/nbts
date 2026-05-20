@@ -1,6 +1,5 @@
 package boets.be.nbts;
 
-import org.flywaydb.core.Flyway;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
