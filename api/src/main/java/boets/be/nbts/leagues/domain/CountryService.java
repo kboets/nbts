@@ -7,6 +7,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,25 +23,35 @@ public class CountryService {
     private final CountryClientService countryClientService;
     private final CountryRepository countryRepository;
 
-
-
     static {
         allowedRegions = List.of("Europe");
     }
 
     @EventListener(ApplicationReadyEvent.class)
-    public List<CountryEntity> loadCountries() {
+    public void onApplicationEvent() {
+        loadCountries();
+    }
+
+    public void loadCountries() {
         // check if all regions are loaded in the database
         for (String region : allowedRegions) {
             if (countryRepository.findByRegion(region).isEmpty()) {
                 List<CountryResponse> countriesByRegion = countryClientService.getCountriesByRegion(region);
-                // map to countryEntity
-                // save to database
+                List<CountryEntity> countryEntities = new ArrayList<>();
+                countriesByRegion.forEach(countryResponse -> countryEntities.add(mapToCountryEntity(countryResponse, region)));
+                countryRepository.saveAll(countryEntities);
             }
-            continue;
-
         }
-        return null;
+    }
+
+    private CountryEntity mapToCountryEntity(CountryResponse countryResponse, String region) {
+        CountryEntity countryEntity = new CountryEntity();
+        countryEntity.setCountryCode(countryResponse.cca2());
+        countryEntity.setName(countryResponse.name().common());
+        countryEntity.setDutchName(countryResponse.translations().nld().common());
+        countryEntity.setFlagUrl(countryResponse.flags().png());
+        countryEntity.setRegion(region);
+        return countryEntity;
     }
 
 }
