@@ -17,6 +17,9 @@ spring:
     compose:
       file: ./docker-compose.yml
 
+nbts:
+  rapidApi:
+    key: ${RAPID_API_KEY}
 
 server:
   servlet:
