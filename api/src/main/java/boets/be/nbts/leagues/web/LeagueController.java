@@ -14,10 +14,10 @@ import java.util.List;
 @AllArgsConstructor
 public class LeagueController {
 
-    private final LeagueClientService leagueClientService;
+    //private final LeagueClientService leagueClientService;
     private final LeagueService leagueService;
 
-    @GetMapping("/selectedLeagues")
+    @GetMapping("/currentLeagues")
     public ResponseEntity<List<League>> getSelectedLeagues() {
         return ResponseEntity.ok(leagueService.getSelectedLeagues());
     }
