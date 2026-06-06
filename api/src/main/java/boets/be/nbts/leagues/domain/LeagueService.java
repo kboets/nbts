@@ -14,17 +14,30 @@ public class LeagueService {
     private final LeagueClientService leagueClientService;
     private final LeagueRepository leagueRepository;
 
-//    public List<League> getLeaguesForCountryAndSeason(String countryCode, int season) {
+//    public List<League> getLeaguesForCountryAndSeason(String countryCode, int season, boolean force) {
 //        List<LeagueEntity> leagues = leagueRepository.findByCountryCodeAndSeason(countryCode, season);
-//        if (leagues.isEmpty()) {
+//        if (force) {
 //            List<League> apiLeagues = leagueClientService.getLeaguesByCountryAndSeason(countryCode, season);
 //            List<LeagueEntity> leagueEntities = apiLeagues.stream()
 //                    .map(this::mapToEntity)
+//                    .filter(leagueEntity -> !leagues.contains(leagueEntity))
 //                    .toList();
-//            return (List<LeagueEntity>) leagueRepository.saveAll(leagueEntities);
+//            leagues.addAll((List<LeagueEntity>) leagueRepository.saveAll(leagueEntities));
 //        }
-//        return leagues;
+//        return leagues.stream()
+//                .map(this::mapToLeague)
+//                .toList();
 //    }
+
+    public List<League> getSelectedLeagues() {
+        List<LeagueEntity> leagueEntityList = leagueRepository.findByCurrent(true);
+        if (leagueEntityList.isEmpty()) {
+            return List.of();
+        }
+        return leagueEntityList.stream()
+                .map(this::mapToLeague)
+                .toList();
+    }
 
     private LeagueEntity mapToEntity(League league) {
         LeagueEntity entity = new LeagueEntity();
@@ -37,5 +50,12 @@ public class LeagueService {
         entity.setEndSeason(league.end());
         entity.setCurrent(league.current());
         return entity;
+    }
+
+    private League mapToLeague(LeagueEntity leagueEntity) {
+        return new League(leagueEntity.getLeagueId(),
+                leagueEntity.getName(), leagueEntity.getLogo(),
+                leagueEntity.getCountryCode(), leagueEntity.getSeason(),
+                leagueEntity.getStartSeason(), leagueEntity.getEndSeason(), leagueEntity.isCurrent());
     }
 }

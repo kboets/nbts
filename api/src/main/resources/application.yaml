@@ -30,5 +30,5 @@ logging:
   level:
     root: INFO
     be.boets: DEBUG
-    org.flywaydb: DEBUG
-    org.springframework.boot.autoconfigure.flyway: DEBUG
+    org.flywaydb: INFO
+    org.springframework.boot.autoconfigure.flyway: INFO
