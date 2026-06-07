@@ -8,3 +8,7 @@ spring:
     clean-disabled: false
     locations:
       - classpath:db/migration/leagues
+
+nbts:
+  rapidApi:
+    key: test-rapid-api-key
