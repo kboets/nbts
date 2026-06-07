@@ -1,1 +1,1 @@
-create schema leagues;
+CREATE SCHEMA IF NOT EXISTS leagues;
