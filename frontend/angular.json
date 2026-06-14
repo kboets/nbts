@@ -30,7 +30,8 @@
                         ],
                         "styles": [
                             "src/assets/styles.scss",
-                            "src/assets/tailwind.css"
+                            "src/assets/tailwind.css",
+                            "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
                         ],
                         "scripts": []
                     },
@@ -60,6 +61,9 @@
                 },
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
+                    "options": {
+                        "proxyConfig": "src/proxy.config.js"
+                    },
                     "configurations": {
                         "production": {
                             "buildTarget": "nbts:build:production"
