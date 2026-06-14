@@ -12,3 +12,5 @@ spring:
 nbts:
   rapidApi:
     key: test-rapid-api-key
+  restCountries:
+    key: test-rest-countries-key

@@ -20,6 +20,8 @@ spring:
 nbts:
   rapidApi:
     key: ${RAPID_API_KEY}
+  restCountries:
+    key: ${REST_COUNTRIES_API_KEY}
 
 server:
   servlet:
