@@ -13,7 +13,7 @@ public abstract class RapidApiClient {
     private final AtomicInteger counter;
 
 
-    protected RapidApiClient(RestClient.Builder restClientBuilder, @Value("${nbts.rapidApi.key}") String apiKey                             ) {
+    protected RapidApiClient(RestClient.Builder restClientBuilder, @Value("${nbts.rapidApi.key}") String apiKey) {
         String baseUrl = "https://api-football-v1.p.rapidapi.com/";
         this.restClient = restClientBuilder.baseUrl(baseUrl)
                 .defaultHeader("x-rapidapi-value", "api-football-v1.p.rapidapi.com")

@@ -64,7 +64,7 @@ class CountryClientServiceTest {
                 ]
                 """;
 
-        this.server.expect(requestTo("https://restcountries.com/v3.1/region/Europe?fields=name,flags,translations,cca2"))
+        this.server.expect(requestTo("https://api.restcountries.com/countries/v5/region/Europe?fields=name,flags,translations,cca2"))
                 .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
 
         List<CountryResponse> countries = countryClientService.getCountriesByRegion("Europe");
@@ -117,7 +117,7 @@ class CountryClientServiceTest {
                 ]
                 """;
 
-        this.server.expect(requestTo("https://restcountries.com/v3.1/region/Americas?fields=name,flags,translations,cca2"))
+        this.server.expect(requestTo("https://api.restcountries.com/countries/v5/region/Americas?fields=name,flags,translations,cca2"))
                 .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
 
         List<CountryResponse> countries = countryClientService.getCountriesByRegion("Americas");
