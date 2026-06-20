@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { MenuItem } from 'primeng/api';
-import { AppMenuitem } from './app.menuitem';
+import {Component} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {RouterModule} from '@angular/router';
+import {MenuItem} from 'primeng/api';
+import {AppMenuitem} from './app.menuitem';
 
 @Component({
     selector: 'app-menu',
@@ -28,8 +28,9 @@ export class AppMenu {
                 items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }]
             },
             {
-                label: 'UI Components',
+                label: 'Overzicht',
                 items: [
+                    { label: 'Competities', icon: 'fa-solid fa-baseball', routerLink: ['/nbts/leagues'] },
                     { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', routerLink: ['/uikit/formlayout'] },
                     { label: 'Input', icon: 'pi pi-fw pi-check-square', routerLink: ['/uikit/input'] },
                     { label: 'Button', icon: 'pi pi-fw pi-mobile', class: 'rotated-icon', routerLink: ['/uikit/button'] },
