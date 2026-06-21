@@ -13,7 +13,11 @@
                 </p>
             </p-tabpanel>
             <p-tabpanel value="1">
-                <p class="m-0">
+                <div class="justify-left items-center p-1">
+                    <p-autocomplete [(ngModel)]="selectedCountry" [forceSelection]="true" [suggestions]="filteredCountries"
+                                    (onSelect)="onSelectCountry($event)"  (onUnselect)="onCountryUnselect()" (onClear)="onCountryUnselect()"
+                                    (completeMethod)="filterCountry($event)" optionLabel="nameNL" [showClear]="true" inputStyleClass="w-56"/>
+                </div>
                 <div class="card">
                     <p-accordion [value]="['0']" (valueChange)="onNewLeaguesCountryOpenTab($event)">
                         @for (country of (countries() || []); track country.countryCode) {
