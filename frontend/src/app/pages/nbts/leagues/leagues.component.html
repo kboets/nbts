@@ -15,8 +15,8 @@
             <p-tabpanel value="1">
                 <p class="m-0">
                 <div class="card">
-                    <p-accordion [value]="['0']">
-                        @for (country of countryStore.countries(); track country.countryCode) {
+                    <p-accordion [value]="['0']" (valueChange)="onNewLeaguesCountryOpenTab($event)">
+                        @for (country of (countries() || []); track country.countryCode) {
                             <p-accordion-panel [value]="country.countryCode">
                                 <p-accordion-header>
                                         <span class="flex items-center gap-2">
