@@ -14,9 +14,23 @@
             </p-tabpanel>
             <p-tabpanel value="1">
                 <p class="m-0">
-                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
-                    enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
-                </p>
+                <div class="card">
+                    <p-accordion [value]="['0']">
+                        @for (country of countryStore.countries(); track country.countryCode) {
+                            <p-accordion-panel [value]="country.countryCode">
+                                <p-accordion-header>
+                                        <span class="flex items-center gap-2">
+                                            <img [src]="country.flagUrl" [alt]="country.nameNL" style="width: 20px; vertical-align: middle;" />
+                                            <span>{{ country.nameNL }}</span>
+                                        </span>
+                                </p-accordion-header>
+                                <p-accordion-content>
+                                    <p class="m-0">test</p>
+                                </p-accordion-content>
+                            </p-accordion-panel>
+                        }
+                    </p-accordion>
+                </div>
             </p-tabpanel>
         </p-tabpanels>
     </p-tabs>
