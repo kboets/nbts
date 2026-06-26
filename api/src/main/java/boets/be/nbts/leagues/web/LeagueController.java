@@ -30,4 +30,9 @@ public class LeagueController {
     public ResponseEntity<List<League>> getCurrentLeaguesForCountry(@PathVariable String countryCode) {
         return ResponseEntity.ok(leagueService.getCurrentLeaguesForCountry(countryCode));
     }
+
+    @GetMapping("/currentLeagues/selected/{countryCode}")
+    public ResponseEntity<List<League>> getCurrentSelectedLeaguesForCountry(@PathVariable String countryCode) {
+        return ResponseEntity.ok(leagueService.getCurrentSelectedLeaguesForCountry(countryCode));
+    }
 }

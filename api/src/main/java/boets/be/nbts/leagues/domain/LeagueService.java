@@ -31,6 +31,11 @@ public class LeagueService {
 //                .toList();
 //    }
 
+    /**
+     * Retrieves the leagues that are not yet persisted. A call to the API is made to retrieve the leagues.
+     * @param countryCode - country code
+     * @return - list of leagues
+     */
     public List<League> getCurrentLeaguesForCountry(String countryCode) {
         List<League> leagues = leagueClientService.getLeaguesByCountry(countryCode);
         List<LeagueEntity> selectedLeagues = leagueRepository.findByCountryCode(countryCode);
@@ -39,6 +44,18 @@ public class LeagueService {
                 .collect(java.util.stream.Collectors.toSet());
         return leagues.stream()
                 .filter(league -> !selectedLeagueIds.contains(league.leagueId()))
+                .toList();
+    }
+
+    /**
+     * Retrieves the leagues that are already persisted
+     * @param countryCode - country code
+     * @return - list of leagues
+     */
+    public List<League> getCurrentSelectedLeaguesForCountry(String countryCode) {
+        List<LeagueEntity> selectedLeagues = leagueRepository.findByCountryCode(countryCode);
+        return selectedLeagues.stream()
+                .map(this::mapToLeague)
                 .toList();
     }
 
