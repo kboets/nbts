@@ -5,5 +5,6 @@ import java.util.List;
 
 public interface LeagueRepository extends CrudRepository<LeagueEntity, Integer> {
     List<LeagueEntity> findByCountryCodeAndSeason(String countryCode, int season);
+    List<LeagueEntity> findByCountryCode(String countryCode);
     List<LeagueEntity> findByCurrent(boolean current);
 }

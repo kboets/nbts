@@ -5,7 +5,9 @@ import boets.be.nbts.leagues.web.LeagueClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -29,11 +31,36 @@ public class LeagueService {
 //                .toList();
 //    }
 
+    public List<League> getCurrentLeaguesForCountry(String countryCode) {
+        List<League> leagues = leagueClientService.getLeaguesByCountry(countryCode);
+        List<LeagueEntity> selectedLeagues = leagueRepository.findByCountryCode(countryCode);
+        Set<Integer> selectedLeagueIds = selectedLeagues.stream()
+                .map(LeagueEntity::getLeagueId)
+                .collect(java.util.stream.Collectors.toSet());
+        return leagues.stream()
+                .filter(league -> !selectedLeagueIds.contains(league.leagueId()))
+                .toList();
+    }
+
+
     public List<League> getSelectedLeagues() {
         List<LeagueEntity> leagueEntityList = leagueRepository.findByCurrent(true);
         if (leagueEntityList.isEmpty()) {
             return List.of();
         }
+        //check if current season is still active, otherwise set to false
+        boolean needRefresh = false;
+        for (LeagueEntity leagueEntity : leagueEntityList) {
+            if (leagueEntity.getEndSeason().isBefore(LocalDate.now())) {
+                leagueEntity.setCurrent(false);
+                needRefresh = true;
+            }
+        }
+        if (needRefresh) {
+            leagueRepository.saveAll(leagueEntityList);
+            leagueEntityList = leagueRepository.findByCurrent(true);
+        }
+
         return leagueEntityList.stream()
                 .map(this::mapToLeague)
                 .toList();
