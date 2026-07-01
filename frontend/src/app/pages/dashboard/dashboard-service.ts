@@ -1,19 +1,18 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import type { League } from '../shared/models/league';
+import {inject, Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import type {League} from '../shared/models/league';
+import {LeagueService} from '../service/league.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class DashboardService {
 
-    private baseUrl = '/nbts/api';
-    private http = inject(HttpClient);
+    private leagueService = inject(LeagueService);
 
     constructor() { }
 
     getCurrentLeagues(): Observable<League[]> {
-        return this.http.get<League[]>(`${this.baseUrl}/currentLeagues`);
+        return this.leagueService.getCurrentLeagues();
     }
 }
