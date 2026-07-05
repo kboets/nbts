@@ -39,7 +39,7 @@ export class LeagueService {
              if (!countryCode) {
                 return of({ data: [], error: undefined } as Result<League[]>);
             }
-            return this.getDummyCurrentLeaguesForCountry(countryCode).pipe(
+            return this.getCurrentLeaguesForCountry(countryCode).pipe(
                 map((leagues) => ({ data: leagues }) as Result<League[]>),
                 catchError((error) =>
                     of({

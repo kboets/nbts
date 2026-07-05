@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, effect, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {CommonModule, NgClass} from '@angular/common';
 import {TabsModule} from 'primeng/tabs';
@@ -33,24 +33,36 @@ export class LeaguesComponent implements OnInit {
     // get signals
     newLeagues = this.leaguesService.newLeagues;
     newLeaguesError = this.leaguesService.newLeaguesError;
+    public loadingNewLeagues = signal<boolean>(false);
 
     constructor() {
         this.countryService.getCountries().then((countriesList) => {
             this.countries.set(countriesList);
         });
-    }
 
-    selectNewLeague(league: any) {
-        console.log('league selected', league);
+        effect(() => {
+            this.newLeagues();
+            if (this.loadingNewLeagues()) {
+                this.loadingNewLeagues.set(false);
+            }
+        });
     }
 
     ngOnInit(): void {
         this.countryService.getCountries();
     }
 
+    selectNewLeague(league: any) {
+        console.log('league selected', league);
+    }
+
+
     onNewLeaguesCountryOpenTab(event: any) {
-        console.log('new tab openeded with countryCode ', event);
-        this.leaguesService.selectCountryForNewLeagues(event);
+        this.leaguesService.resetCountryForNewLeagues();
+        this.loadingNewLeagues.set(true);
+        setTimeout(() => {
+            this.leaguesService.selectCountryForNewLeagues(event);
+        }, 500);
     }
 
     onSelectCountry(event: any) {

@@ -1,20 +1,27 @@
 package boets.be.nbts.leagues.domain;
 
+import boets.be.nbts.leagues.domain.models.LeagueSavedEvent;
 import boets.be.nbts.leagues.web.League;
 import boets.be.nbts.leagues.web.LeagueClientService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LeagueService {
 
     private final LeagueClientService leagueClientService;
     private final LeagueRepository leagueRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
 //    public List<League> getLeaguesForCountryAndSeason(String countryCode, int season, boolean force) {
 //        List<LeagueEntity> leagues = leagueRepository.findByCountryCodeAndSeason(countryCode, season);
@@ -36,6 +43,7 @@ public class LeagueService {
      * @param countryCode - country code
      * @return - list of leagues
      */
+    @Cacheable(value = "leagues", key = "#countryCode")
     public List<League> getCurrentLeaguesForCountry(String countryCode) {
         List<League> leagues = leagueClientService.getLeaguesByCountry(countryCode);
         List<LeagueEntity> selectedLeagues = leagueRepository.findByCountryCode(countryCode);
@@ -59,7 +67,6 @@ public class LeagueService {
                 .toList();
     }
 
-
     public List<League> getSelectedLeagues() {
         List<LeagueEntity> leagueEntityList = leagueRepository.findByCurrent(true);
         if (leagueEntityList.isEmpty()) {
@@ -81,6 +88,22 @@ public class LeagueService {
         return leagueEntityList.stream()
                 .map(this::mapToLeague)
                 .toList();
+    }
+
+    /**
+     * Saves the league in the database.
+     * Removes the cached leagues for the country code.
+     * Will trigger an event.
+     * @param league
+     * @return
+     */
+    @CacheEvict(value = "leagues", key = "#league.countryCode")
+    public League save(League league) {
+        League savedLeague = mapToLeague(leagueRepository.save(mapToEntity(league)));
+        log.info("New league persisted {}, trigger an event", savedLeague.name());
+        LeagueSavedEvent leagueSavedEvent = new LeagueSavedEvent(savedLeague.countryCode(), savedLeague.leagueId(), savedLeague.season());
+        eventPublisher.publishEvent(leagueSavedEvent);
+        return savedLeague;
     }
 
     private LeagueEntity mapToEntity(League league) {
