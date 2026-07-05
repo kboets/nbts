@@ -94,8 +94,8 @@ public class LeagueService {
      * Saves the league in the database.
      * Removes the cached leagues for the country code.
      * Will trigger an event.
-     * @param league
-     * @return
+     * @param league - league to save
+     * @return - the saved league
      */
     @CacheEvict(value = "leagues", key = "#league.countryCode")
     public League save(League league) {

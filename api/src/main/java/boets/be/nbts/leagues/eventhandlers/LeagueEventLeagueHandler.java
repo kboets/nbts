@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 public class LeagueEventLeagueHandler {
 
     /**
-     * Handle a LeagueSavedEvent.  
-     * @param event
+     * Handle a LeagueSavedEvent.
+     * @param event - the LeagueSavedEvent to handle
      */
     void handle(LeagueSavedEvent event) {
         log.info("[League]: Received event for new league {}", event.leagueId());
