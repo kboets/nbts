@@ -20,6 +20,10 @@ export class LeagueService {
         return this.http.get<League[]>(`${this.baseUrl}/currentLeagues`);
     }
 
+    public saveNewLeagues(league: League) : Observable<League> {
+        return this.http.post<League>(`${this.baseUrl}/league`, league);
+    }
+
     /**  retrieve the new leagues for a specific country */
     selectedCountryForNewLeagues = signal<string | undefined>(undefined);
 

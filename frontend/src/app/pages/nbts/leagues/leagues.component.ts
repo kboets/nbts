@@ -5,19 +5,22 @@ import {TabsModule} from 'primeng/tabs';
 import {CountryStore} from '../../service/country.store';
 import {CountryService} from '../../service/country.service';
 import {LeagueService} from '../../service/league.service';
+import {League} from '../../shared/models/league';
 import {AccordionModule} from 'primeng/accordion';
 import {AutoCompleteCompleteEvent, AutoCompleteModule} from 'primeng/autocomplete';
 import {TagModule} from 'primeng/tag';
 import {DataViewModule} from 'primeng/dataview';
 import {ButtonModule} from 'primeng/button';
-
+import {ToastModule} from 'primeng/toast';
+import {MessageService} from 'primeng/api';
 import {Country} from '../../shared/models/country';
 
 @Component({
     selector: 'app-leagues',
     templateUrl: './leagues.component.html',
     standalone: true,
-    imports: [TabsModule, AccordionModule, AutoCompleteModule, FormsModule, DataViewModule, ButtonModule, TagModule, NgClass, CommonModule]
+    imports: [TabsModule, AccordionModule, AutoCompleteModule, FormsModule, DataViewModule, ButtonModule, TagModule, NgClass, CommonModule, ToastModule],
+    providers: [MessageService]
 })
 export class LeaguesComponent implements OnInit {
 
@@ -25,6 +28,7 @@ export class LeaguesComponent implements OnInit {
     public countryStore: CountryStore = inject(CountryStore);
     private countryService = inject(CountryService);
     private leaguesService = inject(LeagueService);
+    private messageService = inject(MessageService);
 
     public countries = signal<Country[] | null>(null);
     filteredCountries: Country[] = [];
@@ -52,8 +56,24 @@ export class LeaguesComponent implements OnInit {
         this.countryService.getCountries();
     }
 
-    selectNewLeague(league: any) {
-        console.log('league selected', league);
+    selectNewLeague(league: League) {
+        console.log('select league: ->', league.name);
+        this.leaguesService.saveNewLeagues(league).subscribe({
+            next: (savedLeague) => {
+                console.log('league saved', savedLeague);
+                this.messageService.add({severity:'success', summary: 'Success', detail: 'Nieuwe competitie is succesvol opgeslagen.'});
+                // refilter the list of leagues
+                this.leaguesService.resetCountryForNewLeagues();
+                this.loadingNewLeagues.set(true);
+                setTimeout(() => {
+                    this.leaguesService.selectCountryForNewLeagues(league.countryCode);
+                }, 500);
+            },
+            error: (error) => {
+                console.error('error saving league', error);
+                this.messageService.add({severity:'error', summary: 'Error', detail: 'Er is iets misgegaan bij het opslaan van de nieuwe competitie.'});
+            }
+        });
     }
 
 

@@ -99,11 +99,12 @@ public class LeagueService {
      */
     @CacheEvict(value = "leagues", key = "#league.countryCode")
     public League save(League league) {
-        League savedLeague = mapToLeague(leagueRepository.save(mapToEntity(league)));
-        log.info("New league persisted {}, trigger an event", savedLeague.name());
-        LeagueSavedEvent leagueSavedEvent = new LeagueSavedEvent(savedLeague.countryCode(), savedLeague.leagueId(), savedLeague.season());
+        LeagueEntity savedLeague = leagueRepository.save(mapToEntity(league));
+        League persistedLeague = mapToLeague(savedLeague);
+        log.info("New league persisted {}, trigger an event", persistedLeague.name());
+        LeagueSavedEvent leagueSavedEvent = new LeagueSavedEvent(persistedLeague.countryCode(), persistedLeague.leagueId(), persistedLeague.season());
         eventPublisher.publishEvent(leagueSavedEvent);
-        return savedLeague;
+        return persistedLeague;
     }
 
     private LeagueEntity mapToEntity(League league) {
