@@ -20,8 +20,14 @@ export class LeagueService {
         return this.http.get<League[]>(`${this.baseUrl}/currentLeagues`);
     }
 
-    public saveNewLeagues(league: League) : Observable<League> {
+    /** persist and remove persisted league */
+
+    public saveNewLeague(league: League) : Observable<League> {
         return this.http.post<League>(`${this.baseUrl}/league`, league);
+    }
+
+    public removeLeague(league: League): Observable<boolean> {
+        return this.http.delete<boolean>(`${this.baseUrl}/league`, { body: league });
     }
 
     /**  retrieve the new leagues for a specific country */

@@ -1,4 +1,5 @@
 <div class="card">
+    <p-confirmDialog />
     @if (newLeaguesError()) {
         <div class="text-danger mt-1">
             <div style="color: red" class="alert alert-danger">{{ newLeaguesError() }}</div>
@@ -10,12 +11,43 @@
             <p-tab value="1">Nieuwe competities</p-tab>
         </p-tablist>
         <p-tabpanels>
-            <p-tabpanel value="0">
-                <p class="m-0">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
-                    laborum.
-                </p>
+            <p-tabpanel value="0" (click)="reloadCurrentLeagues()">
+                <div class="card">
+                    @if (leaguesWithCountry(); as currentLeagues) {
+                        <p-table [value]="currentLeagues" [paginator]="false" [rows]="5" responsiveLayout="scroll">
+                            <ng-template #header>
+                                <tr>
+                                    <th></th>
+                                    <th pSortableColumn="name">Naam <p-sortIcon field="name"></p-sortIcon></th>
+                                    <th pSortableColumn="nameNL">Land <p-sortIcon field="nameNL"></p-sortIcon></th>
+                                    <th>Seizoen</th>
+                                    <th>Bekijk</th>
+                                    <th></th>
+
+                                </tr>
+                            </ng-template>
+                            <ng-template #body let-league>
+                                <tr>
+                                    <td style="width: 20%; min-width: 8rem;">
+                                        <img [src]="league.logo" class="shadow-lg" alt="{{ league.name }}" width="50" />
+                                    </td>
+                                    <td style="width: 15%; min-width: 7rem;">{{ league.name }}</td>
+                                    <td style="width: 20%; min-width: 7rem;">{{ league.nameNL }}</td>
+                                    <td style="width: 15%; min-width: 8rem;">{{ league.season}}</td>
+                                    <td style="width: 15%;">
+                                        <button pButton pRipple type="button" icon="pi pi-search" class="p-button p-component p-button-text p-button-icon-only"></button>
+                                    </td>
+                                    <td style="witdh: 15%;">
+                                        <p-toast timeout="5000" />
+                                        <button type="button" pButton (click)="confirmDelete($event, league)" severity="danger" [outlined]="true">verwijder</button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    } @else {
+                        <p>Er zijn nog geen competities geselecteerd</p>
+                    }
+                </div>
             </p-tabpanel>
             <p-tabpanel value="1">
                 <div class="justify-left items-center p-1">

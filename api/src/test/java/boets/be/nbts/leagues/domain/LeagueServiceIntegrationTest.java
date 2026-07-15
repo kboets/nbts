@@ -2,6 +2,7 @@ package boets.be.nbts.leagues.domain;
 
 import boets.be.nbts.CleanFlywayTestConfiguration;
 import boets.be.nbts.TestcontainersConfiguration;
+import boets.be.nbts.leagues.domain.models.LeagueDeletedEvent;
 import boets.be.nbts.leagues.domain.models.LeagueSavedEvent;
 import boets.be.nbts.leagues.web.League;
 import boets.be.nbts.leagues.web.LeagueClientService;
@@ -62,19 +63,30 @@ class LeagueServiceIntegrationTest {
     }
 
     static class TestEventListener {
-        private final List<LeagueSavedEvent> events = new ArrayList<>();
+        private final List<LeagueSavedEvent> savedEvents = new ArrayList<>();
+        private final List<LeagueDeletedEvent> deletedEvents = new ArrayList<>();
 
         @EventListener
         public void handle(LeagueSavedEvent event) {
-            events.add(event);
+            savedEvents.add(event);
         }
 
-        public List<LeagueSavedEvent> getEvents() {
-            return events;
+        @EventListener
+        public void handle(LeagueDeletedEvent event) {
+            deletedEvents.add(event);
+        }
+
+        public List<LeagueSavedEvent> getSavedEvents() {
+            return savedEvents;
+        }
+
+        public List<LeagueDeletedEvent> getDeletedEvents() {
+            return deletedEvents;
         }
 
         public void clear() {
-            events.clear();
+            savedEvents.clear();
+            deletedEvents.clear();
         }
     }
 
@@ -175,10 +187,56 @@ class LeagueServiceIntegrationTest {
         assertThat(dbLeagues.getFirst().isCurrent()).isTrue();
 
         // 4. Assert that the event was published correctly using ApplicationEvents
-        List<LeagueSavedEvent> events = testEventListener.getEvents();
+        List<LeagueSavedEvent> events = testEventListener.getSavedEvents();
         assertThat(events).hasSize(1);
         assertThat(events.getFirst().countryCode()).isEqualTo(countryCode);
         assertThat(events.getFirst().leagueId()).isEqualTo(10);
         assertThat(events.getFirst().season()).isEqualTo(2025);
+    }
+
+    @Test
+    @Sql("/db/testdata/insert_test_data.sql")
+    @DisplayName("delete - should delete league and publish a LeagueDeletedEvent")
+    void delete_shouldDeleteLeagueAndPublishEvent() {
+        Integer leagueId = 1; // Premier League from insert_test_data.sql
+        LeagueEntity leagueEntity = leagueRepository.findByLeagueId(leagueId).orElseThrow();
+        assertThat(leagueEntity.getLeagueId()).isEqualTo(leagueId);
+        assertThat(leagueEntity.getCountryCode()).isEqualTo("UK");
+
+        // map to league
+        League league = leagueService.mapToLeague(leagueEntity);
+
+        // 1. Delete league via Service
+        boolean result = leagueService.delete(league);
+
+        // 2. Assert result is true
+        assertThat(result).isTrue();
+
+        // 3. Assert it is removed from database
+        assertThat(leagueRepository.findByLeagueId(leagueId)).isEmpty();
+
+        // 4. Assert that the event was published correctly
+        List<LeagueDeletedEvent> events = testEventListener.getDeletedEvents();
+        assertThat(events).hasSize(1);
+        assertThat(events.getFirst().leagueId()).isEqualTo(leagueId);
+        assertThat(events.getFirst().countryCode()).isEqualTo("UK");
+        assertThat(events.getFirst().season()).isEqualTo(2025);
+    }
+
+    @Test
+    @Sql("/db/testdata/insert_test_data.sql")
+    @DisplayName("delete - should return false when league does not exist")
+    void delete_shouldReturnFalseWhenLeagueDoesNotExist() {
+        Integer leagueId = 999;
+
+        // 1. Delete league via Service
+        League league = new League(leagueId, "Nonexistent League", "http://non-existing.be", "NL", 2025, LocalDate.of(2025, 7, 25), LocalDate.of(2026, 3, 31), true);
+        boolean result = leagueService.delete(league);
+
+        // 2. Assert result is false
+        assertThat(result).isFalse();
+
+        // 3. Assert no event was published
+        assertThat(testEventListener.getDeletedEvents()).isEmpty();
     }
 }

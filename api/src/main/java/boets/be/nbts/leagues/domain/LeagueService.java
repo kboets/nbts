@@ -1,5 +1,6 @@
 package boets.be.nbts.leagues.domain;
 
+import boets.be.nbts.leagues.domain.models.LeagueDeletedEvent;
 import boets.be.nbts.leagues.domain.models.LeagueSavedEvent;
 import boets.be.nbts.leagues.web.League;
 import boets.be.nbts.leagues.web.LeagueClientService;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -107,7 +109,28 @@ public class LeagueService {
         return persistedLeague;
     }
 
-    private LeagueEntity mapToEntity(League league) {
+    /**
+     * Deletes the league from the database.
+     * Removes the cached leagues for the country code.
+     * Will trigger an event.
+     * @param league - league to delete
+     * @return - true if the league was deleted, false otherwise
+     */
+    @CacheEvict(value = "leagues", key = "#league.countryCode")
+    public boolean delete(League league) {
+        Optional<LeagueEntity> leagueEntity = leagueRepository.findByLeagueId(league.leagueId());
+        if (leagueEntity.isEmpty()) {
+            log.warn("League with id {} not found, cannot delete", league.leagueId());
+            return false;
+        }
+        log.info("League with id {} deleted, trigger an event", league.leagueId());
+        LeagueDeletedEvent leagueDeletedEvent = new LeagueDeletedEvent(league.countryCode(), league.leagueId(), league.season());
+        leagueRepository.delete(leagueEntity.get());
+        eventPublisher.publishEvent(leagueDeletedEvent);
+        return true;
+    }
+
+    protected LeagueEntity mapToEntity(League league) {
         LeagueEntity entity = new LeagueEntity();
         entity.setLeagueId(league.leagueId());
         entity.setName(league.name());
@@ -120,7 +143,7 @@ public class LeagueService {
         return entity;
     }
 
-    private League mapToLeague(LeagueEntity leagueEntity) {
+    protected League mapToLeague(LeagueEntity leagueEntity) {
         return new League(leagueEntity.getLeagueId(),
                 leagueEntity.getName(), leagueEntity.getLogo(),
                 leagueEntity.getCountryCode(), leagueEntity.getSeason(),

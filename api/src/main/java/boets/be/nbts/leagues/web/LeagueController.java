@@ -39,4 +39,11 @@ public class LeagueController {
         League savedLeague = leagueService.save(league);
         return ResponseEntity.ok(savedLeague);
     }
+
+    @DeleteMapping("/league")
+    public ResponseEntity<Boolean> delete(@RequestBody League league) {
+        boolean deleted = leagueService.delete(league);
+        return ResponseEntity.ok(deleted);
+    }
+
 }
