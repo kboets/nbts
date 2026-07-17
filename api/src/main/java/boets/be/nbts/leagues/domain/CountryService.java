@@ -9,6 +9,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -48,7 +49,7 @@ public class CountryService {
     public List<Country> getCountries() {
         List<CountryEntity> countryEntities = countryRepository.findByRegion(allowedRegions.getFirst());
         // sort by name
-        countryEntities.sort((o1, o2) -> o1.getDutchName().compareTo(o2.getDutchName()));
+        countryEntities.sort(Comparator.comparing(CountryEntity::getDutchName));
         List<Country> countries = new ArrayList<>();
         countryEntities.forEach(countryEntity -> countries.add(mapToCountry(countryEntity)));
         return countries;
