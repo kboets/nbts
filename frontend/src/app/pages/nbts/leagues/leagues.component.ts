@@ -61,12 +61,13 @@ export class LeaguesComponent implements OnInit {
     });
 
     constructor() {
-        this.countryService.getCountries().then((countriesList) => {
+        this.countryService.getCountries().subscribe((countriesList) => {
             this.countries.set(countriesList);
         });
 
         effect(() => {
             this.newLeagues();
+            console.log('newLeagues effect triggered, loadingNewLeagues:', this.loadingNewLeagues());
             if (this.loadingNewLeagues()) {
                 this.loadingNewLeagues.set(false);
             }
@@ -74,7 +75,9 @@ export class LeaguesComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.countryService.getCountries();
+        this.countryService.getCountries().subscribe((countriesList) => {
+            this.countries.set(countriesList);
+        });
         this.reloadCurrentLeagues();
     }
 

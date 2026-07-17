@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,10 @@ public class LeagueClientService extends RapidApiClient {
         return apiResponse.response()
                 .stream()
                 .filter(item -> "League".equalsIgnoreCase(item.league().type()))
+                .filter(item -> {
+                    List<String> leagueNameParts = Arrays.asList(item.league().name().split(" "));
+                    return !leagueNameParts.contains("Women") && !leagueNameParts.contains("Cup");
+                })
                 // only first 3 leagues should be given
                 .limit(3)
                 .flatMap(item -> item.seasons()

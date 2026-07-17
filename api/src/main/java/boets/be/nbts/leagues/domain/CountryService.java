@@ -1,5 +1,6 @@
 package boets.be.nbts.leagues.domain;
 
+import boets.be.nbts.leagues.web.Country;
 import boets.be.nbts.leagues.web.CountryClientService;
 import boets.be.nbts.leagues.web.CountryResponse;
 import lombok.AllArgsConstructor;
@@ -44,6 +45,15 @@ public class CountryService {
         }
     }
 
+    public List<Country> getCountries() {
+        List<CountryEntity> countryEntities = countryRepository.findByRegion(allowedRegions.getFirst());
+        // sort by name
+        countryEntities.sort((o1, o2) -> o1.getDutchName().compareTo(o2.getDutchName()));
+        List<Country> countries = new ArrayList<>();
+        countryEntities.forEach(countryEntity -> countries.add(mapToCountry(countryEntity)));
+        return countries;
+    }
+
     private CountryEntity mapToCountryEntity(CountryResponse countryResponse, String region) {
         CountryEntity countryEntity = new CountryEntity();
         countryEntity.setCountryCode(countryResponse.cca2());
@@ -52,6 +62,10 @@ public class CountryService {
         countryEntity.setFlagUrl(countryResponse.flags().png());
         countryEntity.setRegion(region);
         return countryEntity;
+    }
+
+    private Country mapToCountry(CountryEntity countryEntity) {
+        return new Country(countryEntity.getId(), countryEntity.getCountryCode(), countryEntity.getDutchName(), countryEntity.getName(), countryEntity.getFlagUrl(), countryEntity.getRegion());
     }
 
 }

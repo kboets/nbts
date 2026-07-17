@@ -29,6 +29,9 @@ public class LeagueClientServiceTest {
     @Value("classpath:/boets/be/nbts/leagues/web/leagues4CountryWithCurrent.json")
     private Resource resourceCountryActiveCurrent;
 
+    @Value("classpath:/boets/be/nbts/leagues/web/leaguesWithWomen.json")
+    private Resource resourceLeagueWithWomen;
+
 
     @Autowired
     private MockRestServiceServer server;
@@ -92,4 +95,21 @@ public class LeagueClientServiceTest {
 
     }
 
+    @Test
+    public void getLeaguesWithWomen_shouldNotReturnLeaguesWithWomen() throws Exception {
+        String jsonResponse = resourceLeagueWithWomen.getContentAsString(Charset.defaultCharset());
+        this.server.expect(requestTo(startsWith("https://api-football-v1.p.rapidapi.com/v3/leagues")))
+                .andExpect(queryParam("code", "BE"))
+                .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
+        List<League> belgiumLeagues = leagueClientService.getLeaguesByCountry("BE");
+        assertThat(belgiumLeagues).isNotEmpty();
+
+        // league should not contain women leagues or cup
+        belgiumLeagues.forEach(league -> {
+            assertThat(league.name()).doesNotContain("Women");
+            assertThat(league.name()).doesNotContain("Cup");
+        });
+
+        //assertThat(callCount).isEqualTo(4);
+    }
 }
