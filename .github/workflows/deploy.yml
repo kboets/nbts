@@ -1,0 +1,98 @@
+name: Create and push Image
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - api/**
+      - frontend/**
+      - .github/workflows/deploy.yml
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 25
+
+      # 1. Extract the semantic version from the Maven pom.xml
+      - name: Get Maven Version
+        id: meta
+        working-directory: api/
+        run: |
+          VERSION=$(mvn -q -DforceStdout help:evaluate -Dexpression=project.version)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Run Unit tests
+        working-directory: api/
+        run: mvn -B -ntp test
+
+      - name: Run Integration tests
+        working-directory: api/
+        run: mvn -B -ntp verify
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 2. Build and Push both images using the Maven Version
+      - name: Build and Push Images
+        run: |
+          V=${{ steps.meta.outputs.version }}
+          
+          # Backend
+          docker build -t kubo1601/nbts-api:$V -t kubo1601/nbts-api:latest ./api
+          docker push kubo1601/nbts-api:$V
+          docker push kubo1601/nbts-api:latest
+          
+          # Frontend
+          docker build -t kubo1601/nbts-frontend:$V -t kubo1601/nbts-frontend:latest ./frontend
+          docker push kubo1601/nbts-frontend:$V
+          docker push kubo1601/nbts-frontend:latest
+
+      # 3. Cleanup logic updated to handle Semantic Version strings (X.Y.Z)
+      - name: Cleanup old Docker tags
+        shell: bash
+        run: |
+          set -euo pipefail
+          KEEP_COUNT=2
+          REPOS=("kubo1601/nbts-api" "kubo1601/nbts-frontend")
+          
+          TOKEN=$(curl -s -X POST "https://hub.docker.com/v2/users/login/" \
+            -H "Content-Type: application/json" \
+            -d "{\"username\":\"${{ secrets.DOCKERHUB_USERNAME }}\",\"password\":\"${{ secrets.DOCKERHUB_TOKEN }}\"}" \
+            | jq -r .token)
+          
+          for REPO in "${REPOS[@]}"; do
+            echo "Processing repository: $REPO"
+          
+            TAGS=$(curl -s "https://hub.docker.com/v2/repositories/${REPO}/tags?page_size=100" \
+              -H "Authorization: Bearer ${TOKEN}" \
+              | jq -r '.results[].name')
+          
+            # Updated Regex to find semantic versions like 0.15.1 and 1.0.0
+            # sort -Vr handles version logic (1.10.0 > 1.2.0)
+            TO_DELETE=$(echo "${TAGS}" \
+              | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
+              | sort -Vr \
+              | tail -n +$((KEEP_COUNT + 1)))
+          
+            if [ -z "${TO_DELETE}" ]; then
+              echo " No tags to delete for $REPO."
+              continue
+            fi
+          
+            for TAG in ${TO_DELETE}; do
+              curl -s -o /dev/null -w "%{http_code}" -X DELETE \
+                "https://hub.docker.com/v2/repositories/${REPO}/tags/${TAG}/" \
+                -H "Authorization: Bearer ${TOKEN}"
+              echo " Deleted ${REPO}:${TAG}"
+            done
+          done

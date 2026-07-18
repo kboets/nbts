@@ -42,7 +42,7 @@ services:
       dockerfile: Dockerfile
     image: kubo1601/nbts-frontend
     ports:
-      - "85:80"
+      - "81:80"
     networks:
       - nbts-network
     depends_on:
