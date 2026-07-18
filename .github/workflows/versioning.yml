@@ -2,7 +2,7 @@ name: Update Version
 on:
   push:
     branches:
-      - release/*
+      - release
 
 permissions:
   contents: write
