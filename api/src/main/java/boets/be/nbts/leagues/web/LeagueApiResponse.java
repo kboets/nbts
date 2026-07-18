@@ -16,6 +16,7 @@ public record LeagueApiResponse(List<LeagueApiItem> response) {
         public record LeagueApiLeague(
                 Integer id,
                 String name,
+                String type,
                 String logo)
         {
             @JsonIgnoreProperties(ignoreUnknown = true)

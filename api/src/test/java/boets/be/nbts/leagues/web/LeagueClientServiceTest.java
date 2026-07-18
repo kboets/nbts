@@ -20,8 +20,18 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @RestClientTest(LeagueClientService.class)
 public class LeagueClientServiceTest {
 
-    @Value("classpath:/boets/be/nbts/leagues/web/leagues4country.json")
-    private Resource resource;
+    @Value("classpath:/boets/be/nbts/leagues/web/leagues4countryAndSeason.json")
+    private Resource resourceCountryAndSeason;
+
+    @Value("classpath:/boets/be/nbts/leagues/web/leagues4CountryNoCurrent.json")
+    private Resource resourceCountryNoCurrent;
+
+    @Value("classpath:/boets/be/nbts/leagues/web/leagues4CountryWithCurrent.json")
+    private Resource resourceCountryActiveCurrent;
+
+    @Value("classpath:/boets/be/nbts/leagues/web/leaguesWithWomen.json")
+    private Resource resourceLeagueWithWomen;
+
 
     @Autowired
     private MockRestServiceServer server;
@@ -31,7 +41,7 @@ public class LeagueClientServiceTest {
 
     @Test
     public void getLeaguesByCountryAndSeason_givenBEAnd2025_shouldReturnAllLeagues() throws Exception{
-        String jsonResponse = resource.getContentAsString(Charset.defaultCharset());
+        String jsonResponse = resourceCountryAndSeason.getContentAsString(Charset.defaultCharset());
 
         this.server.expect(requestTo(startsWith("https://api-football-v1.p.rapidapi.com/v3/leagues")))
                 .andExpect(queryParam("code", "BE"))
@@ -39,7 +49,7 @@ public class LeagueClientServiceTest {
                 .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
 
         List<League> belgium2025Leagues = leagueClientService.getLeaguesByCountryAndSeason("BE", 2025);
-        assertThat(belgium2025Leagues).hasSize(10);
+        assertThat(belgium2025Leagues).hasSize(3);
 
         League firstLeague = belgium2025Leagues.getFirst();
         assertThat(firstLeague.name()).isEqualTo("Jupiler Pro League");
@@ -51,4 +61,55 @@ public class LeagueClientServiceTest {
         assertThat(callCount).isEqualTo(1);
     }
 
+    @Test
+    public void getLeaguesByCountry_givenNoActiveCurrent_shouldReturnNoLeagues() throws Exception {
+        String jsonResponse = resourceCountryNoCurrent.getContentAsString(Charset.defaultCharset());
+
+        this.server.expect(requestTo(startsWith("https://api-football-v1.p.rapidapi.com/v3/leagues")))
+                .andExpect(queryParam("code", "BE"))
+                .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
+
+        List<League> belgiumLeagues = leagueClientService.getLeaguesByCountry("BE");
+        assertThat(belgiumLeagues).isEmpty();
+
+        int callCount = leagueClientService.getCallCount();
+        assertThat(callCount).isEqualTo(2);
+    }
+
+    @Test
+    public void getLeaguesByCountry_givenActiveCurrent_shouldLeagues() throws Exception {
+        String jsonResponse = resourceCountryActiveCurrent.getContentAsString(Charset.defaultCharset());
+        this.server.expect(requestTo(startsWith("https://api-football-v1.p.rapidapi.com/v3/leagues")))
+                .andExpect(queryParam("code", "NL"))
+                .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
+
+        List<League> dutchLeagues = leagueClientService.getLeaguesByCountry("NL");
+        assertThat(dutchLeagues).hasSize(2);
+        assertThat(dutchLeagues.getFirst().name()).isEqualTo("Eredivisie");
+        assertThat(dutchLeagues.getFirst().logo()).isEqualTo("https://media.api-sports.io/football/leagues/88.png");
+        assertThat(dutchLeagues.getFirst().countryCode()).isEqualTo("NL");
+        assertThat(dutchLeagues.getFirst().season()).isEqualTo(2026);
+
+        int callCount = leagueClientService.getCallCount();
+        assertThat(callCount).isEqualTo(3);
+
+    }
+
+    @Test
+    public void getLeaguesWithWomen_shouldNotReturnLeaguesWithWomen() throws Exception {
+        String jsonResponse = resourceLeagueWithWomen.getContentAsString(Charset.defaultCharset());
+        this.server.expect(requestTo(startsWith("https://api-football-v1.p.rapidapi.com/v3/leagues")))
+                .andExpect(queryParam("code", "BE"))
+                .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
+        List<League> belgiumLeagues = leagueClientService.getLeaguesByCountry("BE");
+        assertThat(belgiumLeagues).isNotEmpty();
+
+        // league should not contain women leagues or cup
+        belgiumLeagues.forEach(league -> {
+            assertThat(league.name()).doesNotContain("Women");
+            assertThat(league.name()).doesNotContain("Cup");
+        });
+
+        //assertThat(callCount).isEqualTo(4);
+    }
 }

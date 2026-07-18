@@ -13,7 +13,6 @@ import org.springframework.test.web.servlet.client.RestTestClient;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @WebMvcTest(LeagueController.class)
@@ -51,5 +50,68 @@ class LeagueControllerTest {
                 .jsonPath("$[0].current").isEqualTo(true);
     }
 
+    @Test
+    @DisplayName("GET /api/currentLeagues/{countryCode} - should return current leagues for a country")
+    void getCurrentLeaguesForCountry() {
+        String countryCode = "BE";
+        var leagues = List.of(
+                League.builder().leagueId(1).name("Jupiler Pro League").start(LocalDate.of(2025, 7, 25))
+                        .end(LocalDate.of(2026, 3, 31)).countryCode("BE").season(2025).current(true).build()
+        );
+        when(leagueService.getCurrentLeaguesForCountry(countryCode)).thenReturn(leagues);
 
+        restTestClient.get().uri("/api/currentLeagues/{countryCode}", countryCode).exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
+                .expectBody()
+                .jsonPath("$.length()").isEqualTo(1)
+                .jsonPath("$[0].leagueId").isEqualTo(1)
+                .jsonPath("$[0].countryCode").isEqualTo("BE");
+    }
+
+    @Test
+    @DisplayName("GET /api/currentLeagues/{countryCode} - should return empty list when no leagues found")
+    void getCurrentLeaguesForCountry_empty() {
+        String countryCode = "US";
+        when(leagueService.getCurrentLeaguesForCountry(countryCode)).thenReturn(List.of());
+
+        restTestClient.get().uri("/api/currentLeagues/{countryCode}", countryCode).exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
+                .expectBody()
+                .jsonPath("$.length()").isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("GET /api/currentLeagues/selected/{countryCode} - should return selected leagues for a country")
+    void getCurrentSelectedLeaguesForCountry() {
+        String countryCode = "BE";
+        var leagues = List.of(
+                League.builder().leagueId(1).name("Jupiler Pro League").start(LocalDate.of(2025, 7, 25))
+                        .end(LocalDate.of(2026, 3, 31)).countryCode("BE").season(2025).current(true).build()
+        );
+        when(leagueService.getCurrentSelectedLeaguesForCountry(countryCode)).thenReturn(leagues);
+
+        restTestClient.get().uri("/api/currentLeagues/selected/{countryCode}", countryCode).exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
+                .expectBody()
+                .jsonPath("$.length()").isEqualTo(1)
+                .jsonPath("$[0].leagueId").isEqualTo(1)
+                .jsonPath("$[0].countryCode").isEqualTo("BE")
+                .jsonPath("$[0].current").isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("GET /api/currentLeagues/selected/{countryCode} - should return empty list when no selected leagues found")
+    void getCurrentSelectedLeaguesForCountry_empty() {
+        String countryCode = "US";
+        when(leagueService.getCurrentSelectedLeaguesForCountry(countryCode)).thenReturn(List.of());
+
+        restTestClient.get().uri("/api/currentLeagues/selected/{countryCode}", countryCode).exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
+                .expectBody()
+                .jsonPath("$.length()").isEqualTo(0);
+    }
 }

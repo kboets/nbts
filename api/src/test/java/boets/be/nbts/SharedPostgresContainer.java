@@ -11,7 +11,7 @@ public class SharedPostgresContainer extends PostgreSQLContainer {
 
     public SharedPostgresContainer(DockerImageName dockerImageName) {
         super(dockerImageName);
-        this.withReuse(true);
+        this.withReuse(false);
     }
 
     public static SharedPostgresContainer getInstance() {

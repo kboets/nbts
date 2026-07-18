@@ -1,12 +1,12 @@
 import {Injectable, signal, WritableSignal} from '@angular/core';
-import type {League} from '../shared/models/league';
+import type {Country} from '../shared/models/country';
 
 @Injectable({
     providedIn: 'root',
 })
-export class LeagueStore {
-    /** Holds the current leagues or null if not loaded */
-    leagues: WritableSignal<League[] | null> = signal(null);
+export class CountryStore {
+    /** Holds the current countries or null if not loaded */
+    countries: WritableSignal<Country[] | null> = signal(null);
 
     /** Loading flag for async fetches */
     loading: WritableSignal<boolean> = signal(false);
@@ -19,18 +19,10 @@ export class LeagueStore {
         this.loading.set(true);
     }
 
-    setLeagues(ls: League[] | null) {
-        this.leagues.set(ls);
+    setCountries(ls: Country[] | null) {
+        this.countries.set(ls);
         this.loading.set(false);
         this.error.set(null);
-    }
-
-    removeLeague(leagueId: number) {
-        const currentLeagues = this.leagues();
-        if (currentLeagues) {
-            // Adjust 'leagueId' below depending on the exact property name in your League interface (e.g. leagueId, id, etc.)
-            this.leagues.set(currentLeagues.filter(l => l.leagueId !== leagueId));
-        }
     }
 
     setError(msg: string | null) {
@@ -39,7 +31,7 @@ export class LeagueStore {
     }
 
     clear() {
-        this.leagues.set(null);
+        this.countries.set(null);
         this.error.set(null);
         this.loading.set(false);
     }

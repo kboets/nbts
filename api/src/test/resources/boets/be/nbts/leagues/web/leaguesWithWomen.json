@@ -1,0 +1,274 @@
+{
+  "get": "leagues",
+  "parameters": {
+    "season": "2026",
+    "code": "BE"
+  },
+  "errors": [],
+  "results": 7,
+  "paging": {
+    "current": 1,
+    "total": 1
+  },
+  "response": [
+    {
+      "league": {
+        "id": 146,
+        "name": "Super League Women",
+        "type": "League",
+        "logo": "https://media.api-sports.io/football/leagues/146.png"
+      },
+      "country": {
+        "name": "Belgium",
+        "code": "BE",
+        "flag": "https://media.api-sports.io/flags/be.svg"
+      },
+      "seasons": [
+        {
+          "year": 2026,
+          "start": "2026-09-05",
+          "end": "2027-03-19",
+          "current": true,
+          "coverage": {
+            "fixtures": {
+              "events": false,
+              "lineups": false,
+              "statistics_fixtures": false,
+              "statistics_players": false
+            },
+            "standings": false,
+            "players": false,
+            "top_scorers": false,
+            "top_assists": false,
+            "top_cards": false,
+            "injuries": false,
+            "predictions": true,
+            "odds": false
+          }
+        }
+      ]
+    },
+    {
+      "league": {
+        "id": 144,
+        "name": "Jupiler Pro League",
+        "type": "League",
+        "logo": "https://media.api-sports.io/football/leagues/144.png"
+      },
+      "country": {
+        "name": "Belgium",
+        "code": "BE",
+        "flag": "https://media.api-sports.io/flags/be.svg"
+      },
+      "seasons": [
+        {
+          "year": 2026,
+          "start": "2026-08-07",
+          "end": "2027-05-22",
+          "current": true,
+          "coverage": {
+            "fixtures": {
+              "events": false,
+              "lineups": false,
+              "statistics_fixtures": false,
+              "statistics_players": false
+            },
+            "standings": true,
+            "players": false,
+            "top_scorers": false,
+            "top_assists": false,
+            "top_cards": false,
+            "injuries": false,
+            "predictions": true,
+            "odds": false
+          }
+        }
+      ]
+    },
+    {
+      "league": {
+        "id": 145,
+        "name": "Challenger Pro League",
+        "type": "League",
+        "logo": "https://media.api-sports.io/football/leagues/145.png"
+      },
+      "country": {
+        "name": "Belgium",
+        "code": "BE",
+        "flag": "https://media.api-sports.io/flags/be.svg"
+      },
+      "seasons": [
+        {
+          "year": 2026,
+          "start": "2026-08-14",
+          "end": "2027-05-01",
+          "current": true,
+          "coverage": {
+            "fixtures": {
+              "events": false,
+              "lineups": false,
+              "statistics_fixtures": false,
+              "statistics_players": false
+            },
+            "standings": true,
+            "players": false,
+            "top_scorers": false,
+            "top_assists": false,
+            "top_cards": false,
+            "injuries": false,
+            "predictions": true,
+            "odds": false
+          }
+        }
+      ]
+    },
+    {
+      "league": {
+        "id": 149,
+        "name": "Second Amateur Division - VFV A",
+        "type": "League",
+        "logo": "https://media.api-sports.io/football/leagues/149.png"
+      },
+      "country": {
+        "name": "Belgium",
+        "code": "BE",
+        "flag": "https://media.api-sports.io/flags/be.svg"
+      },
+      "seasons": [
+        {
+          "year": 2026,
+          "start": "2026-08-29",
+          "end": "2027-04-25",
+          "current": true,
+          "coverage": {
+            "fixtures": {
+              "events": false,
+              "lineups": false,
+              "statistics_fixtures": false,
+              "statistics_players": false
+            },
+            "standings": false,
+            "players": false,
+            "top_scorers": false,
+            "top_assists": false,
+            "top_cards": false,
+            "injuries": false,
+            "predictions": true,
+            "odds": false
+          }
+        }
+      ]
+    },
+    {
+      "league": {
+        "id": 150,
+        "name": "Second Amateur Division - VFV B",
+        "type": "League",
+        "logo": "https://media.api-sports.io/football/leagues/150.png"
+      },
+      "country": {
+        "name": "Belgium",
+        "code": "BE",
+        "flag": "https://media.api-sports.io/flags/be.svg"
+      },
+      "seasons": [
+        {
+          "year": 2026,
+          "start": "2026-08-29",
+          "end": "2027-04-25",
+          "current": true,
+          "coverage": {
+            "fixtures": {
+              "events": false,
+              "lineups": false,
+              "statistics_fixtures": false,
+              "statistics_players": false
+            },
+            "standings": false,
+            "players": false,
+            "top_scorers": false,
+            "top_assists": false,
+            "top_cards": false,
+            "injuries": false,
+            "predictions": true,
+            "odds": false
+          }
+        }
+      ]
+    },
+    {
+      "league": {
+        "id": 487,
+        "name": "First Amateur Division",
+        "type": "League",
+        "logo": "https://media.api-sports.io/football/leagues/487.png"
+      },
+      "country": {
+        "name": "Belgium",
+        "code": "BE",
+        "flag": "https://media.api-sports.io/flags/be.svg"
+      },
+      "seasons": [
+        {
+          "year": 2026,
+          "start": "2026-08-22",
+          "end": "2027-04-25",
+          "current": true,
+          "coverage": {
+            "fixtures": {
+              "events": false,
+              "lineups": false,
+              "statistics_fixtures": false,
+              "statistics_players": false
+            },
+            "standings": true,
+            "players": false,
+            "top_scorers": false,
+            "top_assists": false,
+            "top_cards": false,
+            "injuries": false,
+            "predictions": true,
+            "odds": false
+          }
+        }
+      ]
+    },
+    {
+      "league": {
+        "id": 148,
+        "name": "Second Amateur Division - ACFF",
+        "type": "League",
+        "logo": "https://media.api-sports.io/football/leagues/148.png"
+      },
+      "country": {
+        "name": "Belgium",
+        "code": "BE",
+        "flag": "https://media.api-sports.io/flags/be.svg"
+      },
+      "seasons": [
+        {
+          "year": 2026,
+          "start": "2026-08-22",
+          "end": "2027-04-25",
+          "current": true,
+          "coverage": {
+            "fixtures": {
+              "events": false,
+              "lineups": false,
+              "statistics_fixtures": false,
+              "statistics_players": false
+            },
+            "standings": false,
+            "players": false,
+            "top_scorers": false,
+            "top_assists": false,
+            "top_cards": false,
+            "injuries": false,
+            "predictions": true,
+            "odds": false
+          }
+        }
+      ]
+    }
+  ]
+}

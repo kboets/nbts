@@ -2,6 +2,7 @@ package boets.be.nbts.leagues.domain;
 
 import boets.be.nbts.CleanFlywayTestConfiguration;
 import boets.be.nbts.TestcontainersConfiguration;
+import boets.be.nbts.leagues.web.Country;
 import boets.be.nbts.leagues.web.CountryClientService;
 import boets.be.nbts.leagues.web.CountryResponse;
 import org.junit.jupiter.api.Test;
@@ -64,6 +65,13 @@ class CountryServiceIntegrationTest {
         countryService.loadCountries();
         // verify data in database, no new countries
         assertEquals(2, countryRepository.findByRegion("Europe").size());
+    }
+
+    @Test
+    @Sql("/db/testdata/insert_test_data.sql")
+    public void getCountries_shouldReturnAllCountries() {
+        List<Country> countries = countryService.getCountries();
+        assertEquals(2, countries.size());
     }
 
 }
