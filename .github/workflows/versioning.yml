@@ -1,0 +1,79 @@
+name: Update Version
+on:
+  push:
+    branches:
+      - release/*
+
+permissions:
+  contents: write
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./api
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          # No token needed here; it uses GITHUB_TOKEN by default
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Read current version
+        id: version
+        run: |
+          CURRENT_VERSION=$(mvn -q -DforceStdout help:evaluate -Dexpression=project.version)
+          echo "current_version=${CURRENT_VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Determine Bump Type and Apply
+        id: bump
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          # 1. Get the branch name from the merge commit message
+          # This looks at the last commit message to find "feature/" or "bugfix/"
+          LAST_MSG=$(git log -1 --pretty=%B)
+          
+          CURRENT_VERSION="${{ steps.version.outputs.current_version }}"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${CURRENT_VERSION}"
+          
+          if [[ "$LAST_MSG" == *"feature/"* ]]; then
+            echo "Detected Feature merge. Bumping Minor version."
+            NEW_MINOR=$((MINOR + 1))
+            NEXT_VERSION="${MAJOR}.${NEW_MINOR}.0"
+          elif [[ "$LAST_MSG" == *"bugfix/"* ]]; then
+            echo "Detected Bugfix merge. Bumping Patch version."
+            NEXT_VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))"
+          else
+            echo "No feature/bugfix pattern found in merge message. Defaulting to Patch."
+            NEXT_VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))"
+          fi
+
+          echo "next_version=${NEXT_VERSION}" >> "$GITHUB_OUTPUT"
+
+          # 2. Apply the version to pom.xml
+          mvn -B -ntp versions:set \
+            -DnewVersion="${NEXT_VERSION}" \
+            -DgenerateBackupPoms=false      
+
+      - name: Commit and Push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet -- pom.xml; then
+            echo "No version change to commit."
+            exit 0
+          fi
+
+          git add pom.xml
+          git commit -m "chore: bump Maven version to ${{ steps.bump.outputs.next_version }} [skip ci]"
+          git push

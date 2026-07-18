@@ -24,7 +24,7 @@ services:
       dockerfile: Dockerfile
     image: kubo1601/nbts-api
     env_file:
-      - api/secret.env
+      - .env
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/nbts
     ports:
@@ -42,7 +42,7 @@ services:
       dockerfile: Dockerfile
     image: kubo1601/nbts-frontend
     ports:
-      - "85:80"
+      - "81:80"
     networks:
       - nbts-network
     depends_on:

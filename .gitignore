@@ -16,3 +16,4 @@ Thumbs.db
 
 # other
 api/secret.env
+.env
