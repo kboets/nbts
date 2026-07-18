@@ -20,7 +20,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # Copy the built application from the builder stage
-COPY --from=builder /app/dist/nbts /usr/share/nginx/html
+COPY --from=builder /app/dist/nbts/browser /usr/share/nginx/html
 
 # Copy the custom Nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
