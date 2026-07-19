@@ -36,7 +36,7 @@ import {AdminService} from '../../pages/service/admin.service';
                 </svg>
                 <div class="flex flex-col">
                     <span class="font-bold">NBTS</span>
-                    <small style="font-size: 0.6rem; line-height: 1">v.{{ adminService.version() }}</small>
+                    <small  style="font-size: 0.7rem; line-height: 1">v.{{ adminService.version() }}</small>
                 </div>
             </a>
         </div>
