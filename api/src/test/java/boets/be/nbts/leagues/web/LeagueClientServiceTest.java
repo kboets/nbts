@@ -1,25 +1,34 @@
 package boets.be.nbts.leagues.web;
 
 import boets.be.nbts.admin.AdminService;
+import boets.be.nbts.admin.domain.models.ApiCounter;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.MockRestServiceServer;
 
 import java.nio.charset.Charset;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.startsWith;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.queryParam;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RestClientTest(LeagueClientService.class)
+@Import(LeagueClientServiceTest.TestConfig.class)
 public class LeagueClientServiceTest {
 
     @Value("classpath:/boets/be/nbts/leagues/web/leagues4countryAndSeason.json")
@@ -34,16 +43,23 @@ public class LeagueClientServiceTest {
     @Value("classpath:/boets/be/nbts/leagues/web/leaguesWithWomen.json")
     private Resource resourceLeagueWithWomen;
 
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        @Primary
+        AdminService adminService() {
+            AdminService adminService = Mockito.mock(AdminService.class);
+            when(adminService.getApiCounter(any(LocalDate.class))).thenReturn(new ApiCounter(0));
+            return adminService;
+        }
+    }
 
     @Autowired
     private MockRestServiceServer server;
 
-    @MockitoBean
-    private AdminService adminService;
-
-
     @Autowired
     private LeagueClientService leagueClientService;
+
 
     @Test
     public void getLeaguesByCountryAndSeason_givenBEAnd2025_shouldReturnAllLeagues() throws Exception{

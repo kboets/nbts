@@ -17,25 +17,32 @@ public class AdminService {
     private final ApiCounterRepository apiCounterRepository;
 
     public ApiCounter getCurrentApiCounter() {
-        ApiCounterEntity entity = apiCounterRepository.findByDate(LocalDate.now());
-        if (entity == null) {
-            entity = new ApiCounterEntity();
-            entity.setDate(LocalDate.now());
-            entity.setCounter(0);
-            apiCounterRepository.save(entity);
-        }
+        return getApiCounter(LocalDate.now());
+    }
+
+    public ApiCounter getApiCounter(LocalDate date) {
+        ApiCounterEntity entity = getOrCreateApiCounterEntity(date);
         return new ApiCounter(entity.getCounter());
     }
 
-    public void saveApiCounter(int counter) {
-        ApiCounterEntity entity = apiCounterRepository.findByDate(LocalDate.now());
+    public void saveApiCounter(LocalDate date, int counter) {
+        ApiCounterEntity entity = apiCounterRepository.findByDate(date);
         if (entity == null) {
             entity = new ApiCounterEntity();
-            entity.setDate(LocalDate.now());
-            entity.setCounter(counter);
-        } else {
-            entity.setCounter(entity.getCounter() + counter);
+            entity.setDate(date);
         }
+        entity.setCounter(counter);
         apiCounterRepository.save(entity);
+    }
+
+    private ApiCounterEntity getOrCreateApiCounterEntity(LocalDate date) {
+        ApiCounterEntity entity = apiCounterRepository.findByDate(date);
+        if (entity == null) {
+            entity = new ApiCounterEntity();
+            entity.setDate(date);
+            entity.setCounter(0);
+            apiCounterRepository.save(entity);
+        }
+        return entity;
     }
 }
