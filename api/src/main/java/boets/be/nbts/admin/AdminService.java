@@ -1,8 +1,8 @@
 package boets.be.nbts.admin;
 
-import boets.be.nbts.admin.domain.ApiCounter;
 import boets.be.nbts.admin.domain.ApiCounterEntity;
 import boets.be.nbts.admin.domain.ApiCounterRepository;
+import boets.be.nbts.admin.domain.models.ApiCounter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -5,4 +5,4 @@ CREATE TABLE IF NOT EXISTS admin.api_counter (
                                              unique (date)
 );
 
-CREATE INDEX api_counter_date_idx ON admin.api_counter(date);
+CREATE INDEX IF NOT EXISTS api_counter_date_idx ON admin.api_counter(date);

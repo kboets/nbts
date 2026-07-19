@@ -1,11 +1,13 @@
 package boets.be.nbts.leagues.web;
 
+import boets.be.nbts.admin.AdminService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.MockRestServiceServer;
 
 import java.nio.charset.Charset;
@@ -35,6 +37,10 @@ public class LeagueClientServiceTest {
 
     @Autowired
     private MockRestServiceServer server;
+
+    @MockitoBean
+    private AdminService adminService;
+
 
     @Autowired
     private LeagueClientService leagueClientService;

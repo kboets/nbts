@@ -46,6 +46,7 @@ class LeagueServiceIntegrationTest {
     @MockitoBean
     private LeagueClientService leagueClientService;
 
+
     @Autowired
     private TestEventListener testEventListener;
 

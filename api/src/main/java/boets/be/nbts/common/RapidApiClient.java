@@ -22,8 +22,9 @@ public abstract class RapidApiClient {
                 .defaultHeader("x-rapidapi-key", apiKey)
                 .build();
         this.adminService = adminService;
-        counter = new AtomicInteger(adminService.getCurrentApiCounter().counter());
+        counter = new AtomicInteger(0);
     }
+
 
     protected <T> T get(String path, Class<T> responseType) {
         return get(path, responseType, Map.of());

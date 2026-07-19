@@ -1,5 +1,6 @@
 package boets.be.nbts.leagues.web;
 
+import boets.be.nbts.admin.AdminService;
 import boets.be.nbts.common.RapidApiClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,8 +15,9 @@ import java.util.Map;
 public class LeagueClientService extends RapidApiClient {
 
     public LeagueClientService(RestClient.Builder restClientBuilder,
-                               @Value("${nbts.rapidApi.key}") String apiKey) {
-        super(restClientBuilder, apiKey);
+                               @Value("${nbts.rapidApi.key}") String apiKey,
+                               AdminService adminService) {
+        super(restClientBuilder, apiKey, adminService);
     }
 
     public List<League> getLeaguesByCountry(String countryCode) {
