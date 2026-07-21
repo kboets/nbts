@@ -28,12 +28,17 @@
                             </ng-template>
                             <ng-template #body let-league>
                                 <tr>
-                                    <td style="width: 20%; min-width: 8rem;">
+                                    <td style="width: 15%; min-width: 8rem;">
                                         <img [src]="league.logo" class="shadow-lg" alt="{{ league.name }}" width="50" />
                                     </td>
                                     <td style="width: 15%; min-width: 7rem;">{{ league.name }}</td>
-                                    <td style="width: 20%; min-width: 7rem;">{{ league.nameNL }}</td>
-                                    <td style="width: 15%; min-width: 8rem;">{{ league.season}}</td>
+                                    <td style="width: 15%; min-width: 7rem;">{{ league.nameNL }}</td>
+                                    <td style="width: 25%; min-width: 8rem;">
+                                        <div class="flex flex-col">
+                                            <span>{{ league.season }}</span>
+                                            <span>{{ league.start | date: 'dd-MM-yyyy' }} - {{ league.end | date: 'dd-MM-yyyy' }}</span>
+                                        </div>
+                                    </td>
                                     <td style="width: 15%;">
                                         <button pButton pRipple type="button" icon="pi pi-search" class="p-button p-component p-button-text p-button-icon-only"></button>
                                     </td>
@@ -84,7 +89,7 @@
                                                                     <div
                                                                         class="bg-surface-0 dark:bg-surface-900 flex items-center gap-2 justify-center py-1 px-2"
                                                                         style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)">
-                                                                        <span class="text-surface-900 dark:text-surface-0 font-medium text-sm">seizoen: {{league.season}}</span>
+                                                                        <span class="text-surface-900 dark:text-surface-0 font-medium text-sm">seizoen: {{league.season}} </span>
 
                                                                     </div>
                                                                 </div>
