@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { LeagueStore } from '../../service/league.store';
+import {Component, inject} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {LeagueStore} from '../../service/league.store';
+import {AdminService} from '../../service/admin.service';
 
 @Component({
     standalone: true,
@@ -31,15 +32,16 @@ import { LeagueStore } from '../../service/league.store';
             <div class="card mb-0">
                 <div class="flex justify-between mb-4">
                     <div>
-                        <span class="block text-muted-color font-medium mb-4">Revenue</span>
-                        <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">$2.100</div>
+                        <span class="block text-muted-color font-medium mb-4">Gemaakte rapidApi calls:</span>
+                        <div *ngIf="adminService.apiCounterError() as err" class="text-surface-900 dark:text-surface-0 font-medium text-sm text-red-600">{{ err }}</div>
+                        <div *ngIf="!adminService.apiCounterError()" class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ adminService.apiCounter() }}</div>
                     </div>
                     <div class="flex items-center justify-center bg-orange-100 dark:bg-orange-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
                         <i class="pi pi-dollar text-orange-500 text-xl!"></i>
                     </div>
                 </div>
-                <span class="text-primary font-medium">%52+ </span>
-                <span class="text-muted-color">since last week</span>
+                <span [ngClass]="getApiCallsLeftClass()" class="font-medium">{{ getApiCallsLeft() }} </span>
+                <span class="text-muted-color">over</span>
             </div>
         </div>
         <div class="col-span-12 lg:col-span-6 xl:col-span-3">
@@ -50,10 +52,10 @@ import { LeagueStore } from '../../service/league.store';
                         <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">28441</div>
                     </div>
                     <div class="flex items-center justify-center bg-cyan-100 dark:bg-cyan-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
-                        <i class="pi pi-users text-cyan-500 text-xl!"></i>
+                        <i class="pi pi-users text-cyan-500 text-xl!">{{ getApiCallsLeft() }}</i>
                     </div>
                 </div>
-                <span class="text-primary font-medium">520 </span>
+                <span class="text-primary font-medium">{{ getApiCallsLeft() }} </span>
                 <span class="text-muted-color">newly registered</span>
             </div>
         </div>
@@ -75,4 +77,43 @@ import { LeagueStore } from '../../service/league.store';
 })
 export class StatsWidget {
     public leagueStore: LeagueStore = inject(LeagueStore);
+    public adminService: AdminService = inject(AdminService);
+    private max = 100;
+
+
+    getApiCallsLeft(): number {
+        if (this.adminService.apiCounterError()) {
+            return 100;
+        }
+        const counter = this.adminService.apiCounter();
+        // check if counter is a number and not undefined
+
+        if (counter === undefined) {
+            console.error('Invalid counter value:', counter);
+            return 100;
+        }
+        return this.max - counter;
+    }
+
+    getApiCallsLeftClass(): string {
+        if (this.adminService.apiCounterError()) {
+            return 'text-primary';
+        }
+
+        const counter = this.adminService.apiCounter();
+
+        if (counter === undefined) {
+            return 'text-primary';
+        }
+
+        if (counter > 90) {
+            return 'text-red-500';
+        }
+
+        if (counter > 80) {
+            return 'text-orange-500';
+        }
+
+        return 'text-green-500';
+    }
 }
