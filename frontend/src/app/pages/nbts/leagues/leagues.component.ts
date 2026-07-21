@@ -67,7 +67,7 @@ export class LeaguesComponent implements OnInit {
 
         effect(() => {
             this.newLeagues();
-            console.log('newLeagues effect triggered, loadingNewLeagues:', this.loadingNewLeagues());
+            //console.log('newLeagues effect triggered, loadingNewLeagues:', this.loadingNewLeagues());
             if (this.loadingNewLeagues()) {
                 this.loadingNewLeagues.set(false);
             }
@@ -82,7 +82,7 @@ export class LeaguesComponent implements OnInit {
     }
 
     selectNewLeague(league: League) {
-        console.log('select league: ->', league.name);
+        //console.log('select league: ->', league.name);
         this.leaguesService.saveNewLeague(league).subscribe({
             next: (savedLeague) => {
                 //console.log('league saved', savedLeague);
@@ -97,14 +97,14 @@ export class LeaguesComponent implements OnInit {
                 this.reloadCurrentLeagues();
             },
             error: (error) => {
-                console.error('error saving league', error);
+                //console.error('error saving league', error);
                 this.messageService.add({severity:'error', summary: 'Error', detail: 'Er is iets misgegaan bij het opslaan van de nieuwe competitie.'});
             }
         });
     }
 
     onNewLeaguesCountryOpenTab(event: any) {
-        console.log('onNewLeaguesCountryOpenTab', event);
+        //console.log('onNewLeaguesCountryOpenTab', event);
         this.leaguesService.resetCountryForNewLeagues();
         this.loadingNewLeagues.set(true);
         setTimeout(() => {
