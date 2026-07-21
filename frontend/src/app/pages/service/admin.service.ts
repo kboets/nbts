@@ -2,10 +2,11 @@ import {computed, inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {HttpErrorService} from './http-error.service';
 import type {Version} from '../shared/models/version';
+import type {ApiCounter} from '../shared/models/apiCounter';
 import type {Result} from '../shared/models/result';
 import {toSignal} from "@angular/core/rxjs-interop";
 
-import {catchError, map, Observable, of, tap} from 'rxjs';
+import {catchError, map, Observable, of} from 'rxjs';
 
 
 @Injectable({
@@ -18,7 +19,7 @@ export class AdminService {
     private errorService = inject(HttpErrorService);
 
     private versionResult$ = this.getVersion().pipe(
-        tap((response) => console.log('maven version:', response.mavenVersion)),
+        //tap((response) => console.log('maven version:', response.mavenVersion)),
         map((response) => ({ data: response.mavenVersion }) as Result<string>),
         catchError((error) =>
             of({
@@ -34,5 +35,25 @@ export class AdminService {
 
     private getVersion(): Observable<Version> {
         return this.http.get<Version>(`${this.baseUrl}/currentVersion`);
+    }
+
+    /**  API COUNTER **/
+    private apiCounterResult$ = this.getApiCounter().pipe(
+        //tap((response) => console.log('API counter:', response.counter)),
+        map((response) => ({ data: response.counter } as Result<number>)),
+        catchError((error) =>
+            of({
+                data: undefined,
+                error: this.errorService.formatError(error),
+            } as Result<number>),
+        ),
+    );
+
+    private apiCounterResult = toSignal(this.apiCounterResult$, { initialValue: { data: 0, error: undefined } });
+    apiCounter = computed(() => this.apiCounterResult()?.data);
+    apiCounterError = computed(() => this.apiCounterResult()?.error);
+
+    private getApiCounter(): Observable<ApiCounter> {
+        return this.http.get<ApiCounter>(`${this.baseUrl}/apiCounter`);
     }
 }
