@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
@@ -92,6 +93,13 @@ public class LeagueService {
                 .toList();
     }
 
+    @Cacheable(value = "selectedLeagues", key = "'countryCode'")
+    public List<String> getSelectedLeaguesCountryCodes() {
+        return leagueRepository.findByCurrent(true).stream()
+                .map(LeagueEntity::getCountryCode)
+                .toList();
+    }
+
     /**
      * Saves the league in the database.
      * Removes the cached leagues for the country code.
@@ -99,7 +107,11 @@ public class LeagueService {
      * @param league - league to save
      * @return - the saved league
      */
-    @CacheEvict(value = "leagues", key = "#league.countryCode")
+    @Caching(evict = {
+            @CacheEvict(value = "leagues", key = "#league.countryCode"),
+            @CacheEvict(value = "selectedLeagues", key = "'countryCode'")
+    })
+
     public League save(League league) {
         LeagueEntity savedLeague = leagueRepository.save(mapToEntity(league));
         League persistedLeague = mapToLeague(savedLeague);
@@ -116,7 +128,10 @@ public class LeagueService {
      * @param league - league to delete
      * @return - true if the league was deleted, false otherwise
      */
-    @CacheEvict(value = "leagues", key = "#league.countryCode")
+    @Caching(evict = {
+            @CacheEvict(value = "leagues", key = "#league.countryCode"),
+            @CacheEvict(value = "selectedLeagues", key = "'countryCode'")
+    })
     public boolean delete(League league) {
         Optional<LeagueEntity> leagueEntity = leagueRepository.findByLeagueId(league.leagueId());
         if (leagueEntity.isEmpty()) {

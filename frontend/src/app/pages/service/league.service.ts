@@ -21,20 +21,55 @@ export class LeagueService {
     }
 
     /** persist and remove persisted league */
-
     public saveNewLeague(league: League) : Observable<League> {
         return this.http.post<League>(`${this.baseUrl}/league`, league);
     }
-
     public removeLeague(league: League): Observable<boolean> {
         return this.http.delete<boolean>(`${this.baseUrl}/league`, { body: league });
     }
+
+    /**  retrieve the selected leagues for a specific country */
+    selectedCountryForSelectedLeagues = signal<string | undefined>(undefined);
+    public selectCountryForSelectedLeagues(countryCode: string) {
+        console.log('selectCountryForSelectedLeagues', countryCode);
+        this.selectedCountryForSelectedLeagues.set(countryCode);
+    }
+    public resetCountryForSelectedLeagues() {
+        this.selectedCountryForSelectedLeagues.set(undefined);
+    }
+    private selectedLeaguesForCountry$ = toObservable(this.selectedCountryForSelectedLeagues).pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        switchMap((countryCode) => {
+            if (!countryCode) {
+                return of({ data: [], error: undefined } as Result<League[]>);
+            }
+            return this.getSelectedLeaguesForCountry(countryCode).pipe(
+                map((leagues) => ({ data: leagues }) as Result<League[]>),
+                catchError((error) =>
+                    of({
+                        data: [],
+                        error: this.errorService.formatError(error),
+                    } as Result<League[]>),
+                ),
+            );
+        }),
+        tap((result) => console.log('selectedLeaguesForCountry$', result)),
+        shareReplay(1)
+    );
+
+    private getSelectedLeaguesForCountry(countryCode: string): Observable<League[]> {
+        return this.http.get<League[]>(`${this.baseUrl}/currentLeagues/selected/${countryCode}`);
+    }
+
+    private selectedLeaguesResult = toSignal(this.selectedLeaguesForCountry$, { initialValue: { data: [], error: undefined } });
+    selectedLeagues = computed(() => this.selectedLeaguesResult().data);
+    selectedLeaguesError = computed(() => this.selectedLeaguesResult().error);
 
     /**  retrieve the new leagues for a specific country */
     selectedCountryForNewLeagues = signal<string | undefined>(undefined);
 
     public selectCountryForNewLeagues(countryCode: string) {
-        console.log('selectCountryForNewLeagues', countryCode);
         this.selectedCountryForNewLeagues.set(countryCode);
     }
 

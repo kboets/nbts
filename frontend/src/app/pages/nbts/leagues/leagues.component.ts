@@ -3,11 +3,6 @@ import {FormsModule} from '@angular/forms';
 import {CommonModule, NgClass} from '@angular/common';
 import {TabsModule} from 'primeng/tabs';
 import {TableModule} from 'primeng/table';
-import {CountryStore} from '../../service/country.store';
-import {CountryService} from '../../service/country.service';
-import {LeagueService} from '../../service/league.service';
-import {League} from '../../shared/models/league';
-import {AccordionModule} from 'primeng/accordion';
 import {AutoCompleteCompleteEvent, AutoCompleteModule} from 'primeng/autocomplete';
 import {TagModule} from 'primeng/tag';
 import {DataViewModule} from 'primeng/dataview';
@@ -15,6 +10,11 @@ import {ButtonModule} from 'primeng/button';
 import {ToastModule} from 'primeng/toast';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ConfirmationService, MessageService} from 'primeng/api';
+import {AccordionModule} from 'primeng/accordion';
+import {CountryStore} from '../../service/country.store';
+import {CountryService} from '../../service/country.service';
+import {LeagueService} from '../../service/league.service';
+import {League} from '../../shared/models/league';
 import {Country} from '../../shared/models/country';
 import {LeagueStore} from "../../service/league.store";
 
@@ -35,7 +35,8 @@ export class LeaguesComponent implements OnInit {
     public countryStore: CountryStore = inject(CountryStore);
     private countryService = inject(CountryService);
     private leaguesService = inject(LeagueService);
-
+    private leagueStore = inject(LeagueStore);
+    public leagues = this.leagueStore.selectedLeagues;
 
     public countries = signal<Country[] | null>(null);
     filteredCountries: Country[] = [];
@@ -44,14 +45,12 @@ export class LeaguesComponent implements OnInit {
     // get signals
     newLeagues = this.leaguesService.newLeagues;
     newLeaguesError = this.leaguesService.newLeaguesError;
+
     public loadingNewLeagues = signal<boolean>(false);
 
-    // get league store
-    private leagueStore = inject(LeagueStore);
-    public leagues = this.leagueStore.leagues;
 
     public leaguesWithCountry = computed(() => {
-        const list = this.leagueStore.leagues();
+        const list = this.leagueStore.selectedLeagues();
         const countriesList = this.countryStore.countries();
         if (!list) return null;
         return list.map(league => ({
@@ -104,7 +103,6 @@ export class LeaguesComponent implements OnInit {
     }
 
     onNewLeaguesCountryOpenTab(event: any) {
-        //console.log('onNewLeaguesCountryOpenTab', event);
         this.leaguesService.resetCountryForNewLeagues();
         this.loadingNewLeagues.set(true);
         setTimeout(() => {

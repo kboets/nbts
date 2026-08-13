@@ -17,7 +17,7 @@ import {AdminService} from '../../service/admin.service';
                         </ng-container>
                         <ng-template #notLoading>
                             <div *ngIf="leagueStore.error() as err" class="text-surface-900 dark:text-surface-0 font-medium text-sm text-red-600">{{ err }}</div>
-                            <div *ngIf="!leagueStore.error()" class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ (leagueStore.leagues() || []).length }}</div>
+                            <div *ngIf="!leagueStore.error()" class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ (leagueStore.selectedLeagues() || []).length }}</div>
                         </ng-template>
                     </div>
                     <div class="flex items-center justify-center bg-blue-100 dark:bg-blue-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">

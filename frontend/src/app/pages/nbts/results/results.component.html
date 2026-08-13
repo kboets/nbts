@@ -1,0 +1,41 @@
+<div class="card">
+    <div class="justify-left items-center p-1">
+        <p-autocomplete [(ngModel)]="selectedCountry" [forceSelection]="true" [suggestions]="filteredCountries"
+                        (onSelect)="onSelectCountry($event)"  (onUnselect)="onCountryUnselect()" (onClear)="onCountryUnselect()"
+                        (completeMethod)="filterCountry($event)" optionLabel="nameNL" [showClear]="true" inputStyleClass="w-56"/>
+    </div>
+    <div class="card">
+        <p-accordion [value]="['0']" (valueChange)="onCountryOpenTab($event)">
+            @for (country of (selectedCountries() || []); track country.countryCode) {
+                <p-accordion-panel [value]="country.countryCode">
+                    <p-accordion-header>
+                    <span class="flex items-center gap-2">
+                        <img [src]="country.flagUrl" [alt]="country.nameNL" style="width: 20px; vertical-align: middle;" />
+                         <span>{{ country.nameNL }}</span>
+                    </span>
+                    </p-accordion-header>
+                    <p-accordion-content>
+<!--                        <p-dataview #dv [value]="selectedLeagues()" [emptyMessage]="'Geen competities gevonden'">-->
+<!--                            <ng-template #list let-leagues>-->
+<!--                                <div class="grid grid-cols-12 gap-4 grid-nogutter">-->
+<!--                                    <div class="col-span-12" *ngFor="let league of leagues; let first = first">-->
+<!--                                        <div class="flex flex-col md:flex-row md:align-items-center p-3 gap-3 border-round border-1 surface-border">-->
+<!--                                            <img [src]="league.logo" class="shadow-lg" alt="{{ league.name }}" width="50" />-->
+<!--                                            <div class="flex flex-column flex-grow-1 gap-2">-->
+<!--                                                <div class="font-bold">{{ league.name }}</div>-->
+<!--                                                <div class="text-sm text-color-secondary">{{ league.season }}</div>-->
+<!--                                            </div>-->
+<!--                                            <button pButton pRipple type="button" icon="pi pi-search" class="p-button p-component p-button-text p-button-icon-only"></button>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </ng-template>-->
+<!--                        </p-dataview>-->
+                    </p-accordion-content>
+                </p-accordion-panel>
+            }
+        </p-accordion>
+    </div>
+
+
+</div>

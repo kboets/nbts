@@ -6,7 +6,7 @@ import type {League} from '../shared/models/league';
 })
 export class LeagueStore {
     /** Holds the current leagues or null if not loaded */
-    leagues: WritableSignal<League[] | null> = signal(null);
+    selectedLeagues: WritableSignal<League[] | null> = signal(null);
 
     /** Loading flag for async fetches */
     loading: WritableSignal<boolean> = signal(false);
@@ -20,16 +20,16 @@ export class LeagueStore {
     }
 
     setLeagues(ls: League[] | null) {
-        this.leagues.set(ls);
+        this.selectedLeagues.set(ls);
         this.loading.set(false);
         this.error.set(null);
     }
 
     removeLeague(leagueId: number) {
-        const currentLeagues = this.leagues();
+        const currentLeagues = this.selectedLeagues();
         if (currentLeagues) {
             // Adjust 'leagueId' below depending on the exact property name in your League interface (e.g. leagueId, id, etc.)
-            this.leagues.set(currentLeagues.filter(l => l.leagueId !== leagueId));
+            this.selectedLeagues.set(currentLeagues.filter(l => l.leagueId !== leagueId));
         }
     }
 
@@ -39,7 +39,7 @@ export class LeagueStore {
     }
 
     clear() {
-        this.leagues.set(null);
+        this.selectedLeagues.set(null);
         this.error.set(null);
         this.loading.set(false);
     }
