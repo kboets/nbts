@@ -97,14 +97,10 @@ class ResultClientServiceTest {
         // Assert that the results list is not empty and contains the expected number of results
         assertThat(results).isNotEmpty();
         // get result of round 16, it should be the current round
-        results.stream().filter(result -> result.round() == 16).findFirst().ifPresent(result -> {
-            assertThat(result.isCurrent()).isTrue();
-        });
+        results.stream().filter(result -> result.round() == 16).findFirst().ifPresent(result -> assertThat(result.isCurrent()).isTrue());
 
         // get result of round 15, it should not be the current round
-        results.stream().filter(result -> result.round() == 15).findFirst().ifPresent(result -> {
-            assertThat(result.isCurrent()).isFalse();
-        });
+        results.stream().filter(result -> result.round() == 15).findFirst().ifPresent(result -> assertThat(result.isCurrent()).isFalse());
     }
 
 }
