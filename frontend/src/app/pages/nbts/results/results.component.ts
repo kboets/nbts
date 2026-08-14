@@ -1,4 +1,4 @@
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {TabsModule} from 'primeng/tabs';
@@ -37,16 +37,7 @@ export class ResultsComponent implements OnInit {
     private leagueStore = inject(LeagueStore);
 
     // data for the table
-    public selectedLeagues = this.leaguesService.selectedLeagues();
-    public selectedLeaguesWithCountry = computed(() => {
-        const list = this.leagueStore.selectedLeagues();
-        const countriesList = this.countryStore.countries();
-        if (!list) return null;
-        return list.map(league => ({
-            ...league,
-            nameNL: countriesList?.find(c => c.countryCode === league.countryCode)?.nameNL || ''
-        }));
-    });
+    public selectedLeagues = this.leaguesService.selectedLeagues;
 
     constructor() {
         this.countryService.getSelectedCountries().subscribe((countriesList: Country[]) => {
@@ -87,6 +78,6 @@ export class ResultsComponent implements OnInit {
     onCountryOpenTab(event: any) {
         console.log('onCountryOpenTab', event);
         this.leaguesService.resetCountryForSelectedLeagues();
-        this.leaguesService.selectCountryForSelectedLeagues(event.countryCode);
+        this.leaguesService.selectCountryForSelectedLeagues(event);
     }
 }

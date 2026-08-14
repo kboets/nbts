@@ -15,22 +15,32 @@
                     </span>
                     </p-accordion-header>
                     <p-accordion-content>
-<!--                        <p-dataview #dv [value]="selectedLeagues()" [emptyMessage]="'Geen competities gevonden'">-->
-<!--                            <ng-template #list let-leagues>-->
-<!--                                <div class="grid grid-cols-12 gap-4 grid-nogutter">-->
-<!--                                    <div class="col-span-12" *ngFor="let league of leagues; let first = first">-->
-<!--                                        <div class="flex flex-col md:flex-row md:align-items-center p-3 gap-3 border-round border-1 surface-border">-->
-<!--                                            <img [src]="league.logo" class="shadow-lg" alt="{{ league.name }}" width="50" />-->
-<!--                                            <div class="flex flex-column flex-grow-1 gap-2">-->
-<!--                                                <div class="font-bold">{{ league.name }}</div>-->
-<!--                                                <div class="text-sm text-color-secondary">{{ league.season }}</div>-->
-<!--                                            </div>-->
-<!--                                            <button pButton pRipple type="button" icon="pi pi-search" class="p-button p-component p-button-text p-button-icon-only"></button>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </ng-template>-->
-<!--                        </p-dataview>-->
+                        <p-dataview #dv [value]="selectedLeagues()" [emptyMessage]="selectedLeagues() == null ? 'Geen competities gevonden' : 'Bezig met ophalen'">
+                            <ng-template #list let-leagues>
+                                <div class="flex flex-col w-full">
+                                    <div *ngFor="let league of leagues; let last = last"
+                                         class="flex items-center justify-between p-3 gap-4"
+                                         [ngClass]="{'border-b border-surface-200 dark:border-surface-700': !last && leagues.length > 1}">
+                                        <!-- Logo & Name (Left aligned) -->
+                                        <div class="flex items-center gap-3 min-w-0 flex-1">
+                                            <img [src]="league.logo" class="shadow-md rounded" alt="{{ league.name }}" width="45" />
+                                            <span class="font-medium truncate">{{ league.name }}</span>
+                                        </div>
+
+                                        <!-- Season & Dates (Centered column) -->
+                                        <div class="flex flex-col items-center justify-center text-sm text-surface-600 dark:text-surface-400 whitespace-nowrap flex-1 text-center">
+                                            <span class="font-semibold">Seizoen: {{ league.season }}</span>
+                                            <span>{{ league.start | date: 'dd/MM/yyyy' }} - {{ league.end | date: 'dd/MM/yyyy' }}</span>
+                                        </div>
+
+                                        <!-- Glass Search Icon Button (Right aligned) -->
+                                        <div class="flex-shrink-0 flex-1 flex justify-end">
+                                            <p-button icon="pi pi-search" [rounded]="true" [text]="true" severity="secondary" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </p-dataview>
                     </p-accordion-content>
                 </p-accordion-panel>
             }

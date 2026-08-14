@@ -94,7 +94,7 @@ export class LeagueService {
                 ),
             );
         }),
-        tap((result) => console.log('newLeaguesForCountry$', result)),
+        //tap((result) => console.log('newLeaguesForCountry$', result)),
         shareReplay(1)
     );
 
