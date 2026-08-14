@@ -12,6 +12,6 @@ public class NbtsCacheConfiguration {
 
     @Bean
     public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("leagues", "selectedLeagues");
+        return new ConcurrentMapCacheManager("leagues", "selectedLeagues", "results");
     }
 }

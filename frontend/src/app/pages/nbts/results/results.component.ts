@@ -41,7 +41,6 @@ export class ResultsComponent implements OnInit {
 
     constructor() {
         this.countryService.getSelectedCountries().subscribe((countriesList: Country[]) => {
-            console.log(countriesList);
             this.selectedCountries.set(countriesList);
         });
     }
