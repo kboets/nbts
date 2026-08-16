@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {TabsModule} from 'primeng/tabs';
@@ -10,6 +10,7 @@ import {ButtonModule} from 'primeng/button';
 import {ToastModule} from 'primeng/toast';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {AccordionModule} from 'primeng/accordion';
+import {SplitterModule} from 'primeng/splitter';
 import {Country} from "../../shared/models/country";
 import {League} from '../../shared/models/league';
 import {CountryStore} from '../../service/country.store';
@@ -23,7 +24,7 @@ import {ResultService} from '../../service/result.service';
     selector: 'app-results',
     templateUrl: './results.component.html',
     standalone: true,
-    imports: [TabsModule, AccordionModule, AutoCompleteModule, FormsModule, DataViewModule, ButtonModule, TagModule, CommonModule, ToastModule, TableModule, ConfirmDialogModule],
+    imports: [TabsModule, AccordionModule, AutoCompleteModule, FormsModule, DataViewModule, ButtonModule, TagModule, CommonModule, ToastModule, TableModule, ConfirmDialogModule, SplitterModule],
 })
 export class ResultsComponent implements OnInit {
 
@@ -43,21 +44,28 @@ export class ResultsComponent implements OnInit {
     public selectedLeagues = this.leaguesService.selectedLeagues;
     public selectedLeaguesError = this.leaguesService.selectedLeaguesError;
 
-    // data for the results table
+    // data for the result table
     public results4Country = this.resultService.results;
     public results4CountryError = this.resultService.resultsError;
+    public hasResults4Country = computed(() =>
+        (this.results4Country()?.length ?? 0) > 0 &&
+        !this.results4CountryError()
+    );
 
     constructor() {
         this.countryService.getSelectedCountries().subscribe((countriesList: Country[]) => {
             this.selectedCountries.set(countriesList);
         });
+        this.resultService.resetLeagueForResult();
+        this.resultService.resetSeasonForResult();
     }
 
     ngOnInit(): void {
         this.countryService.getSelectedCountries().subscribe((countriesList: Country[]) => {
             this.selectedCountries.set(countriesList);
         });
-
+        this.resultService.resetLeagueForResult();
+        this.resultService.resetSeasonForResult();
     }
 
     onSelectCountry(event: any) {
