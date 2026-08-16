@@ -11,10 +11,12 @@ import {ToastModule} from 'primeng/toast';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {AccordionModule} from 'primeng/accordion';
 import {Country} from "../../shared/models/country";
+import {League} from '../../shared/models/league';
 import {CountryStore} from '../../service/country.store';
 import {CountryService} from '../../service/country.service';
 import {LeagueService} from "../../service/league.service";
 import {LeagueStore} from "../../service/league.store";
+import {ResultService} from '../../service/result.service';
 
 
 @Component({
@@ -35,9 +37,15 @@ export class ResultsComponent implements OnInit {
     private countryService = inject(CountryService);
     private leaguesService = inject(LeagueService);
     private leagueStore = inject(LeagueStore);
+    private resultService = inject(ResultService);
 
-    // data for the table
+    // data for the selection of the league in the country tab
     public selectedLeagues = this.leaguesService.selectedLeagues;
+    public selectedLeaguesError = this.leaguesService.selectedLeaguesError;
+
+    // data for the results table
+    public results4Country = this.resultService.results;
+    public results4CountryError = this.resultService.resultsError;
 
     constructor() {
         this.countryService.getSelectedCountries().subscribe((countriesList: Country[]) => {
@@ -75,8 +83,13 @@ export class ResultsComponent implements OnInit {
     }
 
     onCountryOpenTab(event: any) {
-        console.log('onCountryOpenTab', event);
+        //console.log('onCountryOpenTab', event);
         this.leaguesService.resetCountryForSelectedLeagues();
         this.leaguesService.selectCountryForSelectedLeagues(event);
+    }
+
+    selectLeague(league: League) {
+        this.resultService.selectLeagueForResult(league.leagueId);
+        this.resultService.selectSeasonForResult(league.season);
     }
 }

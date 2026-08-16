@@ -2,7 +2,7 @@ import {computed, inject, Injectable, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import type {League} from "../shared/models/league";
 import {debounceTime, distinctUntilChanged, map, Observable, of, switchMap} from 'rxjs';
-import {catchError, shareReplay, tap} from 'rxjs/operators';
+import {catchError, shareReplay} from 'rxjs/operators';
 import {toObservable, toSignal} from '@angular/core/rxjs-interop';
 import {HttpErrorService} from './http-error.service';
 import {Result} from '../shared/models/result';
@@ -31,7 +31,7 @@ export class LeagueService {
     /**  retrieve the selected leagues for a specific country */
     selectedCountryForSelectedLeagues = signal<string | undefined>(undefined);
     public selectCountryForSelectedLeagues(countryCode: string) {
-        console.log('selectCountryForSelectedLeagues', countryCode);
+        //console.log('selectCountryForSelectedLeagues', countryCode);
         this.selectedCountryForSelectedLeagues.set(countryCode);
     }
     public resetCountryForSelectedLeagues() {
@@ -54,7 +54,7 @@ export class LeagueService {
                 ),
             );
         }),
-        tap((result) => console.log('selectedLeaguesForCountry$', result)),
+        //tap((result) => console.log('selectedLeaguesForCountry$', result)),
         shareReplay(1)
     );
 
