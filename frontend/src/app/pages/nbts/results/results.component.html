@@ -59,16 +59,66 @@
             <p-splitter>
                 <ng-template pTemplate>
                     <div class="p-4">
-                        Panel 1
+                        <div class="p-4">
+                            <div class="mb-3">
+                                <p-button
+                                    label="Terug naar competities"
+                                    icon="pi pi-arrow-left"
+                                    severity="secondary"
+                                    [text]="true"
+                                    (onClick)="selectAnotherLeague()"
+                                />
+                            </div>
+                            <div class="mb-3 flex items-center justify-between gap-4">
+                                <h4 class="m-0">
+                                    geselecteerde speelronde
+                                    @if (visibleRound() === currentRound()) {
+                                        <span> (huidige)</span>
+                                    }:
+                                    @if (visibleRound()) {
+                                        <span> {{ visibleRound() }}</span>
+                                    }
+                                </h4>
+                                @if (availableRounds().length > 1) {
+                                    <p-paginator
+                                        [first]="selectedRoundPage()"
+                                        [rows]="1"
+                                        [totalRecords]="availableRounds().length"
+                                        [showCurrentPageReport]="false"
+                                        [showFirstLastIcon]="false"
+                                        [showPageLinks]="false"
+                                        (onPageChange)="onRoundPageChange($event)"
+                                    />
+                                }
+                            </div>
+                            @if (visibleRoundResults().length > 0) {
+                                <p-table [value]="visibleRoundResults()" responsiveLayout="scroll"  [size]="'large'">
+                                    <ng-template #header>
+                                        <tr>
+                                            <th class="py-4"></th>
+                                            <th class="py-4"></th>
+                                            <th class="py-4"></th>
+                                            <th class="py-4"></th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template #body let-result>
+                                        <tr>
+                                            <td class="py-5" style="width: 15%; min-width: 7rem;">{{ result.matchDate | date: 'dd/MM/yyyy' }}</td>
+                                            <td class="py-5" style="width: 45%; min-width: 8rem;">{{ result.homeTeam }}  -  {{ result.awayTeam }}</td>
+                                            <td class="py-5" style="width: 25%; min-width: 7rem;">{{ result.homeTeamScore ?? '-' }} - {{ result.awayTeamScore ?? '-' }}</td>
+                                            <td class="py-5" style="width: 10%; min-width: 7rem;">{{ result.matchStatus }}</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            }
+                        </div>
                     </div>
                 </ng-template>
-
                 <ng-template pTemplate>
-                    <div class="p-4">
-                        Panel 2
-                    </div>
+                    stand
                 </ng-template>
             </p-splitter>
+
         </div>
     }
 

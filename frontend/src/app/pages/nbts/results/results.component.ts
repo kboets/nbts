@@ -9,6 +9,7 @@ import {DataViewModule} from 'primeng/dataview';
 import {ButtonModule} from 'primeng/button';
 import {ToastModule} from 'primeng/toast';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {PaginatorModule, PaginatorState} from 'primeng/paginator';
 import {AccordionModule} from 'primeng/accordion';
 import {SplitterModule} from 'primeng/splitter';
 import {Country} from "../../shared/models/country";
@@ -24,7 +25,7 @@ import {ResultService} from '../../service/result.service';
     selector: 'app-results',
     templateUrl: './results.component.html',
     standalone: true,
-    imports: [TabsModule, AccordionModule, AutoCompleteModule, FormsModule, DataViewModule, ButtonModule, TagModule, CommonModule, ToastModule, TableModule, ConfirmDialogModule, SplitterModule],
+    imports: [TabsModule, AccordionModule, AutoCompleteModule, FormsModule, DataViewModule, ButtonModule, TagModule, CommonModule, ToastModule, TableModule, ConfirmDialogModule, PaginatorModule, SplitterModule],
 })
 export class ResultsComponent implements OnInit {
 
@@ -47,10 +48,60 @@ export class ResultsComponent implements OnInit {
     // data for the result table
     public results4Country = this.resultService.results;
     public results4CountryError = this.resultService.resultsError;
+    public selectedRound = signal<number | undefined>(undefined);
     public hasResults4Country = computed(() =>
         (this.results4Country()?.length ?? 0) > 0 &&
         !this.results4CountryError()
     );
+    // data for the round selection
+    public availableRounds = computed(() => {
+        const results = this.results4Country();
+
+        if ((results?.length ?? 0) === 0 || this.results4CountryError()) {
+            return [];
+        }
+
+        return [...new Set(results.map((result) => result.round))]
+            .sort((left, right) => left - right);
+    });
+
+    public currentRound = computed(() => this.results4Country()
+        .find((result) => result.isCurrent)?.round);
+
+    public visibleRound = computed(() => {
+        const rounds = this.availableRounds();
+        const selectedRound = this.selectedRound();
+
+        if (rounds.length === 0) {
+            return undefined;
+        }
+
+        if (selectedRound !== undefined && rounds.includes(selectedRound)) {
+            return selectedRound;
+        }
+
+        return this.currentRound() ?? rounds[0];
+    });
+
+    public selectedRoundPage = computed(() => {
+        const visibleRound = this.visibleRound();
+        const page = this.availableRounds().findIndex((round) => round === visibleRound);
+
+        return page >= 0 ? page : 0;
+    });
+
+    public visibleRoundResults = computed(() => {
+        const results = this.results4Country();
+        const visibleRound = this.visibleRound();
+
+        if ((results?.length ?? 0) === 0 || this.results4CountryError() || visibleRound === undefined) {
+            return [];
+        }
+
+        return results
+            .filter((result) => result.round === visibleRound)
+            .sort((left, right) => new Date(left.matchDate).getTime() - new Date(right.matchDate).getTime());
+    });
 
     constructor() {
         this.countryService.getSelectedCountries().subscribe((countriesList: Country[]) => {
@@ -97,7 +148,18 @@ export class ResultsComponent implements OnInit {
     }
 
     selectLeague(league: League) {
+        this.selectedRound.set(undefined);
         this.resultService.selectLeagueForResult(league.leagueId);
         this.resultService.selectSeasonForResult(league.season);
+    }
+
+    selectAnotherLeague() {
+        this.selectedRound.set(undefined);
+        this.resultService.resetLeagueForResult();
+        this.resultService.resetSeasonForResult();
+    }
+
+    onRoundPageChange(event: PaginatorState) {
+        this.selectedRound.set(this.availableRounds()[event.page ?? 0]);
     }
 }
