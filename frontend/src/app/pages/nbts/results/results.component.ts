@@ -49,6 +49,25 @@ export class ResultsComponent implements OnInit {
     public results4Country = this.resultService.results;
     public results4CountryError = this.resultService.resultsError;
     public selectedRound = signal<number | undefined>(undefined);
+
+
+    constructor() {
+        this.countryService.getSelectedCountries().subscribe((countriesList: Country[]) => {
+            this.selectedCountries.set(countriesList);
+        });
+        this.resultService.resetLeagueForResult();
+        this.resultService.resetSeasonForResult();
+    }
+
+    ngOnInit(): void {
+        this.countryService.getSelectedCountries().subscribe((countriesList: Country[]) => {
+            this.selectedCountries.set(countriesList);
+        });
+        this.resultService.resetLeagueForResult();
+        this.resultService.resetSeasonForResult();
+    }
+
+    // create signal for the results
     public hasResults4Country = computed(() =>
         (this.results4Country()?.length ?? 0) > 0 &&
         !this.results4CountryError()
@@ -103,21 +122,6 @@ export class ResultsComponent implements OnInit {
             .sort((left, right) => new Date(left.matchDate).getTime() - new Date(right.matchDate).getTime());
     });
 
-    constructor() {
-        this.countryService.getSelectedCountries().subscribe((countriesList: Country[]) => {
-            this.selectedCountries.set(countriesList);
-        });
-        this.resultService.resetLeagueForResult();
-        this.resultService.resetSeasonForResult();
-    }
-
-    ngOnInit(): void {
-        this.countryService.getSelectedCountries().subscribe((countriesList: Country[]) => {
-            this.selectedCountries.set(countriesList);
-        });
-        this.resultService.resetLeagueForResult();
-        this.resultService.resetSeasonForResult();
-    }
 
     onSelectCountry(event: any) {
         const selected = event?.value || this.selectedCountry;
