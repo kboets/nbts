@@ -15,6 +15,7 @@ import java.util.List;
 public class ResultService {
 
     private final ResultClientService resultClientService;
+
     @Cacheable(value = "results", key = "#league + ':' + #season")
     public List<Result> getResultsByLeagueAndSeason(int league, int season) {
         log.info("Fetching results for league {} and season {}", league, season);
