@@ -116,8 +116,14 @@
                 </ng-template>
                 <ng-template pTemplate>
                     <div class="p-4 w-full">
-                        <div class="mb-3">
-                            <h4 class="m-0">Stand</h4>
+                        <div class="mb-3 flex w-full items-center justify-between gap-4">
+                            <h4 class="m-0 flex-shrink-0">Stand</h4>
+
+                            @if (standingLastUpdated()) {
+                                <small class="ml-auto text-right text-surface-500 dark:text-surface-400 whitespace-nowrap">
+                                    Laatst bijgewerkt: {{ standingLastUpdated() | date: 'dd/MM/yyyy' }}
+                                </small>
+                            }
                         </div>
 
                         @if (standingDataError()) {
@@ -127,7 +133,8 @@
                         }
 
                         @if (standingData().length > 0) {
-                            <p-table [value]="standingData()" responsiveLayout="scroll" [size]="'large'" headerStyleClass="bg-gray-100 text-gray-700">
+                            <p-table styleClass="custom-header-table"
+                                [value]="standingData()" responsiveLayout="scroll" [size]="'large'">
                                 <ng-template #header>
                                     <tr>
                                         <th class="py-4">#</th>

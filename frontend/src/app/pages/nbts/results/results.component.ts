@@ -25,6 +25,7 @@ import {StandingService} from "../../service/standing.service";
 @Component({
     selector: 'app-results',
     templateUrl: './results.component.html',
+    styleUrls: ['./results.components.scss'],
     standalone: true,
     imports: [TabsModule, AccordionModule, AutoCompleteModule, FormsModule, DataViewModule, ButtonModule, TagModule, CommonModule, ToastModule, TableModule, ConfirmDialogModule, PaginatorModule, SplitterModule],
 })
@@ -55,6 +56,8 @@ export class ResultsComponent implements OnInit {
     // data for the standing table
     public standingData = this.standingService.standing;
     public standingDataError = this.standingService.standingError;
+    public standingLastUpdated = computed(() => this.standingData()?.[0]?.lastUpdated);
+
 
     constructor() {
         this.countryService.getSelectedCountries().subscribe((countriesList: Country[]) => {
