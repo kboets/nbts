@@ -1,5 +1,6 @@
 package boets.be.nbts.results.web;
 
+import boets.be.nbts.results.domain.StandingService;
 import boets.be.nbts.results.domain.models.Standing;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class StandingControllerTest {
     private RestTestClient restTestClient;
 
     @MockitoBean
-    private StandingClientService standingClientService;
+    private StandingService standingService;
 
     @Test
     @DisplayName("GET /api/standings/{leagueId}/{season} - should return standings for the given league and season")
@@ -32,7 +33,7 @@ class StandingControllerTest {
         int season = 2026;
         Standing standing = new Standing(144, 2026, 1, "Club Brugge KV", 569, 9, 3, 3, 0, 0, LocalDate.of(2026, 8, 29));
 
-        when(standingClientService.getStandingsByLeagueAndSeason(leagueId, season)).thenReturn(List.of(standing));
+        when(standingService.getStandingsByLeagueAndSeason(leagueId, season)).thenReturn(List.of(standing));
 
         restTestClient.get().uri("/api/standings/{leagueId}/{season}", leagueId, season)
                 .exchange()
