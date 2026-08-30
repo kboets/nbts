@@ -1,7 +1,7 @@
 import {computed, inject, Injectable, signal} from '@angular/core';
 import {toObservable, toSignal} from '@angular/core/rxjs-interop';
 import {HttpClient} from '@angular/common/http';
-import {combineLatest, Observable, of, tap} from 'rxjs';
+import {combineLatest, Observable, of} from 'rxjs';
 import {catchError, distinctUntilChanged, map, shareReplay, switchMap} from 'rxjs/operators';
 import {HttpErrorService} from './http-error.service';
 import type {MatchResult} from '../shared/models/matchResult';
@@ -57,7 +57,7 @@ export class ResultService {
                     ),
                 );
         }),
-        tap((result) => console.log('resultsByLeagueAndSeason$', result)),
+        //tap((result) => console.log('resultsByLeagueAndSeason$', result)),
         shareReplay(1)
     );
 

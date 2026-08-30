@@ -115,7 +115,49 @@
                     </div>
                 </ng-template>
                 <ng-template pTemplate>
-                    stand
+                    <div class="p-4 w-full">
+                        <div class="mb-3">
+                            <h4 class="m-0">Stand</h4>
+                        </div>
+
+                        @if (standingDataError()) {
+                            <div class="alert alert-danger text-danger">
+                                {{ standingDataError() }}
+                            </div>
+                        }
+
+                        @if (standingData().length > 0) {
+                            <p-table [value]="standingData()" responsiveLayout="scroll" [size]="'large'" headerStyleClass="bg-gray-100 text-gray-700">
+                                <ng-template #header>
+                                    <tr>
+                                        <th class="py-4">#</th>
+                                        <th class="py-4">Ploeg</th>
+                                        <th class="py-4">P</th>
+                                        <th class="py-4">W</th>
+                                        <th class="py-4">G</th>
+                                        <th class="py-4">V</th>
+                                        <th class="py-4">Ptn</th>
+                                    </tr>
+                                </ng-template>
+
+                                <ng-template #body let-standing>
+                                    <tr>
+                                        <td class="py-4" style="width: 4rem;">{{ standing.rank }}</td>
+                                        <td class="py-4" style="min-width: 10rem;">{{ standing.teamName }}</td>
+                                        <td class="py-4">{{ standing.played }}</td>
+                                        <td class="py-4">{{ standing.won }}</td>
+                                        <td class="py-4">{{ standing.drawn }}</td>
+                                        <td class="py-4">{{ standing.lost }}</td>
+                                        <td class="py-4 font-semibold">{{ standing.points }}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        } @else {
+                            <div class="text-surface-500 dark:text-surface-400">
+                                Geen stand beschikbaar.
+                            </div>
+                        }
+                    </div>
                 </ng-template>
             </p-splitter>
 

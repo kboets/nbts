@@ -19,6 +19,7 @@ import {CountryService} from '../../service/country.service';
 import {LeagueService} from "../../service/league.service";
 import {LeagueStore} from "../../service/league.store";
 import {ResultService} from '../../service/result.service';
+import {StandingService} from "../../service/standing.service";
 
 
 @Component({
@@ -40,6 +41,7 @@ export class ResultsComponent implements OnInit {
     private leaguesService = inject(LeagueService);
     private leagueStore = inject(LeagueStore);
     private resultService = inject(ResultService);
+    private standingService = inject(StandingService);
 
     // data for the selection of the league in the country tab
     public selectedLeagues = this.leaguesService.selectedLeagues;
@@ -50,6 +52,9 @@ export class ResultsComponent implements OnInit {
     public results4CountryError = this.resultService.resultsError;
     public selectedRound = signal<number | undefined>(undefined);
 
+    // data for the standing table
+    public standingData = this.standingService.standing;
+    public standingDataError = this.standingService.standingError;
 
     constructor() {
         this.countryService.getSelectedCountries().subscribe((countriesList: Country[]) => {
@@ -57,6 +62,8 @@ export class ResultsComponent implements OnInit {
         });
         this.resultService.resetLeagueForResult();
         this.resultService.resetSeasonForResult();
+        this.standingService.resetLeagueForStanding();
+        this.standingService.resetSeasonForStanding();
     }
 
     ngOnInit(): void {
@@ -65,13 +72,22 @@ export class ResultsComponent implements OnInit {
         });
         this.resultService.resetLeagueForResult();
         this.resultService.resetSeasonForResult();
-    }
+        this.standingService.resetLeagueForStanding();
+        this.standingService.resetSeasonForStanding();
+        }
+
+    // create signal for the standing
+    public hasStanding4Country = computed(() =>
+        (this.standingData()?.length ?? 0) > 0 &&
+        !this.standingDataError()
+    );
 
     // create signal for the results
     public hasResults4Country = computed(() =>
         (this.results4Country()?.length ?? 0) > 0 &&
         !this.results4CountryError()
     );
+
     // data for the round selection
     public availableRounds = computed(() => {
         const results = this.results4Country();
@@ -149,18 +165,23 @@ export class ResultsComponent implements OnInit {
         //console.log('onCountryOpenTab', event);
         this.leaguesService.resetCountryForSelectedLeagues();
         this.leaguesService.selectCountryForSelectedLeagues(event);
+
     }
 
     selectLeague(league: League) {
         this.selectedRound.set(undefined);
         this.resultService.selectLeagueForResult(league.leagueId);
         this.resultService.selectSeasonForResult(league.season);
+        this.standingService.selectLeagueForStanding(league.leagueId);
+        this.standingService.selectSeasonForStanding(league.season);
     }
 
     selectAnotherLeague() {
         this.selectedRound.set(undefined);
         this.resultService.resetLeagueForResult();
         this.resultService.resetSeasonForResult();
+        this.standingService.resetLeagueForStanding();
+        this.standingService.resetSeasonForStanding();
     }
 
     onRoundPageChange(event: PaginatorState) {
