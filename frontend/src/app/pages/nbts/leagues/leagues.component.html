@@ -40,7 +40,14 @@
                                         </div>
                                     </td>
                                     <td style="width: 15%;">
-                                        <button pButton pRipple type="button" icon="pi pi-search" class="p-button p-component p-button-text p-button-icon-only"></button>
+                                        <button
+                                            pButton
+                                            pRipple
+                                            type="button"
+                                            icon="pi pi-search"
+                                            class="p-button p-component p-button-text p-button-icon-only"
+                                            (click)="openResults(league)">
+                                        </button>
                                     </td>
                                     <td style="witdh: 15%;">
                                         <p-toast timeout="5000" />

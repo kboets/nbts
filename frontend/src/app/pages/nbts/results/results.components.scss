@@ -1,0 +1,4 @@
+:host ::ng-deep .custom-header-table thead > tr > th {
+    background-color: var(--p-content-hover-background);
+    color: var(--p-text-color);
+}
