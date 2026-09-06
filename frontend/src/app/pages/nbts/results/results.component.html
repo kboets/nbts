@@ -166,7 +166,11 @@
                                     <ng-template #body let-result>
                                         <tr>
                                             <td class="py-4" style="width: 15%; min-width: 7rem;">{{ result.matchDate | date: 'dd/MM/yyyy' }}</td>
-                                            <td class="py-4" style="width: 45%; min-width: 10rem;">
+                                            <td
+                                                class="py-4 font-semibold"
+                                                style="width: 45%; min-width: 10rem;"
+                                                [ngStyle]="{ color: getSelectedTeamResultColor(result) }"
+                                            >
                                                 {{ result.homeTeam }} - {{ result.awayTeam }}
                                             </td>
                                             <td class="py-4" style="width: 25%; min-width: 7rem;">

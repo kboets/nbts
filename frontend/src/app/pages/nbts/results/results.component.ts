@@ -220,4 +220,23 @@ export class ResultsComponent implements OnInit {
     clearSelectedTeam() {
         this.selectedTeam.set(undefined);
     }
+
+    getSelectedTeamResultColor(result: MatchResult): string {
+        const team = this.selectedTeam();
+        console.log(team);
+        if (!team || result.homeTeamScore === null || result.homeTeamScore === undefined ||
+            result.awayTeamScore === null || result.awayTeamScore === undefined) {
+            return '';
+        }
+
+        if (result.homeTeamScore === result.awayTeamScore) {
+            return '#f97316';
+        }
+
+        const selectedTeamWon =
+            (result.homeTeam === team && result.homeTeamScore > result.awayTeamScore) ||
+            (result.awayTeam === team && result.awayTeamScore > result.homeTeamScore);
+
+        return selectedTeamWon ? '#22c55e' : '#ef4444';
+    }
 }
