@@ -49,8 +49,8 @@ export class ResultsComponent implements OnInit {
     public selectedLeaguesError = this.leaguesService.selectedLeaguesError;
 
     // data for the result table
-    public results4Country = this.resultService.results;
-    public results4CountryError = this.resultService.resultsError;
+    public results4League = this.resultService.results;
+    public results4LeagueError = this.resultService.resultsError;
     public selectedRound = signal<number | undefined>(undefined);
 
     // data for the standing table
@@ -86,16 +86,16 @@ export class ResultsComponent implements OnInit {
     );
 
     // create signal for the results
-    public hasResults4Country = computed(() =>
-        (this.results4Country()?.length ?? 0) > 0 &&
-        !this.results4CountryError()
+    public hasResults4League = computed(() =>
+        (this.results4League()?.length ?? 0) > 0 &&
+        !this.results4LeagueError()
     );
 
     // data for the round selection
     public availableRounds = computed(() => {
-        const results = this.results4Country();
+        const results = this.results4League();
 
-        if ((results?.length ?? 0) === 0 || this.results4CountryError()) {
+        if ((results?.length ?? 0) === 0 || this.results4LeagueError()) {
             return [];
         }
 
@@ -103,7 +103,7 @@ export class ResultsComponent implements OnInit {
             .sort((left, right) => left - right);
     });
 
-    public currentRound = computed(() => this.results4Country()
+    public currentRound = computed(() => this.results4League()
         .find((result) => result.isCurrent)?.round);
 
     public visibleRound = computed(() => {
@@ -129,10 +129,10 @@ export class ResultsComponent implements OnInit {
     });
 
     public visibleRoundResults = computed(() => {
-        const results = this.results4Country();
+        const results = this.results4League();
         const visibleRound = this.visibleRound();
 
-        if ((results?.length ?? 0) === 0 || this.results4CountryError() || visibleRound === undefined) {
+        if ((results?.length ?? 0) === 0 || this.results4LeagueError() || visibleRound === undefined) {
             return [];
         }
 
