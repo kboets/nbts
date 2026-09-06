@@ -61,6 +61,7 @@ export class ResultsComponent implements OnInit {
 
     // data for selected team results
     public selectedTeam = signal<string | undefined>(undefined);
+    public showAllSelectedTeamResults = signal<boolean>(false);
 
     public selectedTeamResults = computed(() => {
         const team = this.selectedTeam();
@@ -70,14 +71,17 @@ export class ResultsComponent implements OnInit {
             return [];
         }
 
-        return results
+        const selectedTeamResults = results
             .filter((result: MatchResult) =>
                 result.matchStatus === 'FT' &&
                 (result.homeTeam === team || result.awayTeam === team))
             .sort((left: MatchResult, right: MatchResult) =>
                 new Date(right.matchDate).getTime() - new Date(left.matchDate).getTime()
-            )
-            .slice(0, 6);
+            );
+
+        return this.showAllSelectedTeamResults()
+            ? selectedTeamResults
+            : selectedTeamResults.slice(0, 6);
     });
 
 
@@ -219,6 +223,10 @@ export class ResultsComponent implements OnInit {
 
     clearSelectedTeam() {
         this.selectedTeam.set(undefined);
+    }
+
+    onShowAllSelectedTeamResultsChange(event: Event) {
+        this.showAllSelectedTeamResults.set((event.target as HTMLInputElement).checked);
     }
 
     getSelectedTeamResultColor(result: MatchResult): string {

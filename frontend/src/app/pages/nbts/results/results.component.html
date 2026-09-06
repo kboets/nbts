@@ -141,7 +141,24 @@
                     <div class="p-4 w-full">
                         @if (selectedTeam()) {
                             <div class="mb-3 flex w-full items-center justify-between gap-4">
-                                <h4 class="m-0 flex-shrink-0">{{ selectedTeam() }}</h4>
+                                <div class="flex flex-col gap-2">
+                                    <h4 class="m-0 flex-shrink-0">
+                                        @if (showAllSelectedTeamResults()) {
+                                            Alle resultaten: {{ selectedTeam() }}
+                                        } @else {
+                                            Laatste 6 resultaten: {{ selectedTeam() }}
+                                        }
+                                    </h4>
+
+                                    <label class="flex items-center gap-2 text-sm cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            [checked]="showAllSelectedTeamResults()"
+                                            (change)="onShowAllSelectedTeamResultsChange($event)"
+                                        />
+                                        <span>Toon alle resultaten</span>
+                                    </label>
+                                </div>
 
                                 <p-button
                                     label="Toon stand"
@@ -151,6 +168,7 @@
                                     (onClick)="clearSelectedTeam()"
                                 />
                             </div>
+
 
                             @if (selectedTeamResults().length > 0) {
                                 <p-table [value]="selectedTeamResults()" responsiveLayout="scroll" [size]="'large'">
