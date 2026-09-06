@@ -14,6 +14,7 @@ import {AccordionModule} from 'primeng/accordion';
 import {SplitterModule} from 'primeng/splitter';
 import {Country} from "../../shared/models/country";
 import {League} from '../../shared/models/league';
+import type {MatchResult} from '../../shared/models/matchResult';
 import {CountryStore} from '../../service/country.store';
 import {CountryService} from '../../service/country.service';
 import {LeagueService} from "../../service/league.service";
@@ -58,6 +59,27 @@ export class ResultsComponent implements OnInit {
     public standingDataError = this.standingService.standingError;
     public standingLastUpdated = computed(() => this.standingData()?.[0]?.lastUpdated);
 
+    // data for selected team results
+    public selectedTeam = signal<string | undefined>(undefined);
+
+    public selectedTeamResults = computed(() => {
+        const team = this.selectedTeam();
+        const results = this.results4League();
+
+        if (!team || (results?.length ?? 0) === 0 || this.results4LeagueError()) {
+            return [];
+        }
+
+        return results
+            .filter((result: MatchResult) =>
+                result.matchStatus === 'FT' &&
+                (result.homeTeam === team || result.awayTeam === team))
+            .sort((left: MatchResult, right: MatchResult) =>
+                new Date(right.matchDate).getTime() - new Date(left.matchDate).getTime()
+            )
+            .slice(0, 6);
+    });
+
 
     constructor() {
         this.countryService.getSelectedCountries().subscribe((countriesList: Country[]) => {
@@ -77,7 +99,7 @@ export class ResultsComponent implements OnInit {
         this.resultService.resetSeasonForResult();
         this.standingService.resetLeagueForStanding();
         this.standingService.resetSeasonForStanding();
-        }
+    }
 
     // create signal for the standing
     public hasStanding4Country = computed(() =>
@@ -165,14 +187,13 @@ export class ResultsComponent implements OnInit {
     }
 
     onCountryOpenTab(event: any) {
-        //console.log('onCountryOpenTab', event);
         this.leaguesService.resetCountryForSelectedLeagues();
         this.leaguesService.selectCountryForSelectedLeagues(event);
-
     }
 
     selectLeague(league: League) {
         this.selectedRound.set(undefined);
+        this.selectedTeam.set(undefined);
         this.resultService.selectLeagueForResult(league.leagueId);
         this.resultService.selectSeasonForResult(league.season);
         this.standingService.selectLeagueForStanding(league.leagueId);
@@ -181,6 +202,7 @@ export class ResultsComponent implements OnInit {
 
     selectAnotherLeague() {
         this.selectedRound.set(undefined);
+        this.selectedTeam.set(undefined);
         this.resultService.resetLeagueForResult();
         this.resultService.resetSeasonForResult();
         this.standingService.resetLeagueForStanding();
@@ -189,5 +211,13 @@ export class ResultsComponent implements OnInit {
 
     onRoundPageChange(event: PaginatorState) {
         this.selectedRound.set(this.availableRounds()[event.page ?? 0]);
+    }
+
+    onSelectTeam(team: string) {
+        this.selectedTeam.set(team);
+    }
+
+    clearSelectedTeam() {
+        this.selectedTeam.set(undefined);
     }
 }

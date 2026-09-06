@@ -16,10 +16,10 @@
                 @for (country of (selectedCountries() || []); track country.countryCode) {
                     <p-accordion-panel [value]="country.countryCode">
                         <p-accordion-header>
-                    <span class="flex items-center gap-2">
-                        <img [src]="country.flagUrl" [alt]="country.nameNL" style="width: 20px; vertical-align: middle;" />
-                         <span>{{ country.nameNL }}</span>
-                    </span>
+                            <span class="flex items-center gap-2">
+                                <img [src]="country.flagUrl" [alt]="country.nameNL" style="width: 20px; vertical-align: middle;" />
+                                <span>{{ country.nameNL }}</span>
+                            </span>
                         </p-accordion-header>
                         <p-accordion-content>
                             <p-dataview #dv [value]="selectedLeagues()" [emptyMessage]="selectedLeagues() == null ? 'Geen competities gevonden' : 'Bezig met ophalen'">
@@ -30,10 +30,14 @@
                                              [ngClass]="{'border-b border-surface-200 dark:border-surface-700': !last && leagues.length > 1}">
                                             <!-- Logo & Name (Left aligned) -->
                                             <div class="flex items-center gap-3 min-w-0 flex-1">
-                                                <a href="#" (click)="selectLeague(league)">
+                                                <button
+                                                    type="button"
+                                                    class="p-button-link p-0 font-medium cursor-pointer"
+                                                    (click)="selectLeague(league)"
+                                                >
                                                     <img [src]="league.logo" class="shadow-md rounded" alt="{{ league.name }}" width="45" />
-                                                <span class="font-medium truncate">{{ league.name }}</span>
-                                                </a>
+                                                    <span class="font-medium truncate">{{ league.name }}</span>
+                                                </button>
                                             </div>
 
                                             <!-- Season & Dates (Centered column) -->
@@ -94,7 +98,7 @@
                                 }
                             </div>
                             @if (visibleRoundResults().length > 0) {
-                                <p-table [value]="visibleRoundResults()" responsiveLayout="scroll"  [size]="'large'">
+                                <p-table [value]="visibleRoundResults()" responsiveLayout="scroll" [size]="'large'">
                                     <ng-template #header>
                                         <tr>
                                             <th class="py-4"></th>
@@ -106,7 +110,23 @@
                                     <ng-template #body let-result>
                                         <tr>
                                             <td class="py-5" style="width: 15%; min-width: 7rem;">{{ result.matchDate | date: 'dd/MM/yyyy' }}</td>
-                                            <td class="py-5" style="width: 45%; min-width: 8rem;">{{ result.homeTeam }}  -  {{ result.awayTeam }}</td>
+                                            <td class="py-5" style="width: 45%; min-width: 8rem;">
+                                                <button
+                                                    type="button"
+                                                    class="p-button-link p-0 font-medium cursor-pointer"
+                                                    (click)="onSelectTeam(result.homeTeam)"
+                                                >
+                                                    {{ result.homeTeam }}
+                                                </button>
+                                                -
+                                                <button
+                                                    type="button"
+                                                    class="p-button-link p-0 font-medium cursor-pointer"
+                                                    (click)="onSelectTeam(result.awayTeam)"
+                                                >
+                                                    {{ result.awayTeam }}
+                                                </button>
+                                            </td>
                                             <td class="py-5" style="width: 25%; min-width: 7rem;">{{ result.homeTeamScore ?? '-' }} - {{ result.awayTeamScore ?? '-' }}</td>
                                             <td class="py-5" style="width: 10%; min-width: 7rem;">{{ result.matchStatus }}</td>
                                         </tr>
@@ -116,62 +136,112 @@
                         </div>
                     </div>
                 </ng-template>
+                <!-- standing or results 4 team -->
                 <ng-template pTemplate>
                     <div class="p-4 w-full">
-                        <div class="mb-3 flex w-full items-center justify-between gap-4">
-                            <h4 class="m-0 flex-shrink-0">Stand</h4>
+                        @if (selectedTeam()) {
+                            <div class="mb-3 flex w-full items-center justify-between gap-4">
+                                <h4 class="m-0 flex-shrink-0">resultaten: {{ selectedTeam() }}</h4>
 
-                            @if (standingLastUpdated()) {
-                                <small class="ml-auto text-right text-surface-500 dark:text-surface-400 whitespace-nowrap">
-                                    Laatst bijgewerkt: {{ standingLastUpdated() | date: 'dd/MM/yyyy' }}
-                                </small>
+                                <p-button
+                                    label="Toon stand"
+                                    icon="pi pi-list"
+                                    severity="secondary"
+                                    [text]="true"
+                                    (onClick)="clearSelectedTeam()"
+                                />
+                            </div>
+
+                            @if (selectedTeamResults().length > 0) {
+                                <p-table [value]="selectedTeamResults()" responsiveLayout="scroll" [size]="'large'">
+                                    <ng-template #header>
+                                        <tr>
+                                            <th class="py-4">Datum</th>
+                                            <th class="py-4">Wedstrijd</th>
+                                            <th class="py-4">Uitslag</th>
+                                            <th class="py-4">Status</th>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template #body let-result>
+                                        <tr>
+                                            <td class="py-4" style="width: 15%; min-width: 7rem;">{{ result.matchDate | date: 'dd/MM/yyyy' }}</td>
+                                            <td class="py-4" style="width: 45%; min-width: 10rem;">
+                                                {{ result.homeTeam }} - {{ result.awayTeam }}
+                                            </td>
+                                            <td class="py-4" style="width: 25%; min-width: 7rem;">
+                                                {{ result.homeTeamScore ?? '-' }} - {{ result.awayTeamScore ?? '-' }}
+                                            </td>
+                                            <td class="py-4" style="width: 10%; min-width: 7rem;">{{ result.matchStatus }}</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            } @else {
+                                <div class="text-surface-500 dark:text-surface-400">
+                                    Geen resultaten beschikbaar voor {{ selectedTeam() }}.
+                                </div>
                             }
-                        </div>
-
-                        @if (standingDataError()) {
-                            <div class="alert alert-danger text-danger">
-                                {{ standingDataError() }}
-                            </div>
-                        }
-
-                        @if (standingData().length > 0) {
-                            <p-table styleClass="custom-header-table"
-                                [value]="standingData()" responsiveLayout="scroll" [size]="'large'">
-                                <ng-template #header>
-                                    <tr>
-                                        <th class="py-4">#</th>
-                                        <th class="py-4">Ploeg</th>
-                                        <th class="py-4">P</th>
-                                        <th class="py-4">W</th>
-                                        <th class="py-4">G</th>
-                                        <th class="py-4">V</th>
-                                        <th class="py-4">Ptn</th>
-                                    </tr>
-                                </ng-template>
-
-                                <ng-template #body let-standing>
-                                    <tr>
-                                        <td class="py-4" style="width: 4rem;">{{ standing.rank }}</td>
-                                        <td class="py-4" style="min-width: 10rem;">{{ standing.teamName }}</td>
-                                        <td class="py-4">{{ standing.played }}</td>
-                                        <td class="py-4">{{ standing.won }}</td>
-                                        <td class="py-4">{{ standing.drawn }}</td>
-                                        <td class="py-4">{{ standing.lost }}</td>
-                                        <td class="py-4 font-semibold">{{ standing.points }}</td>
-                                    </tr>
-                                </ng-template>
-                            </p-table>
                         } @else {
-                            <div class="text-surface-500 dark:text-surface-400">
-                                Geen stand beschikbaar.
+                            <div class="mb-3 flex w-full items-center justify-between gap-4">
+                                <h4 class="m-0 flex-shrink-0">Stand</h4>
+
+                                @if (standingLastUpdated()) {
+                                    <small class="ml-auto text-right text-surface-500 dark:text-surface-400 whitespace-nowrap">
+                                        Laatst bijgewerkt: {{ standingLastUpdated() | date: 'dd/MM/yyyy' }}
+                                    </small>
+                                }
                             </div>
+
+                            @if (standingDataError()) {
+                                <div class="alert alert-danger text-danger">
+                                    {{ standingDataError() }}
+                                </div>
+                            }
+
+                            @if (standingData().length > 0) {
+                                <p-table styleClass="custom-header-table"
+                                         [value]="standingData()" responsiveLayout="scroll" [size]="'large'">
+                                    <ng-template #header>
+                                        <tr>
+                                            <th class="py-4">#</th>
+                                            <th class="py-4">Ploeg</th>
+                                            <th class="py-4">P</th>
+                                            <th class="py-4">W</th>
+                                            <th class="py-4">G</th>
+                                            <th class="py-4">V</th>
+                                            <th class="py-4">Ptn</th>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template #body let-standing>
+                                        <tr>
+                                            <td class="py-4" style="width: 4rem;">{{ standing.rank }}</td>
+                                            <td class="py-4" style="min-width: 10rem;">
+                                                <button
+                                                    type="button"
+                                                    class="p-button-link p-0 font-medium cursor-pointer"
+                                                    (click)="onSelectTeam(standing.teamName)"
+                                                >
+                                                    {{ standing.teamName }}
+                                                </button>
+                                            </td>
+                                            <td class="py-4">{{ standing.played }}</td>
+                                            <td class="py-4">{{ standing.won }}</td>
+                                            <td class="py-4">{{ standing.drawn }}</td>
+                                            <td class="py-4">{{ standing.lost }}</td>
+                                            <td class="py-4 font-semibold">{{ standing.points }}</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            } @else {
+                                <div class="text-surface-500 dark:text-surface-400">
+                                    Geen stand beschikbaar.
+                                </div>
+                            }
                         }
                     </div>
                 </ng-template>
             </p-splitter>
-
         </div>
     }
-
-
 </div>
