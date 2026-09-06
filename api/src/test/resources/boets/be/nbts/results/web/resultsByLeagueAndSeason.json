@@ -1,0 +1,85 @@
+{
+  "get": "fixtures",
+  "parameters": {
+    "league": "113",
+    "season": "2026"
+  },
+  "errors": [],
+  "results": 240,
+  "paging": {
+    "current": 1,
+    "total": 1
+  },
+  "response": [
+    {
+      "fixture": {
+        "id": 1494118,
+        "referee": "K. Karlsson",
+        "timezone": "UTC",
+        "date": "2026-04-04T13:00:00+00:00",
+        "timestamp": 1775307600,
+        "periods": {
+          "first": 1775307600,
+          "second": 1775311200
+        },
+        "venue": {
+          "id": null,
+          "name": "3Arena",
+          "city": "Stockholm"
+        },
+        "status": {
+          "long": "Match Finished",
+          "short": "FT",
+          "elapsed": 90,
+          "extra": 4
+        }
+      },
+      "league": {
+        "id": 113,
+        "name": "Allsvenskan",
+        "country": "Sweden",
+        "logo": "https://media.api-sports.io/football/leagues/113.png",
+        "flag": "https://media.api-sports.io/flags/se.svg",
+        "season": 2026,
+        "round": "Regular Season - 1",
+        "standings": true
+      },
+      "teams": {
+        "home": {
+          "id": 363,
+          "name": "Hammarby FF",
+          "logo": "https://media.api-sports.io/football/teams/363.png",
+          "winner": true
+        },
+        "away": {
+          "id": 2240,
+          "name": "Mjallby AIF",
+          "logo": "https://media.api-sports.io/football/teams/2240.png",
+          "winner": false
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 0
+      },
+      "score": {
+        "halftime": {
+          "home": 2,
+          "away": 0
+        },
+        "fulltime": {
+          "home": 3,
+          "away": 0
+        },
+        "extratime": {
+          "home": null,
+          "away": null
+        },
+        "penalty": {
+          "home": null,
+          "away": null
+        }
+      }
+    }
+  ]
+}

@@ -1,13 +1,9 @@
 import {Component, computed, effect, inject, OnInit, signal} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {CommonModule, NgClass} from '@angular/common';
+import {Router} from '@angular/router';
 import {TabsModule} from 'primeng/tabs';
 import {TableModule} from 'primeng/table';
-import {CountryStore} from '../../service/country.store';
-import {CountryService} from '../../service/country.service';
-import {LeagueService} from '../../service/league.service';
-import {League} from '../../shared/models/league';
-import {AccordionModule} from 'primeng/accordion';
 import {AutoCompleteCompleteEvent, AutoCompleteModule} from 'primeng/autocomplete';
 import {TagModule} from 'primeng/tag';
 import {DataViewModule} from 'primeng/dataview';
@@ -15,8 +11,15 @@ import {ButtonModule} from 'primeng/button';
 import {ToastModule} from 'primeng/toast';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ConfirmationService, MessageService} from 'primeng/api';
+import {AccordionModule} from 'primeng/accordion';
+import {CountryStore} from '../../service/country.store';
+import {CountryService} from '../../service/country.service';
+import {LeagueService} from '../../service/league.service';
+import {League} from '../../shared/models/league';
 import {Country} from '../../shared/models/country';
 import {LeagueStore} from "../../service/league.store";
+import {ResultService} from '../../service/result.service';
+import {StandingService} from '../../service/standing.service';
 
 @Component({
     selector: 'app-leagues',
@@ -30,12 +33,16 @@ export class LeaguesComponent implements OnInit {
     // inject 3rd party services
     private messageService = inject(MessageService);
     private confirmationService = inject(ConfirmationService);
+    private router = inject(Router);
 
     // stores and services
     public countryStore: CountryStore = inject(CountryStore);
     private countryService = inject(CountryService);
     private leaguesService = inject(LeagueService);
-
+    private leagueStore = inject(LeagueStore);
+    private resultService = inject(ResultService);
+    private standingService = inject(StandingService);
+    public leagues = this.leagueStore.selectedLeagues;
 
     public countries = signal<Country[] | null>(null);
     filteredCountries: Country[] = [];
@@ -44,14 +51,12 @@ export class LeaguesComponent implements OnInit {
     // get signals
     newLeagues = this.leaguesService.newLeagues;
     newLeaguesError = this.leaguesService.newLeaguesError;
+
     public loadingNewLeagues = signal<boolean>(false);
 
-    // get league store
-    private leagueStore = inject(LeagueStore);
-    public leagues = this.leagueStore.leagues;
 
     public leaguesWithCountry = computed(() => {
-        const list = this.leagueStore.leagues();
+        const list = this.leagueStore.selectedLeagues();
         const countriesList = this.countryStore.countries();
         if (!list) return null;
         return list.map(league => ({
@@ -104,7 +109,6 @@ export class LeaguesComponent implements OnInit {
     }
 
     onNewLeaguesCountryOpenTab(event: any) {
-        //console.log('onNewLeaguesCountryOpenTab', event);
         this.leaguesService.resetCountryForNewLeagues();
         this.loadingNewLeagues.set(true);
         setTimeout(() => {
@@ -132,6 +136,15 @@ export class LeaguesComponent implements OnInit {
             country.nameNL?.toLowerCase().includes(query) ||
             country.nameEN?.toLowerCase().includes(query)
         );
+    }
+
+    openResults(league: League) {
+        this.resultService.selectLeagueForResult(league.leagueId);
+        this.resultService.selectSeasonForResult(league.season);
+        this.standingService.selectLeagueForStanding(league.leagueId);
+        this.standingService.selectSeasonForStanding(league.season);
+
+        this.router.navigate(['/nbts/results']);
     }
 
     confirmDelete(event: Event, league: League) {

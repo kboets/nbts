@@ -28,4 +28,18 @@ export class CountryService {
             })
         );
     }
+
+    getSelectedCountries(): Observable<Country[]> {
+        this.countryStore.startLoading();
+        return this.http.get<Country[]>(`${this.baseUrl}/countries/selected`).pipe(
+            tap((countries) => {
+                this.countryStore.setSelectedCountries(countries);
+            }),
+            catchError((error) => {
+                this.countryStore.setSelectedCountries([]);
+                this.countryStore.setError(`Failed to load selected countries: ${error.message}`);
+                return of([]);
+            })
+        )
+    }
 }
