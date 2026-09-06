@@ -30,8 +30,10 @@
                                              [ngClass]="{'border-b border-surface-200 dark:border-surface-700': !last && leagues.length > 1}">
                                             <!-- Logo & Name (Left aligned) -->
                                             <div class="flex items-center gap-3 min-w-0 flex-1">
-                                                <img [src]="league.logo" class="shadow-md rounded" alt="{{ league.name }}" width="45" />
+                                                <a href="#" (click)="selectLeague(league)">
+                                                    <img [src]="league.logo" class="shadow-md rounded" alt="{{ league.name }}" width="45" />
                                                 <span class="font-medium truncate">{{ league.name }}</span>
+                                                </a>
                                             </div>
 
                                             <!-- Season & Dates (Centered column) -->
