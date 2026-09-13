@@ -6,6 +6,7 @@ import { BestSellingWidget } from './components/bestsellingwidget';
 import { RevenueStreamWidget } from './components/revenuestreamwidget';
 import { DashboardService } from './dashboard-service';
 import { LeagueStore } from '../service/league.store';
+import { AdminService } from '../service/admin.service';
 import type { League } from '../shared/models/league';
 @Component({
     selector: 'app-dashboard',
@@ -28,8 +29,10 @@ export class Dashboard implements OnInit {
 
     private dashboardService = inject(DashboardService);
     private leagueStore = inject(LeagueStore);
+    private adminService = inject(AdminService);
 
     ngOnInit() {
+        this.adminService.refreshApiCounter();
         this.leagueStore.startLoading();
         this.dashboardService.getCurrentLeagues().subscribe({
             next: (leagues: League[]) => this.leagueStore.setLeagues(leagues),

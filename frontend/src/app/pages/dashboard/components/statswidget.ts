@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {LeagueStore} from '../../service/league.store';
 import {AdminService} from '../../service/admin.service';
@@ -33,8 +33,8 @@ import {AdminService} from '../../service/admin.service';
                 <div class="flex justify-between mb-4">
                     <div>
                         <span class="block text-muted-color font-medium mb-4">Gemaakte rapidApi calls:</span>
-                        <div *ngIf="adminService.apiCounterError() as err" class="text-surface-900 dark:text-surface-0 font-medium text-sm text-red-600">{{ err }}</div>
-                        <div *ngIf="!adminService.apiCounterError()" class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ adminService.apiCounter() }}</div>
+                        <div *ngIf="apiCounterError() as err" class="text-surface-900 dark:text-surface-0 font-medium text-sm text-red-600">{{ err }}</div>
+                        <div *ngIf="!apiCounterError()" class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ apiCounter() }}</div>
                     </div>
                     <div class="flex items-center justify-center bg-orange-100 dark:bg-orange-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
                         <i class="pi pi-dollar text-orange-500 text-xl!"></i>
@@ -75,36 +75,32 @@ import {AdminService} from '../../service/admin.service';
             </div>
         </div>`
 })
-export class StatsWidget {
+export class StatsWidget implements OnInit {
     public leagueStore: LeagueStore = inject(LeagueStore);
     public adminService: AdminService = inject(AdminService);
     private max = 100;
+    apiCounter = this.adminService.apiCounter;
+    apiCounterError = this.adminService.apiCounterError;
+
+    ngOnInit(): void {
+         this.adminService.refreshApiCounter();
+    }
 
 
     getApiCallsLeft(): number {
-        if (this.adminService.apiCounterError()) {
+        if (this.apiCounterError()) {
             return 100;
         }
-        const counter = this.adminService.apiCounter();
-        // check if counter is a number and not undefined
-
-        if (counter === undefined) {
-            console.error('Invalid counter value:', counter);
-            return 100;
-        }
+        const counter = this.apiCounter();
         return this.max - counter;
     }
 
     getApiCallsLeftClass(): string {
-        if (this.adminService.apiCounterError()) {
+        if (this.apiCounterError()) {
             return 'text-primary';
         }
 
-        const counter = this.adminService.apiCounter();
-
-        if (counter === undefined) {
-            return 'text-primary';
-        }
+        const counter = this.apiCounter();
 
         if (counter > 90) {
             return 'text-red-500';
