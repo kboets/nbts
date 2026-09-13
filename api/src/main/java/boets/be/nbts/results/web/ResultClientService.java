@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -33,11 +35,19 @@ public class ResultClientService extends RapidApiClient {
     }
 
     private List<Result> markCurrentRound(List<Result> results) {
+        String currentData = LocalDate.now().toString();
+        // check if there is a match in progress
         List<Result> finishedResults = results.stream()
-                .filter(result -> "FT".equalsIgnoreCase(result.matchStatus()))
+                .filter(result -> result.matchDate().equals(currentData))
                 .toList();
-        Result lastResult = finishedResults.isEmpty() ? results.getFirst() : finishedResults.getLast();
-        int currentRound = lastResult.round();
+        if (finishedResults.isEmpty()) {
+            finishedResults = results.stream()
+                    .filter(result -> "FT".equalsIgnoreCase(result.matchStatus()))
+                    .sorted(Comparator.comparing(Result::matchDate).reversed())
+                    .toList();
+        }
+        Result latestResult = finishedResults.isEmpty() ? results.getFirst() : finishedResults.getFirst();
+        int currentRound = latestResult.round();
         return results.stream()
                 .map(result -> result.withCurrentRound(result.round() == currentRound))
                 .toList();
