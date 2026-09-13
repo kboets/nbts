@@ -80,7 +80,7 @@ class ResultClientServiceTest {
         assertThat(result.homeTeamHasWon()).isTrue();
         assertThat(result.homeTeamHasLost()).isFalse();
         assertThat(result.round()).isEqualTo(1);
-        assertThat(resultClientService.getCallCount()).isEqualTo(1);
+        assertThat(resultClientService.getCallCount()).isEqualTo(2);
     }
 
     @Test
@@ -97,10 +97,86 @@ class ResultClientServiceTest {
         // Assert that the results list is not empty and contains the expected number of results
         assertThat(results).isNotEmpty();
         // get result of round 16, it should be the current round
-        results.stream().filter(result -> result.round() == 16).findFirst().ifPresent(result -> assertThat(result.isCurrent()).isTrue());
+        results.stream().filter(result -> result.round() == 21).findFirst().ifPresent(result -> assertThat(result.isCurrent()).isTrue());
 
         // get result of round 15, it should not be the current round
         results.stream().filter(result -> result.round() == 15).findFirst().ifPresent(result -> assertThat(result.isCurrent()).isFalse());
+    }
+
+    @Test
+    void getResultsByLeagueAndSeason_shouldUseMostRecentFinishedResultAsCurrentRound() {
+        String jsonResponse = """
+                {
+                  "response": [
+                    {
+                      "fixture": {
+                        "id": 1,
+                        "date": "2026-04-01T13:00:00+00:00",
+                        "status": {
+                          "short": "FT"
+                        }
+                      },
+                      "league": {
+                        "name": "Allsvenskan",
+                        "round": "Regular Season - 1"
+                      },
+                      "teams": {
+                        "home": {
+                          "name": "Home 1",
+                          "winner": true
+                        },
+                        "away": {
+                          "name": "Away 1",
+                          "winner": false
+                        }
+                      },
+                      "goals": {
+                        "home": 1,
+                        "away": 0
+                      }
+                    },
+                    {
+                      "fixture": {
+                        "id": 2,
+                        "date": "2026-04-05T13:00:00+00:00",
+                        "status": {
+                          "short": "FT"
+                        }
+                      },
+                      "league": {
+                        "name": "Allsvenskan",
+                        "round": "Regular Season - 2"
+                      },
+                      "teams": {
+                        "home": {
+                          "name": "Home 2",
+                          "winner": true
+                        },
+                        "away": {
+                          "name": "Away 2",
+                          "winner": false
+                        }
+                      },
+                      "goals": {
+                        "home": 2,
+                        "away": 1
+                      }
+                    }
+                  ]
+                }
+                """;
+
+        server.expect(requestTo(startsWith("https://api-football-v1.p.rapidapi.com/v3/fixtures")))
+                .andExpect(queryParam("league", "113"))
+                .andExpect(queryParam("season", "2026"))
+                .andRespond(withSuccess(jsonResponse, MediaType.APPLICATION_JSON));
+
+        List<Result> results = resultClientService.getResultsByLeagueAndSeason(113, 2026);
+
+        assertThat(results).hasSize(2);
+        assertThat(results.get(0).isCurrent()).isFalse();
+        assertThat(results.get(1).isCurrent()).isTrue();
+        assertThat(results.get(1).round()).isEqualTo(2);
     }
 
 }
