@@ -16,9 +16,9 @@ public class ResultService {
 
     private final ResultClientService resultClientService;
 
-    @Cacheable(value = "results", key = "#league + ':' + #season")
-    public List<Result> getResultsByLeagueAndSeason(int league, int season) {
-        log.info("Fetching results for league {} and season {}", league, season);
-        return resultClientService.getResultsByLeagueAndSeason(league, season);
+    @Cacheable(value = "results", key = "#leagueId + ':' + #season")
+    public List<Result> getResultsByLeagueAndSeason(int leagueId, int season) {
+        log.info("Fetching results for league {} and season {}", leagueId, season);
+        return resultClientService.getResultsByLeagueAndSeason(leagueId, season);
     }
 }

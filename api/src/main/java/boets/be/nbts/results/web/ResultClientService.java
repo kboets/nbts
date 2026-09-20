@@ -35,12 +35,12 @@ public class ResultClientService extends RapidApiClient {
     }
 
     private List<Result> markCurrentRound(List<Result> results) {
-        String currentData = LocalDate.now().toString();
-        // check if there is a match in progress
+        LocalDate currentDate = LocalDate.now();
         List<Result> finishedResults = results.stream()
-                .filter(result -> result.matchDate().equals(currentData))
+                .filter(result -> result.matchDate().isEqual(currentDate))
                 .toList();
         if (finishedResults.isEmpty()) {
+            // check if there is a match in progress
             finishedResults = results.stream()
                     .filter(result -> "FT".equalsIgnoreCase(result.matchStatus()))
                     .sorted(Comparator.comparing(Result::matchDate).reversed())
@@ -62,7 +62,7 @@ public class ResultClientService extends RapidApiClient {
                 item.teams().away().name(),
                 item.goals().home(),
                 item.goals().away(),
-                item.fixture().date().toLocalDate().toString(),
+                item.fixture().date().toLocalDate(),
                 item.fixture().status().shortStatus(),
                 Boolean.TRUE.equals(item.teams().home().winner()),
                 Boolean.TRUE.equals(item.teams().away().winner()),

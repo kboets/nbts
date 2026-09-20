@@ -9,12 +9,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringJUnitConfig
 @ContextConfiguration(classes = {ResultService.class, NbtsCacheConfiguration.class})
@@ -35,7 +34,7 @@ class ResultServiceTest {
                 "Mjallby AIF",
                 3,
                 0,
-                "2026-04-04",
+                LocalDate.of(2026, 4, 4),
                 "FT",
                 true,
                 false,

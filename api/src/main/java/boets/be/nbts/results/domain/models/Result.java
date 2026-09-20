@@ -1,7 +1,9 @@
 package boets.be.nbts.results.domain.models;
 
+import java.time.LocalDate;
+
 public record Result(int resultId, String leagueName, String homeTeam, String awayTeam, Integer homeTeamScore, Integer awayTeamScore,
-                     String matchDate, String matchStatus, boolean homeTeamHasWon, boolean homeTeamHasLost, int round, boolean isCurrent){
+                     LocalDate matchDate, String matchStatus, boolean homeTeamHasWon, boolean homeTeamHasLost, int round, boolean isCurrent){
 
     public Result withCurrentRound(boolean currentRound) {
         return new Result(
