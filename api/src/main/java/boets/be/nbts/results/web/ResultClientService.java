@@ -37,6 +37,7 @@ public class ResultClientService extends RapidApiClient {
     private List<Result> markCurrentRound(List<Result> results) {
         LocalDate currentDate = LocalDate.now();
         List<Result> finishedResults = results.stream()
+                .filter(Result::isCurrent)
                 .filter(result -> result.matchDate().isEqual(currentDate))
                 .toList();
         if (finishedResults.isEmpty()) {
