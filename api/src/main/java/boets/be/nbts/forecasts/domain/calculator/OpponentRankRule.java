@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
  * This rule calculates points based on the rank of the opponent team.
  * If the team wins or draws, the points awared are equal to the amount of teams minus the rank of the opponent team.
  * eg if there are 20 teams and the opponent is ranked 5th, the team will get 15 points.
- *
  * If the team loses, the points deducted are equal to the rank of the opponent team.
  * eg if there are 20 teams and the opponent is ranked 5th, the team will lose 5 points.
  */

@@ -2,8 +2,6 @@ package boets.be.nbts.forecasts.domain;
 
 import boets.be.nbts.datacollector.models.ForecastRawData;
 import boets.be.nbts.forecasts.domain.calculator.CalculationContext;
-import boets.be.nbts.leagues.LeagueForecastApi;
-import boets.be.nbts.results.ResultForecastApi;
 import boets.be.nbts.results.domain.models.Result;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -13,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -28,11 +25,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class ForecastServiceTest {
 
-    @Mock
-    private LeagueForecastApi leagueForecastApi;
-
-    @Mock
-    private ResultForecastApi resultForecastApi;
 
     @InjectMocks
     private ForecastService forecastService;
