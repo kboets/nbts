@@ -25,8 +25,7 @@ public class DataIngestionService {
     /**
      * This method is scheduled to run every 10 minutes and triggers the data ingestion process for forecasting.
      * It performs the following steps:
-     *
-     * 1. Retrieves all the seelected leagues for which the forecasts should be calculated.
+     * 1. Retrieves all the selected leagues for which the forecasts should be calculated.
      * 2. For each league, retrieves the results and standings for forecasting in parallel using CompletableFuture.
      * 3. Waits for all external calls to finish.
      * 4. Publishes an event across the Spring Modulith boundary with the collected forecast data.

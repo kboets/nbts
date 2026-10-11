@@ -29,8 +29,8 @@ public class ForecastService {
 
     /**
      * Check if the forecast for the given league and round has already been calculated and stored in the cache.
-     * @param rawData
-     * @return
+     * @param rawData -
+     * @return true if the forecast has already been calculated, false otherwise
      */
     public boolean isForecastAlreadyCalculated(ForecastRawData rawData) {
         Map<ForecastRound, List<Forecast>> forecastsCache = getForecastCache();
