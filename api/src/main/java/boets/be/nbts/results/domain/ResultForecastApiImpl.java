@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -14,6 +15,7 @@ class ResultForecastApiImpl implements ResultForecastApi {
 
     private final ResultService resultService;
     private final StandingService standingService;
+
 
     @Override
     public List<Result> getResultsForForecasting(int leagueId, int season) {
@@ -23,5 +25,16 @@ class ResultForecastApiImpl implements ResultForecastApi {
     @Override
     public List<Standing> getStandingsForForecasting(int leagueId, int season) {
         return standingService.getStandingsByLeagueAndSeason(leagueId, season);
+    }
+
+    @Override
+    public Optional<Result> getCurrentRound(int leagueId, int season) {
+        List<Result> results = resultService.getResultsByLeagueAndSeason(leagueId, season);
+        if (results.isEmpty()) {
+            return Optional.empty();
+        }
+        return results.stream()
+                .filter(Result::isCurrent)
+                .findFirst();
     }
 }

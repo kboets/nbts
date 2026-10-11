@@ -21,4 +21,6 @@ public class ResultService {
         log.info("Fetching results for league {} and season {}", leagueId, season);
         return resultClientService.getResultsByLeagueAndSeason(leagueId, season);
     }
+
+
 }

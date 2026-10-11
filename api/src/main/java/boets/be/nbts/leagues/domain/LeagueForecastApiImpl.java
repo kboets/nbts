@@ -20,7 +20,8 @@ class LeagueForecastApiImpl implements LeagueForecastApi {
                 .map(league -> new ForecastLeague(
                             league.leagueId(),
                             league.name(),
-                            league.season()
+                            league.season(),
+                            league.countryCode()
                     ))
                 .toList();
         }

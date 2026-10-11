@@ -1,6 +1,16 @@
 package boets.be.nbts.forecasts.domain.models;
 
-import boets.be.nbts.results.domain.models.Result;
+import java.util.List;
 
-public record Forecast(Result nextResult, String team, String opponent, int totalPoints) {
+public record Forecast(String leagueName, String countryCode, List<ForecastDetail> forecastDetails) {
+
+    public Forecast withForecastDetails(List<ForecastDetail> forecastDetails) {
+        return new Forecast(
+                leagueName,
+                countryCode,
+                forecastDetails
+        );
+    }
+
+
 }
