@@ -10,7 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -30,10 +32,11 @@ public class DataIngestionService {
      * 3. Waits for all external calls to finish.
      * 4. Publishes an event across the Spring Modulith boundary with the collected forecast data.
      */
+    @Transactional
     @Scheduled(cron = "0 */10 * ? * *")
     public void triggerDataIngestion() {
         log.info("[FORECASTS] Triggering data ingestion");
-        //1. get the leagues for which the forecasts should be calculated, and filter out the leagues that have already been forecasted
+        //1. get the leagues for which the forecasts should be calculated
         var selectedLeagues = leagueForecastApi.getSelectedLeaguesForForecasting();
         log.info("[FORECASTS] Number of selected leagues to forecast: {}", selectedLeagues.size());
         //2. For each league, get the results, standings and current round for forecasting in parallel using CompletableFuture
@@ -55,7 +58,8 @@ public class DataIngestionService {
 
         //4. Publish event across Spring Modulith boundary
         log.info("[FORECASTS] Publishing ForecastCollectedEvent with {} raw data entries", rawDataList.size());
-        eventPublisher.publishEvent(new ForecastCollectedEvent(rawDataList));
+        rawDataList.forEach(rawData ->
+                eventPublisher.publishEvent(new ForecastCollectedEvent(List.of(rawData)))
+        );
     }
-
 }

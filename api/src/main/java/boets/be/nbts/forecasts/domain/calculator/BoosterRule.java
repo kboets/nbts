@@ -20,7 +20,7 @@ public class BoosterRule implements PointsCalculationRule {
 
 
     @Override
-    public int calculatePoints(CalculationContext context) {
+    public CalculationContext calculatePoints(CalculationContext context) {
         int points = 0;
         int homeMatches = 0;
         int awayMatches = 0;
@@ -34,7 +34,7 @@ public class BoosterRule implements PointsCalculationRule {
                 points += calculateAwayBoosterPoints(match, awayMatches);
             }
         }
-        return points;
+        return context.withTeamScore(points);
     }
 
     private int calculateHomeBoosterPoints(Result result, int index) {

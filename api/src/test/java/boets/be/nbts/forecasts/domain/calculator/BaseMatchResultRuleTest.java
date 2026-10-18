@@ -24,9 +24,9 @@ class BaseMatchResultRuleTest {
         CalculationContext context = new CalculationContext(
                 18, "TeamA", "TeamB", 0, 0, null, Collections.emptyList(),  Collections.emptyList());
 
-        int points = rule.calculatePoints(context);
+        CalculationContext result = rule.calculatePoints(context);
 
-        assertThat(points).isZero();
+        assertThat(result.teamScore()).isZero();
     }
 
     @Test
@@ -34,9 +34,9 @@ class BaseMatchResultRuleTest {
         Result result = createResult("TeamA", "TeamB", true, false);
         CalculationContext context = createContext("TeamA", List.of(result));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
-        assertThat(points).isEqualTo(20);
+        assertThat(resultContext.teamScore()).isEqualTo(20);
     }
 
     @Test
@@ -44,9 +44,9 @@ class BaseMatchResultRuleTest {
         Result result = createResult("TeamA", "TeamB", false, true);
         CalculationContext context = createContext("TeamA", List.of(result));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
-        assertThat(points).isEqualTo(-10);
+        assertThat(resultContext.teamScore()).isEqualTo(-10);
     }
 
     @Test
@@ -54,9 +54,9 @@ class BaseMatchResultRuleTest {
         Result result = createResult("TeamA", "TeamB", false, false);
         CalculationContext context = createContext("TeamA", List.of(result));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
-        assertThat(points).isEqualTo(5);
+        assertThat(resultContext.teamScore()).isEqualTo(5);
     }
 
     @Test
@@ -65,9 +65,9 @@ class BaseMatchResultRuleTest {
         Result result = createResult("TeamB", "TeamA", false, true);
         CalculationContext context = createContext("TeamA", List.of(result));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
-        assertThat(points).isEqualTo(30);
+        assertThat(resultContext.teamScore()).isEqualTo(30);
     }
 
     @Test
@@ -76,9 +76,9 @@ class BaseMatchResultRuleTest {
         Result result = createResult("TeamB", "TeamA", true, false);
         CalculationContext context = createContext("TeamA", List.of(result));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
-        assertThat(points).isEqualTo(-5);
+        assertThat(resultContext.teamScore()).isEqualTo(-5);
     }
 
     @Test
@@ -87,9 +87,9 @@ class BaseMatchResultRuleTest {
         Result result = createResult("TeamB", "TeamA", false, false);
         CalculationContext context = createContext("TeamA", List.of(result));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
-        assertThat(points).isEqualTo(10);
+        assertThat(resultContext.teamScore()).isEqualTo(10);
     }
 
     @Test
@@ -97,9 +97,9 @@ class BaseMatchResultRuleTest {
         Result result = createResult("TeamB", "TeamC", true, false);
         CalculationContext context = createContext("TeamA", List.of(result));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
-        assertThat(points).isZero();
+        assertThat(resultContext.teamScore()).isZero();
     }
 
     @Test
@@ -114,10 +114,10 @@ class BaseMatchResultRuleTest {
         );
         CalculationContext context = createContext("TeamA", results);
 
-        int points = rule.calculatePoints(context);
+        CalculationContext result = rule.calculatePoints(context);
 
         // 20 + 30 + 5 + 10 - 10 - 5 = 50
-        assertThat(points).isEqualTo(50);
+        assertThat(result.teamScore()).isEqualTo(50);
     }
 
     private CalculationContext createContext(String team, List<Result> previousResults) {

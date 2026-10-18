@@ -13,9 +13,11 @@ public class PointsCalculationEngine {
         this.rules = rules;
     }
 
-    public int calculateTotalPoints(CalculationContext context) {
-        return rules.stream()
-                .mapToInt(rule -> rule.calculatePoints(context))
-                .sum();
+    public CalculationContext calculateTotalPoints(CalculationContext context) {
+        CalculationContext currentContext = context;
+        for (PointsCalculationRule rule : rules) {
+            currentContext = rule.calculatePoints(currentContext);
+        }
+        return currentContext;
     }
 }

@@ -23,9 +23,9 @@ class BoosterRuleTest {
     void calculatePoints_shouldReturnZero_whenNoPreviousResults() {
         CalculationContext context = createContext("TeamA", Collections.emptyList());
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
-        assertThat(points).isZero();
+        assertThat(resultContext.teamScore()).isZero();
     }
 
     @Test
@@ -33,9 +33,9 @@ class BoosterRuleTest {
         Result homeWin = createResult("TeamA", "TeamB", true, false);
         CalculationContext context = createContext("TeamA", List.of(homeWin));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
-        assertThat(points).isEqualTo(20);
+        assertThat(resultContext.teamScore()).isEqualTo(20);
     }
 
     @Test
@@ -43,9 +43,9 @@ class BoosterRuleTest {
         Result homeLoss = createResult("TeamA", "TeamB", false, true);
         CalculationContext context = createContext("TeamA", List.of(homeLoss));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
-        assertThat(points).isEqualTo(-20);
+        assertThat(resultContext.teamScore()).isEqualTo(-20);
     }
 
     @Test
@@ -53,9 +53,9 @@ class BoosterRuleTest {
         Result homeDraw = createResult("TeamA", "TeamB", false, false);
         CalculationContext context = createContext("TeamA", List.of(homeDraw));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
-        assertThat(points).isZero();
+        assertThat(resultContext.teamScore()).isZero();
     }
 
     @Test
@@ -64,10 +64,10 @@ class BoosterRuleTest {
         Result homeWin = createResult("TeamA", "TeamC", true, false);
         CalculationContext context = createContext("TeamA", List.of(homeDraw, homeWin));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
         // 0 (draw) + 10 (2nd home win) = 10
-        assertThat(points).isEqualTo(10);
+        assertThat(resultContext.teamScore()).isEqualTo(10);
     }
 
     @Test
@@ -76,10 +76,10 @@ class BoosterRuleTest {
         Result homeLoss = createResult("TeamA", "TeamC", false, true);
         CalculationContext context = createContext("TeamA", List.of(homeDraw, homeLoss));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
         // 0 (draw) + (-10) (2nd home loss) = -10
-        assertThat(points).isEqualTo(-10);
+        assertThat(resultContext.teamScore()).isEqualTo(-10);
     }
 
     @Test
@@ -90,10 +90,10 @@ class BoosterRuleTest {
         Result homeLoss4 = createResult("TeamA", "TeamE", false, true); // 0 (4th match)
         CalculationContext context = createContext("TeamA", List.of(homeWin1, homeWin2, homeWin3, homeLoss4));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
         // 20 + 10 + 0 + 0 = 30
-        assertThat(points).isEqualTo(30);
+        assertThat(resultContext.teamScore()).isEqualTo(30);
     }
 
     @Test
@@ -102,9 +102,9 @@ class BoosterRuleTest {
         Result awayWin = createResult("TeamB", "TeamA", false, true);
         CalculationContext context = createContext("TeamA", List.of(awayWin));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
-        assertThat(points).isEqualTo(20);
+        assertThat(resultContext.teamScore()).isEqualTo(20);
     }
 
     @Test
@@ -113,9 +113,9 @@ class BoosterRuleTest {
         Result awayLoss = createResult("TeamB", "TeamA", true, false);
         CalculationContext context = createContext("TeamA", List.of(awayLoss));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
-        assertThat(points).isEqualTo(-20);
+        assertThat(resultContext.teamScore()).isEqualTo(-20);
     }
 
     @Test
@@ -124,9 +124,9 @@ class BoosterRuleTest {
         Result awayDraw = createResult("TeamB", "TeamA", false, false);
         CalculationContext context = createContext("TeamA", List.of(awayDraw));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
-        assertThat(points).isZero();
+        assertThat(resultContext.teamScore()).isZero();
     }
 
     @Test
@@ -135,10 +135,10 @@ class BoosterRuleTest {
         Result awayWin = createResult("TeamC", "TeamA", false, true);
         CalculationContext context = createContext("TeamA", List.of(awayDraw, awayWin));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
         // 0 (draw) + 10 (2nd away win) = 10
-        assertThat(points).isEqualTo(10);
+        assertThat(resultContext.teamScore()).isEqualTo(10);
     }
 
     @Test
@@ -147,10 +147,10 @@ class BoosterRuleTest {
         Result awayLoss = createResult("TeamC", "TeamA", true, false);
         CalculationContext context = createContext("TeamA", List.of(awayDraw, awayLoss));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
         // 0 (draw) + (-10) (2nd away loss) = -10
-        assertThat(points).isEqualTo(-10);
+        assertThat(resultContext.teamScore()).isEqualTo(-10);
     }
 
     @Test
@@ -161,10 +161,10 @@ class BoosterRuleTest {
         Result awayLoss4 = createResult("TeamE", "TeamA", true, false); // 0 (4th match)
         CalculationContext context = createContext("TeamA", List.of(awayWin1, awayWin2, awayWin3, awayLoss4));
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
         // 20 + 10 + 0 + 0 = 30
-        assertThat(points).isEqualTo(30);
+        assertThat(resultContext.teamScore()).isEqualTo(30);
     }
 
     @Test
@@ -179,10 +179,10 @@ class BoosterRuleTest {
         );
         CalculationContext context = createContext("TeamA", results);
 
-        int points = rule.calculatePoints(context);
+        CalculationContext resultContext = rule.calculatePoints(context);
 
         // 20 + 20 - 10 + 0 + 0 + 0 = 30
-        assertThat(points).isEqualTo(30);
+        assertThat(resultContext.teamScore()).isEqualTo(30);
     }
 
     private CalculationContext createContext(String team, List<Result> previousResults) {

@@ -16,11 +16,11 @@ import org.springframework.stereotype.Component;
 public class OpponentRankRule implements PointsCalculationRule {
 
     @Override
-    public int calculatePoints(CalculationContext context) {
+    public CalculationContext calculatePoints(CalculationContext context) {
         int points = 0;
         int totalTeams = context.totalTeams();
         for (Result match : context.previousResults()) {
-            int opponentRank = getOpponentRank(context);
+            int opponentRank = getOpponentRankFromMatch(match, context);
             if (isHomeMatch(match, context.team())) {
                 if (match.homeTeamHasWon() || !match.homeTeamHasLost()) {
                     points += (totalTeams - opponentRank);
@@ -35,13 +35,13 @@ public class OpponentRankRule implements PointsCalculationRule {
                 }
             }
         }
-        return points;
+        return context.withOpponentScore(points);
     }
 
-    private int getOpponentRank(CalculationContext context) {
-        String team = context.opponent();
+    private int getOpponentRankFromMatch(Result match, CalculationContext context) {
+        String opponentTeam = match.awayTeam().equals(context.team()) ? match.homeTeam() : match.awayTeam();
         for (var standing : context.standings()) {
-            if (standing.teamName().equals(team)) {
+            if (standing.teamName().equals(opponentTeam)) {
                 return standing.rank();
             }
         }

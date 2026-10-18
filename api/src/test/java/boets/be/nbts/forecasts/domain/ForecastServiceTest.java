@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -136,8 +137,13 @@ class ForecastServiceTest {
 
     @Test
     void prepareDataForForecasting_shouldHandleWhenNextRoundDoesNotExist() {
-        Result r1_1 = createResult(1, "TeamA", "TeamB", 1, LocalDate.of(2026, 1, 1), true);
-        ForecastRawData rawData = new ForecastRawData(new ForecastLeague(1, "Allsvenskan", 2026, "SE"), List.of(r1_1), Collections.emptyList(), 1);
+        // Create 6 results to satisfy the requirement
+        List<Result> results = new ArrayList<>();
+        for (int i = 1; i <= 6; i++) {
+            results.add(createResult(i, "TeamA", "TeamB", i, LocalDate.of(2026, 1, i), i == 6));
+        }
+
+        ForecastRawData rawData = new ForecastRawData(new ForecastLeague(1, "Allsvenskan", 2026, "SE"), results, Collections.emptyList(), 6);
 
         List<CalculationContext> contexts = forecastService.prepareDataForForecasting(rawData);
 
@@ -150,7 +156,7 @@ class ForecastServiceTest {
         assertThat(contextA.totalTeams()).isEqualTo(2);
         assertThat(contextA.nextMatch()).isNull();
         assertThat(contextA.opponent()).isNull();
-        assertThat(contextA.previousResults()).containsExactly(r1_1);
+        assertThat(contextA.previousResults()).hasSize(6);
 
         CalculationContext contextB = contexts.stream()
                 .filter(c -> c.team().equals("TeamB"))
@@ -159,7 +165,7 @@ class ForecastServiceTest {
         assertThat(contextB.totalTeams()).isEqualTo(2);
         assertThat(contextB.nextMatch()).isNull();
         assertThat(contextB.opponent()).isNull();
-        assertThat(contextB.previousResults()).containsExactly(r1_1);
+        assertThat(contextB.previousResults()).hasSize(6);
     }
 
     @Test
@@ -296,12 +302,13 @@ class ForecastServiceTest {
     @Test
     void isForecastAlreadyCalculated_shouldReturnTrueWhenLeagueAndRoundMatch() {
         int leagueId = 1;
-        int round = 7;
+        int currentRound = 7;
         int season = 2026;
         ForecastLeague league = new ForecastLeague(leagueId, "Allsvenskan", season, "SE");
-        ForecastRawData rawData = new ForecastRawData(league, Collections.emptyList(), Collections.emptyList(), round);
+        ForecastRawData rawData = new ForecastRawData(league, Collections.emptyList(), Collections.emptyList(), currentRound);
 
-        ForecastRound forecastRound = new ForecastRound(round, leagueId, season);
+        // We forecast for the next round
+        ForecastRound forecastRound = new ForecastRound(currentRound + 1, leagueId, season);
         forecastService.saveForecastCache(forecastRound, Collections.emptyList());
 
         boolean result = forecastService.isForecastAlreadyCalculated(rawData);

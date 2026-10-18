@@ -37,7 +37,7 @@ public class ForecastService {
         Set<ForecastRound> forecastRounds = forecastsCache.keySet();
         Optional<ForecastRound> optionalForecastRound = forecastRounds.stream()
                 .filter(forecastRound -> forecastRound.leagueId() == rawData.league().leagueId())
-                .filter(forecastRound -> forecastRound.currentRound() == rawData.currentRound())
+                .filter(forecastRound -> forecastRound.round()  == rawData.currentRound()+1)
                 .filter(forecastRound -> forecastRound.season() == rawData.league().season())
                 .findFirst();
         return optionalForecastRound.isPresent();
@@ -82,8 +82,10 @@ public class ForecastService {
             int teamScore = nextMatch != null ? (nextMatch.homeTeam().equals(team) ? nextMatch.homeTeamScore() : nextMatch.awayTeamScore()) : 0;
             int opponentScore = nextMatch != null ? (nextMatch.homeTeam().equals(team) ? nextMatch.awayTeamScore() : nextMatch.homeTeamScore()) : 0;
 
-            CalculationContext calculationContext = new CalculationContext(teams.size(), team, opponent, teamScore, opponentScore, nextMatch, lastResults, rawData.standings());
-            calculationContexts.add(calculationContext);
+            if (lastResults.size() >= 6) {
+                CalculationContext calculationContext = new CalculationContext(teams.size(), team, opponent, teamScore, opponentScore, nextMatch, lastResults, rawData.standings());
+                calculationContexts.add(calculationContext);
+            }
         }
 
         return calculationContexts;

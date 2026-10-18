@@ -28,21 +28,20 @@ public class ForecastEventHandler {
 
     @ApplicationModuleListener
     public void onForecastDataCollected(ForecastCollectedEvent event) {
-        // Handle the forecast event here
-        log.info("[FORECASTS] Received forecast event: {}", event);
+        log.info("[FORECASTS] Received forecast event");
 
         var rawDataList = event.forecastRawData();
         var updatedForecastList = new ArrayList<ForecastRawData>();
 
-        //1. Check if the leagues should be forecasted
+        //1. Verify if the forecast is still valid, if not, skip the forecasting for this league
         for (var rawData : rawDataList) {
             List<Result> results = rawData.results();
-            //1. check if the current round is already forecasted, if so, skip the forecasting for this league
+            //A. check if the next round is already forecasted, if so, skip the forecasting for this league
             if (forecastService.isForecastAlreadyCalculated(rawData)) {
                 log.info("[FORECASTS] Forecast already calculated for league {} and round {}, skipping forecasting", rawData.league().name(), rawData.currentRound());
                 continue;
             }
-            //2. check if there are enough results to forecast, if not, skip the forecasting for this league
+            //B. check if there are enough results to forecast, if not, skip the forecasting for this league
             if (!forecastService.canForecastResults(results)) {
                 log.info("[FORECASTS] Not enough results to forecast for league {} and round {}, skipping forecasting", rawData.league().name(), rawData.currentRound());
                 continue;
@@ -50,23 +49,28 @@ public class ForecastEventHandler {
             updatedForecastList.add(rawData);
         }
 
+        // 2. For each valid raw data, prepare the data for forecasting, call the points engine rule and save the forecast results
         for (var rawData : updatedForecastList) {
-            //1. Prepare the data for forecasting
+            //A. Prepare the data for forecasting
            List<CalculationContext> calculationContexts = forecastService.prepareDataForForecasting(rawData);
            List<Forecast> forecasts = new ArrayList<>();
            List<ForecastDetail> forecastDetails = new ArrayList<>();
-           Forecast forecast = new Forecast(rawData.league().name(), rawData.league().countryCode(), forecastDetails);
-           forecasts.add(forecast);
+           Forecast forecast = new Forecast(rawData.league().name(),
+                   rawData.league().countryCode(),
+                   calculationContexts.getFirst().nextMatch().round(),
+                   forecastDetails);
            for (var context : calculationContexts) {
-               // 2. call the points engine rule
-               int totalPoints = pointsCalculationEngine.calculateTotalPoints(context);
-               log.info("[FORECASTS] Total points for context {}: {}", context, totalPoints);
-               ForecastDetail forecastDetail = new ForecastDetail(context.nextMatch().matchDate(), context.team(), context.opponent(), totalPoints);
+               //B. call the points engine rule
+               CalculationContext resultContext = pointsCalculationEngine.calculateTotalPoints(context);
+               int totalPoints = resultContext.teamScore() - resultContext.opponentScore();
+               log.info("[FORECASTS] Total points for context {}: {}", resultContext, totalPoints);
+               ForecastDetail forecastDetail = new ForecastDetail(resultContext.nextMatch().matchDate(), resultContext.team(), resultContext.opponent(), totalPoints);
                forecastDetails.add(forecastDetail);
            }
-           forecast.withForecastDetails(forecastDetails);
-           //3. save the forecast results
-            ForecastRound forecastRound = new ForecastRound(calculationContexts.getFirst().nextMatch().round(), rawData.league().leagueId(), rawData.league().season());
+           forecast = forecast.withForecastDetails(forecastDetails);
+           forecasts.add(forecast);
+           //C. save the forecast results
+           ForecastRound forecastRound = new ForecastRound(calculationContexts.getFirst().nextMatch().round(), rawData.league().leagueId(), rawData.league().season());
            forecastService.saveForecastCache(forecastRound, forecasts);
         }
     }

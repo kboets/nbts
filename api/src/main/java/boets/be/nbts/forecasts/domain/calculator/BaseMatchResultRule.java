@@ -17,7 +17,7 @@ public class BaseMatchResultRule implements PointsCalculationRule {
     private static final int AWAY_LOSS_POINTS = -5;
 
     @Override
-    public int calculatePoints(CalculationContext context) {
+    public CalculationContext calculatePoints(CalculationContext context) {
         int points = 0;
         String team = context.team();
         for (Result result : context.previousResults()) {
@@ -27,7 +27,7 @@ public class BaseMatchResultRule implements PointsCalculationRule {
                 points += calculateAwayMatchPoints(result);
             }
         }
-        return points;
+        return context.withTeamScore(points);
     }
 
     private int calculateHomeMatchPoints(Result result) {
