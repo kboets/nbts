@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -31,7 +32,7 @@ class ResultControllerTest {
         // Given
         int leagueId = 113;
         int season = 2026;
-        Result result = new Result(1494118, "Allsvenskan", "Hammarby FF", "Mjallby AIF", 3, 0, "2026-04-04", "FT", true, false, 1, false);
+        Result result = new Result(1494118, "Allsvenskan", "Hammarby FF", "Mjallby AIF", 3, 0, LocalDate.of(2026, 4, 4), "FT", true, false, 1, false);
         List<Result> results = List.of(result);
 
         when(resultService.getResultsByLeagueAndSeason(leagueId, season)).thenReturn(results);

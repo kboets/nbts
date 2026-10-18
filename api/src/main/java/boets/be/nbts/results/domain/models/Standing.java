@@ -2,9 +2,9 @@ package boets.be.nbts.results.domain.models;
 
 import java.time.LocalDate;
 
-public record Standing(Integer leagueId, Integer season, Integer rank, String teamName, Integer teamId, Integer points, Integer played, Integer won, Integer drawn, Integer lost, LocalDate lastUpdated) {
+public record Standing(int leagueId, int season, int rank, String teamName, int teamId, int points, int played, int won, int drawn, int lost, LocalDate lastUpdated) {
 
-    public Standing withRank(Integer rank) {
+    public Standing withRank(int rank) {
         return new Standing(
                 leagueId,
                 season,
