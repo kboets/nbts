@@ -23,6 +23,12 @@ public class ForecastService {
 
     private final ConcurrentHashMap<ForecastRound, List<Forecast>> forecastCache = new ConcurrentHashMap<>();
 
+
+    public List<Forecast> getForecasts(int leagueId, int round, int season) {
+        ForecastRound forecastRound = new ForecastRound(round, leagueId, season);
+        return forecastCache.get(forecastRound);
+    }
+
     public void saveForecastCache(ForecastRound forecastRound, List<Forecast> forecasts) {
         forecastCache.put(forecastRound, forecasts);
     }
@@ -79,8 +85,10 @@ public class ForecastService {
                     .findFirst()
                     .orElse(null);
             String opponent = nextMatch != null ? (nextMatch.homeTeam().equals(team) ? nextMatch.awayTeam() : nextMatch.homeTeam()) : null;
-            int teamScore = nextMatch != null ? (nextMatch.homeTeam().equals(team) ? nextMatch.homeTeamScore() : nextMatch.awayTeamScore()) : 0;
-            int opponentScore = nextMatch != null ? (nextMatch.homeTeam().equals(team) ? nextMatch.awayTeamScore() : nextMatch.homeTeamScore()) : 0;
+            //int teamScore = nextMatch != null ? (nextMatch.homeTeam().equals(team) ? nextMatch.homeTeamScore() : nextMatch.awayTeamScore()) : 0;
+            int teamScore = 0;
+            //int opponentScore = nextMatch != null ? (nextMatch.homeTeam().equals(team) ? nextMatch.awayTeamScore() : nextMatch.homeTeamScore()) : 0;
+            int opponentScore = 0;
 
             if (lastResults.size() >= 6) {
                 CalculationContext calculationContext = new CalculationContext(teams.size(), team, opponent, teamScore, opponentScore, nextMatch, lastResults, rawData.standings());
