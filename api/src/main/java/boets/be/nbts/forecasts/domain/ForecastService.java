@@ -65,6 +65,11 @@ public class ForecastService {
         return hasEnoughResultsForForecasting(results);
     }
 
+    /**
+     * Prepare the data for forecasting by extracting the last 6 results for each team and the next match for each team.
+     * @param rawData - ForecastRawData containing the results and standings for a specific league
+     * @return List of CalculationContext objects containing the prepared data for forecasting
+     */
     public List<CalculationContext> prepareDataForForecasting(ForecastRawData rawData) {
         // get unique teams for each league and prepare the data for forecasting
         Set<String> teams = rawData.results().stream()

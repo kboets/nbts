@@ -1,7 +1,7 @@
 package boets.be.nbts.results.domain;
 
 import boets.be.nbts.results.domain.models.Result;
-import boets.be.nbts.results.web.ResultClientService;
+import boets.be.nbts.results.web.ResultClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ResultService {
 
-    private final ResultClientService resultClientService;
+    private final ResultClient resultClientService;
 
     @Cacheable(value = "results", key = "#leagueId + ':' + #season")
     public List<Result> getResultsByLeagueAndSeason(int leagueId, int season) {
