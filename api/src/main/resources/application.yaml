@@ -5,10 +5,10 @@ spring:
     url: jdbc:postgresql://localhost:5435/nbts?currentSchema=leagues
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-  modulith:
-    events:
-      jdbc:
-        schema: leagues
+#  modulith:
+#    events:
+#      jdbc:
+#        schema: leagues
   application:
     name: nbts
     version: @project.version@

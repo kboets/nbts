@@ -49,6 +49,16 @@ public class ForecastService {
         return optionalForecastRound.isPresent();
     }
 
+    public boolean currentRoundAlreadyStarted(ForecastRawData rawData) {
+        // get all results for current round.
+        List<Result> currentRoundResults = rawData.results().stream()
+                .filter(result -> result.round() == rawData.currentRound())
+                .toList();
+
+        return currentRoundResults.stream()
+                .anyMatch(result -> result.matchStatus().equals("NS"));
+    }
+
     /**
      * Check if the results should be forecasted based on the current round and the number of available results.
      * There should be at least 6 finished results available before forecasting, and the current round should not be the last round.

@@ -36,12 +36,17 @@ public class ForecastEventHandler {
         //1. Verify if the forecast is still valid, if not, skip the forecasting for this league
         for (var rawData : rawDataList) {
             List<Result> results = rawData.results();
-            //A. check if the next round is already forecasted, if so, skip the forecasting for this league
+            //A. Check if current round is not just started, if so, skip the forecasting for this round and league
+            if (forecastService.currentRoundAlreadyStarted(rawData)) {
+                log.info("[FORECASTS] Current round already started for league {} and round {}, skipping forecasting", rawData.league().name(), rawData.currentRound());
+                continue;
+            }
+            //B. check if the next round is already forecasted, if so, skip the forecasting for this round and league
             if (forecastService.isForecastAlreadyCalculated(rawData)) {
                 log.info("[FORECASTS] Forecast already calculated for league {} and round {}, skipping forecasting", rawData.league().name(), rawData.currentRound());
                 continue;
             }
-            //B. check if there are enough results to forecast, if not, skip the forecasting for this league
+            //C. check if there are enough results to forecast, if not, skip the forecasting for this round and league
             if (!forecastService.canForecastResults(results)) {
                 log.info("[FORECASTS] Not enough results to forecast for league {} and round {}, skipping forecasting", rawData.league().name(), rawData.currentRound());
                 continue;
