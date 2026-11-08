@@ -30,17 +30,12 @@ public interface ResultClient {
     default List<Result> markCurrentRound(List<Result> results) {
         LocalDate currentDate = LocalDate.now();
         List<Result> finishedResults = results.stream()
-                .filter(Result::isCurrent)
-                .filter(result -> result.matchDate().isEqual(currentDate))
+                .filter(result -> "FT".equalsIgnoreCase(result.matchStatus()))
+                .filter(result -> result.matchDate().isBefore(currentDate))
+                .sorted(Comparator.comparing(Result::matchDate).reversed())
                 .toList();
-        if (finishedResults.isEmpty()) {
-            // check if there is a match in progress
-            finishedResults = results.stream()
-                    .filter(result -> "FT".equalsIgnoreCase(result.matchStatus()))
-                    .sorted(Comparator.comparing(Result::matchDate).reversed())
-                    .toList();
-        }
-        Result latestResult = finishedResults.isEmpty() ? results.getFirst() : finishedResults.getFirst();
+
+        Result latestResult = finishedResults.isEmpty() ? results.getFirst() : finishedResults.get(2);
         int currentRound = latestResult.round();
         return results.stream()
                 .map(result -> result.withCurrentRound(result.round() == currentRound))
