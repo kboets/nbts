@@ -102,11 +102,11 @@ class ForecastServiceTest {
         assertThat(contextA.team()).isEqualTo("TeamA");
         assertThat(contextA.opponent()).isEqualTo("TeamC"); // in nextMatch r8_1: TeamA vs TeamC
         assertThat(contextA.nextMatch()).isEqualTo(r8_1);
-        assertThat(contextA.teamScore()).isEqualTo(1);
-        assertThat(contextA.opponentScore()).isEqualTo(0);
+        assertThat(contextA.teamScore()).isZero();
+        assertThat(contextA.opponentRankScore()).isZero();
         // TeamA played in r1_1, r2_1, r3_1, r4_1, r5_1, r6_1, r7_1, r8_1 (8 matches in total list).
-        // Descending date sorted limit 6 and filtered by current round (7): r7_1, r6_1, r5_1, r4_1, r3_1, r2_1
-        assertThat(contextA.previousResults()).containsExactly(r7_1, r6_1, r5_1, r4_1, r3_1, r2_1);
+        // Last 3 home results followed by last 3 away results, filtered by current round (7).
+        assertThat(contextA.previousResults()).containsExactly(r7_1, r6_1, r2_1, r5_1, r4_1, r3_1);
 
         // Check TeamC context where TeamC is awayTeam in next match r8_1
         CalculationContext contextC = contexts.stream()
@@ -118,9 +118,9 @@ class ForecastServiceTest {
         assertThat(contextC.opponent()).isEqualTo("TeamA");
         assertThat(contextC.nextMatch()).isEqualTo(r8_1);
         assertThat(contextC.teamScore()).isEqualTo(0);
-        assertThat(contextC.opponentScore()).isEqualTo(1);
+        assertThat(contextC.opponentRankScore()).isZero();
         // TeamC played in r1_2, r2_1, r3_2, r4_2, r5_1, r6_2, r7_2, r8_1.
-        // Descending date sorted limit 6 and filtered by current round (7): r7_2, r6_2, r5_1, r4_2, r3_2, r2_1
+        // Last 3 home results followed by last 3 away results, filtered by current round (7).
         assertThat(contextC.previousResults()).containsExactly(r7_2, r6_2, r5_1, r4_2, r3_2, r2_1);
 
         // Check TeamB context
@@ -131,16 +131,18 @@ class ForecastServiceTest {
         assertThat(contextB.team()).isEqualTo("TeamB");
         assertThat(contextB.opponent()).isEqualTo("TeamD");
         assertThat(contextB.nextMatch()).isEqualTo(r8_2);
-        assertThat(contextB.teamScore()).isEqualTo(1);
-        assertThat(contextB.opponentScore()).isEqualTo(0);
+        assertThat(contextB.teamScore()).isZero();
+        assertThat(contextB.opponentRankScore()).isZero();
     }
 
     @Test
     void prepareDataForForecasting_shouldHandleWhenNextRoundDoesNotExist() {
-        // Create 6 results to satisfy the requirement
+        // Create 3 home and 3 away results for each team to satisfy the requirement.
         List<Result> results = new ArrayList<>();
         for (int i = 1; i <= 6; i++) {
-            results.add(createResult(i, "TeamA", "TeamB", i, LocalDate.of(2026, 1, i), i == 6));
+            String homeTeam = i % 2 == 1 ? "TeamA" : "TeamB";
+            String awayTeam = i % 2 == 1 ? "TeamB" : "TeamA";
+            results.add(createResult(i, homeTeam, awayTeam, i, LocalDate.of(2026, 1, i), i == 6));
         }
 
         ForecastRawData rawData = new ForecastRawData(new ForecastLeague(1, "Allsvenskan", 2026, "SE"), results, Collections.emptyList(), 6);
@@ -166,30 +168,6 @@ class ForecastServiceTest {
         assertThat(contextB.nextMatch()).isNull();
         assertThat(contextB.opponent()).isNull();
         assertThat(contextB.previousResults()).hasSize(6);
-    }
-
-    @Test
-    void prepareDataForForecasting_shouldLimitResultsToMaxSix() {
-        Result r1 = createResult(1, "TeamA", "TeamB", 1, LocalDate.of(2026, 1, 1), false);
-        Result r2 = createResult(2, "TeamA", "TeamB", 2, LocalDate.of(2026, 1, 2), false);
-        Result r3 = createResult(3, "TeamA", "TeamB", 3, LocalDate.of(2026, 1, 3), false);
-        Result r4 = createResult(4, "TeamA", "TeamB", 4, LocalDate.of(2026, 1, 4), false);
-        Result r5 = createResult(5, "TeamA", "TeamB", 5, LocalDate.of(2026, 1, 5), false);
-        Result r6 = createResult(6, "TeamA", "TeamB", 6, LocalDate.of(2026, 1, 6), false);
-        Result r7 = createResult(7, "TeamA", "TeamB", 7, LocalDate.of(2026, 1, 7), true);
-        Result r8 = createResult(8, "TeamA", "TeamB", 8, LocalDate.of(2026, 1, 8), false);
-
-        ForecastRawData rawData = new ForecastRawData(new ForecastLeague(1, "Allsvenskan", 2026, "SE"), List.of(r1, r2, r3, r4, r5, r6, r7, r8), Collections.emptyList(), 7);
-
-        List<CalculationContext> contexts = forecastService.prepareDataForForecasting(rawData);
-
-        CalculationContext contextA = contexts.stream()
-                .filter(c -> c.team().equals("TeamA"))
-                .findFirst()
-                .orElseThrow();
-
-        assertThat(contextA.previousResults()).hasSize(6);
-        assertThat(contextA.previousResults()).containsExactly(r7, r6, r5, r4, r3, r2);
     }
 
     @Test
@@ -245,12 +223,6 @@ class ForecastServiceTest {
         assertThat(nextRound).contains(expectedNextRound);
     }
 
-    private List<String> loggedMessages() {
-        return logAppender.list.stream()
-                .map(ILoggingEvent::getFormattedMessage)
-                .toList();
-    }
-
     private boolean hasEnoughResultsForForecasting(List<Result> results) {
         return ReflectionTestUtils.invokeMethod(
                 forecastService,
@@ -259,9 +231,8 @@ class ForecastServiceTest {
         );
     }
 
-    @SuppressWarnings("unchecked")
     private Optional<Result> getNextRound(List<Result> results) {
-        return (Optional<Result>) ReflectionTestUtils.invokeMethod(
+        return ReflectionTestUtils.invokeMethod(
                 forecastService,
                 "getNextRound",
                 results

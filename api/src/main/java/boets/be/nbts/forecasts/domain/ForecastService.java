@@ -23,6 +23,12 @@ public class ForecastService {
 
     private final ConcurrentHashMap<ForecastRound, List<Forecast>> forecastCache = new ConcurrentHashMap<>();
 
+
+    public List<Forecast> getForecasts(int leagueId, int round, int season) {
+        ForecastRound forecastRound = new ForecastRound(round, leagueId, season);
+        return forecastCache.getOrDefault(forecastRound, List.of());
+    }
+
     public void saveForecastCache(ForecastRound forecastRound, List<Forecast> forecasts) {
         forecastCache.put(forecastRound, forecasts);
     }
@@ -43,6 +49,16 @@ public class ForecastService {
         return optionalForecastRound.isPresent();
     }
 
+    public boolean currentRoundAlreadyStarted(ForecastRawData rawData) {
+        // get all results for current round.
+        List<Result> currentRoundResults = rawData.results().stream()
+                .filter(result -> result.round() == rawData.currentRound())
+                .toList();
+
+        return currentRoundResults.stream()
+                .anyMatch(result -> result.matchStatus().equals("NS"));
+    }
+
     /**
      * Check if the results should be forecasted based on the current round and the number of available results.
      * There should be at least 6 finished results available before forecasting, and the current round should not be the last round.
@@ -59,6 +75,11 @@ public class ForecastService {
         return hasEnoughResultsForForecasting(results);
     }
 
+    /**
+     * Prepare the data for forecasting by extracting the last 6 results for each team and the next match for each team.
+     * @param rawData - ForecastRawData containing the results and standings for a specific league
+     * @return List of CalculationContext objects containing the prepared data for forecasting
+     */
     public List<CalculationContext> prepareDataForForecasting(ForecastRawData rawData) {
         // get unique teams for each league and prepare the data for forecasting
         Set<String> teams = rawData.results().stream()
@@ -67,20 +88,33 @@ public class ForecastService {
         // get last 6 results for each team and prepare the data for forecasting
         List<CalculationContext> calculationContexts = new ArrayList<>();
         for (var team : teams) {
-            var lastResults = rawData.results().stream()
-                    .filter(result -> result.homeTeam().equals(team) || result.awayTeam().equals(team))
+            var lastHomeResults = rawData.results().stream()
+                    .filter(result -> result.homeTeam().equals(team))
                     .filter(result -> result.round() <= rawData.currentRound())
+                    .filter(result -> result.matchStatus().equals("FT"))
                     .sorted(Comparator.comparing(Result::matchDate).reversed())
-                    .limit(6)
+                    .limit(3)
                     .toList();
+            var lastAwayResults = rawData.results().stream()
+                    .filter(result -> result.awayTeam().equals(team))
+                    .filter(result -> result.round() <= rawData.currentRound())
+                    .filter(result -> result.matchStatus().equals("FT"))
+                    .sorted(Comparator.comparing(Result::matchDate).reversed())
+                    .limit(3)
+                    .toList();
+
+            List<Result> lastResults = new ArrayList<>();
+            lastResults.addAll(lastHomeResults);
+            lastResults.addAll(lastAwayResults);
+
             var nextMatch = rawData.results().stream()
                     .filter(result -> result.round() == rawData.currentRound() + 1)
                     .filter(result -> result.homeTeam().equals(team) || result.awayTeam().equals(team))
                     .findFirst()
                     .orElse(null);
             String opponent = nextMatch != null ? (nextMatch.homeTeam().equals(team) ? nextMatch.awayTeam() : nextMatch.homeTeam()) : null;
-            int teamScore = nextMatch != null ? (nextMatch.homeTeam().equals(team) ? nextMatch.homeTeamScore() : nextMatch.awayTeamScore()) : 0;
-            int opponentScore = nextMatch != null ? (nextMatch.homeTeam().equals(team) ? nextMatch.awayTeamScore() : nextMatch.homeTeamScore()) : 0;
+            int teamScore = 0;
+            int opponentScore = 0;
 
             if (lastResults.size() >= 6) {
                 CalculationContext calculationContext = new CalculationContext(teams.size(), team, opponent, teamScore, opponentScore, nextMatch, lastResults, rawData.standings());

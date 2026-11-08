@@ -2,7 +2,7 @@ package boets.be.nbts.results.domain;
 
 import boets.be.nbts.config.NbtsCacheConfiguration;
 import boets.be.nbts.results.domain.models.Result;
-import boets.be.nbts.results.web.ResultClientService;
+import boets.be.nbts.results.web.ResultClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -23,7 +23,7 @@ class ResultServiceTest {
     private ResultService resultService;
 
     @MockitoBean
-    private ResultClientService resultClientService;
+    private ResultClient resultClientService;
 
     @Test
     void getResultsByLeagueAndSeason_shouldUseCacheForSameLeagueAndSeason() {
