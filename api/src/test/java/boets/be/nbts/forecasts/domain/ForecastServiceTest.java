@@ -103,7 +103,7 @@ class ForecastServiceTest {
         assertThat(contextA.opponent()).isEqualTo("TeamC"); // in nextMatch r8_1: TeamA vs TeamC
         assertThat(contextA.nextMatch()).isEqualTo(r8_1);
         assertThat(contextA.teamScore()).isEqualTo(1);
-        assertThat(contextA.opponentScore()).isEqualTo(0);
+        assertThat(contextA.opponentRankScore()).isEqualTo(0);
         // TeamA played in r1_1, r2_1, r3_1, r4_1, r5_1, r6_1, r7_1, r8_1 (8 matches in total list).
         // Descending date sorted limit 6 and filtered by current round (7): r7_1, r6_1, r5_1, r4_1, r3_1, r2_1
         assertThat(contextA.previousResults()).containsExactly(r7_1, r6_1, r5_1, r4_1, r3_1, r2_1);
@@ -118,7 +118,7 @@ class ForecastServiceTest {
         assertThat(contextC.opponent()).isEqualTo("TeamA");
         assertThat(contextC.nextMatch()).isEqualTo(r8_1);
         assertThat(contextC.teamScore()).isEqualTo(0);
-        assertThat(contextC.opponentScore()).isEqualTo(1);
+        assertThat(contextC.opponentRankScore()).isEqualTo(1);
         // TeamC played in r1_2, r2_1, r3_2, r4_2, r5_1, r6_2, r7_2, r8_1.
         // Descending date sorted limit 6 and filtered by current round (7): r7_2, r6_2, r5_1, r4_2, r3_2, r2_1
         assertThat(contextC.previousResults()).containsExactly(r7_2, r6_2, r5_1, r4_2, r3_2, r2_1);
@@ -132,7 +132,7 @@ class ForecastServiceTest {
         assertThat(contextB.opponent()).isEqualTo("TeamD");
         assertThat(contextB.nextMatch()).isEqualTo(r8_2);
         assertThat(contextB.teamScore()).isEqualTo(1);
-        assertThat(contextB.opponentScore()).isEqualTo(0);
+        assertThat(contextB.opponentRankScore()).isEqualTo(0);
     }
 
     @Test
