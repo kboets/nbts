@@ -35,7 +35,10 @@ public interface ResultClient {
                 .sorted(Comparator.comparing(Result::matchDate).reversed())
                 .toList();
 
-        Result latestResult = finishedResults.isEmpty() ? results.getFirst() : finishedResults.get(2);
+        if (results.isEmpty()) {
+            return results;
+        }
+        Result latestResult = finishedResults.isEmpty() ? results.getFirst() : finishedResults.get(1);
         int currentRound = latestResult.round();
         return results.stream()
                 .map(result -> result.withCurrentRound(result.round() == currentRound))
