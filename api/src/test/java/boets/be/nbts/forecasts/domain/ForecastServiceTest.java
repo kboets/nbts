@@ -261,7 +261,7 @@ class ForecastServiceTest {
 
     @SuppressWarnings("unchecked")
     private Optional<Result> getNextRound(List<Result> results) {
-        return (Optional<Result>) ReflectionTestUtils.invokeMethod(
+        return ReflectionTestUtils.invokeMethod(
                 forecastService,
                 "getNextRound",
                 results

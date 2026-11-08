@@ -50,11 +50,9 @@ class ForecastEventHandlerIT {
     @Autowired
     private ForecastEventHandler forecastEventHandler;
 
-    private ForecastCollectedEvent forecastCollectedEvent;
-
     @BeforeEach
     void setup() {
-        forecastCollectedEvent = setupForecastCollectedEvent();
+        ForecastCollectedEvent forecastCollectedEvent = setupForecastCollectedEvent();
         forecastEventHandler.onForecastDataCollected(forecastCollectedEvent);
     }
 
