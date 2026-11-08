@@ -1,7 +1,7 @@
 package boets.be.nbts.results.domain;
 
 import boets.be.nbts.results.domain.models.Standing;
-import boets.be.nbts.results.web.StandingClientService;
+import boets.be.nbts.results.web.StandingClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StandingService {
 
-    private final StandingClientService standingClientService;
+    private final StandingClient standingClientService;
 
     @Cacheable(value = "standings", key = "#league + ':' + #season")
     public List<Standing> getStandingsByLeagueAndSeason(int league, int season) {

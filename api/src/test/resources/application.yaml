@@ -1,5 +1,7 @@
 spring:
-
+  datasource:
+    hikari:
+      schema: leagues
   flyway:
     enabled: true
     default-schema: leagues
