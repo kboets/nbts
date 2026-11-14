@@ -1,12 +1,15 @@
 package boets.be.nbts.leagues.web;
 
 import boets.be.nbts.leagues.domain.LeagueService;
+import boets.be.nbts.results.ResultForecastApi;
+import boets.be.nbts.results.domain.models.Result;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -15,6 +18,7 @@ import java.util.List;
 public class LeagueController {
 
     private final LeagueService leagueService;
+    private final ResultForecastApi resultForecastApi;
 
     @GetMapping("/currentLeagues")
     public ResponseEntity<List<League>> getSelectedLeagues() {
@@ -32,6 +36,13 @@ public class LeagueController {
     @GetMapping("/currentLeagues/selected/{countryCode}")
     public ResponseEntity<List<League>> getCurrentSelectedLeaguesForCountry(@PathVariable String countryCode) {
         return ResponseEntity.ok(leagueService.getCurrentSelectedLeaguesForCountry(countryCode));
+    }
+
+    @GetMapping("/currentRound/{leagueId}/{season}")
+    public ResponseEntity<Integer> getCurrentRoundForLeagueAndSeason(@PathVariable int leagueId, @PathVariable int season) {
+        log.info("Getting current round for league {} and season {}", leagueId, season);
+        Optional<Result> currentRound = resultForecastApi.getCurrentRound(leagueId, season);
+        return currentRound.map(result -> ResponseEntity.ok(result.round())).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/league")
