@@ -3,6 +3,6 @@ module.exports = [
     {
         context: ['/nbts/api/**'],
         target: defaultTarget,
-        changeOrigin: true,
-    },
+        changeOrigin: true
+    }
 ];

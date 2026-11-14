@@ -1,8 +1,8 @@
-import {Component} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {RouterModule} from '@angular/router';
-import {MenuItem} from 'primeng/api';
-import {AppMenuitem} from './app.menuitem';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { MenuItem } from 'primeng/api';
+import { AppMenuitem } from './app.menuitem';
 
 @Component({
     selector: 'app-menu',
@@ -16,7 +16,7 @@ import {AppMenuitem} from './app.menuitem';
                 <li class="menu-separator"></li>
             }
         }
-    </ul> `,
+    </ul> `
 })
 export class AppMenu {
     model: MenuItem[] = [];
@@ -32,7 +32,7 @@ export class AppMenu {
                 items: [
                     { label: 'Competities', icon: 'fa-solid fa-baseball', routerLink: ['/nbts/leagues'] },
                     { label: 'Resultaten', icon: 'fa-solid fa-trophy', routerLink: ['/nbts/results'] },
-                    { label: 'Prognoses', icon: 'fa-solid fa-scale-unbalanced', routerLink: ['/nbts/forecasts'] },
+                    { label: 'Prognoses', icon: 'fa-solid fa-scale-unbalanced', routerLink: ['/nbts/forecasts'] }
                     // { label: 'Form Layout', icon: 'pi pi-fw pi-id-card', routerLink: ['/uikit/formlayout'] },
                     // { label: 'Input', icon: 'pi pi-fw pi-check-square', routerLink: ['/uikit/input'] },
                     // { label: 'Button', icon: 'pi pi-fw pi-mobile', class: 'rotated-icon', routerLink: ['/uikit/button'] },

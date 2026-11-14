@@ -23,33 +23,25 @@
                                     <th>Seizoen</th>
                                     <th>Bekijk</th>
                                     <th></th>
-
                                 </tr>
                             </ng-template>
                             <ng-template #body let-league>
                                 <tr>
-                                    <td style="width: 15%; min-width: 8rem;">
+                                    <td style="width: 15%; min-width: 8rem">
                                         <img [src]="league.logo" class="shadow-lg" alt="{{ league.name }}" width="50" />
                                     </td>
-                                    <td style="width: 15%; min-width: 7rem;">{{ league.name }}</td>
-                                    <td style="width: 15%; min-width: 7rem;">{{ league.nameNL }}</td>
-                                    <td style="width: 25%; min-width: 8rem;">
+                                    <td style="width: 15%; min-width: 7rem">{{ league.name }}</td>
+                                    <td style="width: 15%; min-width: 7rem">{{ league.nameNL }}</td>
+                                    <td style="width: 25%; min-width: 8rem">
                                         <div class="flex flex-col">
                                             <span>{{ league.season }}</span>
                                             <span>{{ league.start | date: 'dd/MM/yyyy' }} - {{ league.end | date: 'dd/MM/yyyy' }}</span>
                                         </div>
                                     </td>
-                                    <td style="width: 15%;">
-                                        <button
-                                            pButton
-                                            pRipple
-                                            type="button"
-                                            icon="pi pi-search"
-                                            class="p-button p-component p-button-text p-button-icon-only"
-                                            (click)="openResults(league)">
-                                        </button>
+                                    <td style="width: 15%">
+                                        <button pButton pRipple type="button" icon="pi pi-search" class="p-button p-component p-button-text p-button-icon-only" (click)="openResults(league)"></button>
                                     </td>
-                                    <td style="witdh: 15%;">
+                                    <td style="witdh: 15%">
                                         <p-toast timeout="5000" />
                                         <button type="button" pButton (click)="confirmDelete($event, league)" severity="danger" [outlined]="true">verwijder</button>
                                     </td>
@@ -63,25 +55,34 @@
             </p-tabpanel>
             <p-tabpanel value="1">
                 <div class="justify-left items-center p-1">
-                    <p-autocomplete [(ngModel)]="selectedCountry" [forceSelection]="true" [suggestions]="filteredCountries"
-                                    (onSelect)="onSelectCountry($event)"  (onUnselect)="onCountryUnselect()" (onClear)="onCountryUnselect()"
-                                    (completeMethod)="filterCountry($event)" optionLabel="nameNL" [showClear]="true" inputStyleClass="w-56"/>
+                    <p-autocomplete
+                        [(ngModel)]="selectedCountry"
+                        [forceSelection]="true"
+                        [suggestions]="filteredCountries"
+                        (onSelect)="onSelectCountry($event)"
+                        (onUnselect)="onCountryUnselect()"
+                        (onClear)="onCountryUnselect()"
+                        (completeMethod)="filterCountry($event)"
+                        optionLabel="nameNL"
+                        [showClear]="true"
+                        inputStyleClass="w-56"
+                    />
                 </div>
                 <div class="card">
                     <p-accordion [value]="['0']" (valueChange)="onNewLeaguesCountryOpenTab($event)">
-                        @for (country of (countries() || []); track country.countryCode) {
+                        @for (country of countries() || []; track country.countryCode) {
                             <p-accordion-panel [value]="country.countryCode">
                                 <p-accordion-header>
-                                        <span class="flex items-center gap-2">
-                                            <img [src]="country.flagUrl" [alt]="country.nameNL" style="width: 20px; vertical-align: middle;" />
-                                            <span>{{ country.nameNL }}</span>
-                                        </span>
+                                    <span class="flex items-center gap-2">
+                                        <img [src]="country.flagUrl" [alt]="country.nameNL" style="width: 20px; vertical-align: middle" />
+                                        <span>{{ country.nameNL }}</span>
+                                    </span>
                                 </p-accordion-header>
                                 <p-accordion-content>
                                     <p-dataview #dv [value]="newLeagues()" [emptyMessage]="loadingNewLeagues() ? 'Laden competities' : 'Geen competities gevonden'" [loading]="loadingNewLeagues()">
                                         <ng-template #list let-leagues>
                                             <div class="grid grid-cols-12 gap-4 grid-nogutter">
-                                                   <div class="col-span-12" *ngFor="let league of leagues; let first = first">
+                                                <div class="col-span-12" *ngFor="let league of leagues; let first = first">
                                                     <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4" [ngClass]="{ 'border-t border-surface-200 dark:border-surface-700': !first }">
                                                         <div class="md:w-40 relative">
                                                             <img class="block xl:block mx-auto rounded-border w-full" [src]="league.logo" [alt]="league.name" />
@@ -95,16 +96,18 @@
                                                                 <div class="bg-surface-100 dark:bg-surface-700 p-1" style="border-radius: 30px">
                                                                     <div
                                                                         class="bg-surface-0 dark:bg-surface-900 flex items-center gap-2 justify-center py-1 px-2"
-                                                                        style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06)">
-                                                                        <span class="text-surface-900 dark:text-surface-0 font-medium text-sm">seizoen: {{league.season}} </span>
-
+                                                                        style="
+                                                                            border-radius: 30px;
+                                                                            box-shadow:
+                                                                                0px 1px 2px 0px rgba(0, 0, 0, 0.04),
+                                                                                0px 1px 2px 0px rgba(0, 0, 0, 0.06);
+                                                                        "
+                                                                    >
+                                                                        <span class="text-surface-900 dark:text-surface-0 font-medium text-sm">seizoen: {{ league.season }} </span>
                                                                     </div>
                                                                 </div>
                                                                 <div>
-                                                                    <div
-                                                                        class="bg-surface-0 dark:bg-surface-900 flex items-center gap-2 justify-center py-1 px-2"                                    >
-                                                                        {{league.start | date: 'dd/MM/yyyy'}} -  {{league.end | date: 'dd/MM/yyyy'}}
-                                                                    </div>
+                                                                    <div class="bg-surface-0 dark:bg-surface-900 flex items-center gap-2 justify-center py-1 px-2">{{ league.start | date: 'dd/MM/yyyy' }} - {{ league.end | date: 'dd/MM/yyyy' }}</div>
                                                                 </div>
                                                             </div>
                                                             <div class="flex flex-col md:items-end gap-8">

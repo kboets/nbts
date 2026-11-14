@@ -1,19 +1,18 @@
-import {inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {CountryStore} from './country.store';
-import type {Country} from '../shared/models/country';
-import {catchError, Observable, of, tap} from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { CountryStore } from './country.store';
+import type { Country } from '../shared/models/country';
+import { catchError, Observable, of, tap } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
 export class CountryService {
-
     private baseUrl = '/nbts/api';
     private http = inject(HttpClient);
     private countryStore = inject(CountryStore);
 
-    constructor() { }
+    constructor() {}
 
     getCountries(): Observable<Country[]> {
         this.countryStore.startLoading();
@@ -40,6 +39,6 @@ export class CountryService {
                 this.countryStore.setError(`Failed to load selected countries: ${error.message}`);
                 return of([]);
             })
-        )
+        );
     }
 }

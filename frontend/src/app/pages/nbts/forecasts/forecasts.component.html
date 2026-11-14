@@ -1,10 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Forecasts</title>
-</head>
-<body>
+<div class="card">
+    @if (forecastsForLeagueAndRoundError()) {
+        <div class="text-danger mt-1">
+            <div style="color: red" class="alert alert-danger">{{ forecastsForLeagueAndRoundError() }}</div>
+        </div>
+    }
 
-</body>
-</html>
+    @for (forecast of forecastsForLeagueAndRound(); track forecast.leagueName) {
+        <div class="card">
+            <p-table [value]="forecast.forecastDetails" responsiveLayout="scroll">
+                <ng-template #header>
+                    <tr>
+                        <th class="py-5" style="width: 25%; min-width: 8rem">Competitie</th>
+                        <th class="py-5" style="width: 25%; min-width: 8rem">Team</th>
+                        <th class="py-5" style="width: 35%; min-width: 10rem">Volgende wedstrijd</th>
+                        <th class="py-5" style="width: 15%; min-width: 6rem">Score</th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-detail>
+                    <tr>
+                        <td class="py-5" style="width: 25%; min-width: 8rem">{{ forecast.leagueName }}</td>
+                        <td class="py-5" style="width: 25%; min-width: 8rem">{{ detail.team }}</td>
+                        <td class="py-5" style="width: 35%; min-width: 10rem">
+                            <span>{{ getNextMatchDisplay(detail) }} ({{ detail.nextMatchDate | date: 'dd/MM/yyyy' }})</span>
+                        </td>
+                        <td class="py-5" style="width: 15%; min-width: 6rem">{{ detail.totalPoints }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    }
+</div>

@@ -1,15 +1,14 @@
-import {computed, inject, Injectable, signal} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import type {League} from "../shared/models/league";
-import {debounceTime, distinctUntilChanged, map, Observable, of, switchMap} from 'rxjs';
-import {catchError, shareReplay} from 'rxjs/operators';
-import {toObservable, toSignal} from '@angular/core/rxjs-interop';
-import {HttpErrorService} from './http-error.service';
-import {Result} from '../shared/models/result';
-
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import type { League } from '../shared/models/league';
+import { debounceTime, distinctUntilChanged, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, shareReplay } from 'rxjs/operators';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { HttpErrorService } from './http-error.service';
+import { Result } from '../shared/models/result';
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
 })
 export class LeagueService {
     private baseUrl = '/nbts/api';
@@ -21,7 +20,7 @@ export class LeagueService {
     }
 
     /** persist and remove persisted league */
-    public saveNewLeague(league: League) : Observable<League> {
+    public saveNewLeague(league: League): Observable<League> {
         return this.http.post<League>(`${this.baseUrl}/league`, league);
     }
     public removeLeague(league: League): Observable<boolean> {
@@ -49,9 +48,9 @@ export class LeagueService {
                 catchError((error) =>
                     of({
                         data: [],
-                        error: this.errorService.formatError(error),
-                    } as Result<League[]>),
-                ),
+                        error: this.errorService.formatError(error)
+                    } as Result<League[]>)
+                )
             );
         }),
         //tap((result) => console.log('selectedLeaguesForCountry$', result)),
@@ -81,7 +80,7 @@ export class LeagueService {
         debounceTime(500),
         distinctUntilChanged(),
         switchMap((countryCode) => {
-             if (!countryCode) {
+            if (!countryCode) {
                 return of({ data: [], error: undefined } as Result<League[]>);
             }
             return this.getCurrentLeaguesForCountry(countryCode).pipe(
@@ -89,9 +88,9 @@ export class LeagueService {
                 catchError((error) =>
                     of({
                         data: [],
-                        error: this.errorService.formatError(error),
-                    } as Result<League[]>),
-                ),
+                        error: this.errorService.formatError(error)
+                    } as Result<League[]>)
+                )
             );
         }),
         //tap((result) => console.log('newLeaguesForCountry$', result)),
@@ -118,7 +117,7 @@ export class LeagueService {
                 start: new Date(2026, 7, 7),
                 end: new Date(2027, 4, 22),
                 season: '2026',
-                current: true,
+                current: true
             },
             {
                 leagueId: 145,
@@ -128,8 +127,8 @@ export class LeagueService {
                 start: new Date(2026, 7, 14),
                 end: new Date(2027, 4, 1),
                 season: '2026',
-                current: true,
+                current: true
             }
-        ])
+        ]);
     }
 }

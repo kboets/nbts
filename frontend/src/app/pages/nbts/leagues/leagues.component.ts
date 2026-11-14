@@ -1,25 +1,25 @@
-import {Component, computed, effect, inject, OnInit, signal} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {CommonModule, NgClass} from '@angular/common';
-import {Router} from '@angular/router';
-import {TabsModule} from 'primeng/tabs';
-import {TableModule} from 'primeng/table';
-import {AutoCompleteCompleteEvent, AutoCompleteModule} from 'primeng/autocomplete';
-import {TagModule} from 'primeng/tag';
-import {DataViewModule} from 'primeng/dataview';
-import {ButtonModule} from 'primeng/button';
-import {ToastModule} from 'primeng/toast';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {ConfirmationService, MessageService} from 'primeng/api';
-import {AccordionModule} from 'primeng/accordion';
-import {CountryStore} from '../../service/country.store';
-import {CountryService} from '../../service/country.service';
-import {LeagueService} from '../../service/league.service';
-import {League} from '../../shared/models/league';
-import {Country} from '../../shared/models/country';
-import {LeagueStore} from "../../service/league.store";
-import {ResultService} from '../../service/result.service';
-import {StandingService} from '../../service/standing.service';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CommonModule, NgClass } from '@angular/common';
+import { Router } from '@angular/router';
+import { TabsModule } from 'primeng/tabs';
+import { TableModule } from 'primeng/table';
+import { AutoCompleteCompleteEvent, AutoCompleteModule } from 'primeng/autocomplete';
+import { TagModule } from 'primeng/tag';
+import { DataViewModule } from 'primeng/dataview';
+import { ButtonModule } from 'primeng/button';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { AccordionModule } from 'primeng/accordion';
+import { CountryStore } from '../../service/country.store';
+import { CountryService } from '../../service/country.service';
+import { LeagueService } from '../../service/league.service';
+import { League } from '../../shared/models/league';
+import { Country } from '../../shared/models/country';
+import { LeagueStore } from '../../service/league.store';
+import { ResultService } from '../../service/result.service';
+import { StandingService } from '../../service/standing.service';
 
 @Component({
     selector: 'app-leagues',
@@ -29,7 +29,6 @@ import {StandingService} from '../../service/standing.service';
     providers: [MessageService, ConfirmationService]
 })
 export class LeaguesComponent implements OnInit {
-
     // inject 3rd party services
     private messageService = inject(MessageService);
     private confirmationService = inject(ConfirmationService);
@@ -54,14 +53,13 @@ export class LeaguesComponent implements OnInit {
 
     public loadingNewLeagues = signal<boolean>(false);
 
-
     public leaguesWithCountry = computed(() => {
         const list = this.leagueStore.selectedLeagues();
         const countriesList = this.countryStore.countries();
         if (!list) return null;
-        return list.map(league => ({
+        return list.map((league) => ({
             ...league,
-            nameNL: countriesList?.find(c => c.countryCode === league.countryCode)?.nameNL || ''
+            nameNL: countriesList?.find((c) => c.countryCode === league.countryCode)?.nameNL || ''
         }));
     });
 
@@ -91,7 +89,7 @@ export class LeaguesComponent implements OnInit {
         this.leaguesService.saveNewLeague(league).subscribe({
             next: (savedLeague) => {
                 //console.log('league saved', savedLeague);
-                this.messageService.add({severity:'success', summary: 'Success', detail: 'Nieuwe competitie is succesvol opgeslagen.'});
+                this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Nieuwe competitie is succesvol opgeslagen.' });
                 // refilter the list of leagues
                 this.leaguesService.resetCountryForNewLeagues();
                 this.loadingNewLeagues.set(true);
@@ -103,7 +101,7 @@ export class LeaguesComponent implements OnInit {
             },
             error: (error) => {
                 //console.error('error saving league', error);
-                this.messageService.add({severity:'error', summary: 'Error', detail: 'Er is iets misgegaan bij het opslaan van de nieuwe competitie.'});
+                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Er is iets misgegaan bij het opslaan van de nieuwe competitie.' });
             }
         });
     }
@@ -132,10 +130,7 @@ export class LeaguesComponent implements OnInit {
         const query = (event.query || '').toLowerCase();
         const countryList = this.countryStore.countries() || [];
 
-        this.filteredCountries = countryList.filter(country =>
-            country.nameNL?.toLowerCase().includes(query) ||
-            country.nameEN?.toLowerCase().includes(query)
-        );
+        this.filteredCountries = countryList.filter((country) => country.nameNL?.toLowerCase().includes(query) || country.nameEN?.toLowerCase().includes(query));
     }
 
     openResults(league: League) {
@@ -177,14 +172,14 @@ export class LeaguesComponent implements OnInit {
         this.leaguesService.removeLeague(league).subscribe({
             next: (success) => {
                 if (success) {
-                    this.messageService.add({severity:'success', summary: 'Success', detail: 'Competitie is succesvol verwijderd.'});
+                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Competitie is succesvol verwijderd.' });
                     this.reloadCurrentLeagues();
                 } else {
-                    this.messageService.add({severity:'error', summary: 'Error', detail: 'Competitie kon niet worden verwijderd.'});
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Competitie kon niet worden verwijderd.' });
                 }
             },
             error: (error) => {
-                this.messageService.add({severity:'error', summary: 'Error', detail: 'Er is een fout opgetreden bij het verwijderen van de competitie.'});
+                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Er is een fout opgetreden bij het verwijderen van de competitie.' });
             }
         });
     }
@@ -197,8 +192,6 @@ export class LeaguesComponent implements OnInit {
                 const msg = err?.message || 'Er is iets misgegaan bij het ophalen van de competities.';
                 this.leagueStore.setError(msg);
             }
-        })
+        });
     }
-
-
 }

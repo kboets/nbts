@@ -26,7 +26,6 @@ import type { League } from '../shared/models/league';
     `
 })
 export class Dashboard implements OnInit {
-
     private dashboardService = inject(DashboardService);
     private leagueStore = inject(LeagueStore);
     private adminService = inject(AdminService);
@@ -39,7 +38,7 @@ export class Dashboard implements OnInit {
             error: (err: any) => {
                 const msg = err?.message || 'Failed to load leagues';
                 this.leagueStore.setError(msg);
-            },
+            }
         });
     }
 }
