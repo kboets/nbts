@@ -68,7 +68,7 @@ public class ForecastEventHandler {
                //B. call the points engine rule
                CalculationContext resultContext = pointsCalculationEngine.calculateTotalPoints(context);
                int totalPoints = resultContext.teamScore() + resultContext.opponentRankScore();
-               ForecastDetail forecastDetail = new ForecastDetail(resultContext.nextMatch().matchDate(), resultContext.team(), resultContext.opponent(), resultContext.teamScore(), resultContext.opponentRankScore(), totalPoints);
+               ForecastDetail forecastDetail = new ForecastDetail(resultContext.nextMatch().matchDate(), resultContext.nextMatch().homeTeam(), resultContext.team(), resultContext.opponent(), resultContext.teamScore(), resultContext.opponentRankScore(), totalPoints);
                forecastDetails.add(forecastDetail);
            }
            forecast = forecast.withForecastDetails(forecastDetails);

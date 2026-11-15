@@ -1,7 +1,7 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {LeagueStore} from '../../service/league.store';
-import {AdminService} from '../../service/admin.service';
+import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { LeagueStore } from '../../service/league.store';
+import { AdminService } from '../../service/admin.service';
 
 @Component({
     standalone: true,
@@ -24,8 +24,8 @@ import {AdminService} from '../../service/admin.service';
                         <i class="fa-solid fa-baseball text-xl!"></i>
                     </div>
                 </div>
-<!--                <span class="text-primary font-medium">24 new </span>-->
-<!--                <span class="text-muted-color">since last visit</span>-->
+                <!--                <span class="text-primary font-medium">24 new </span>-->
+                <!--                <span class="text-muted-color">since last visit</span>-->
             </div>
         </div>
         <div class="col-span-12 lg:col-span-6 xl:col-span-3">
@@ -83,9 +83,8 @@ export class StatsWidget implements OnInit {
     apiCounterError = this.adminService.apiCounterError;
 
     ngOnInit(): void {
-         this.adminService.refreshApiCounter();
+        this.adminService.refreshApiCounter();
     }
-
 
     getApiCallsLeft(): number {
         if (this.apiCounterError()) {

@@ -1,8 +1,8 @@
-import {Injectable, signal, WritableSignal} from '@angular/core';
-import type {Country} from '../shared/models/country';
+import { Injectable, signal, WritableSignal } from '@angular/core';
+import type { Country } from '../shared/models/country';
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
 })
 export class CountryStore {
     /** Holds the current countries or null if not loaded */
@@ -45,4 +45,3 @@ export class CountryStore {
         this.loading.set(false);
     }
 }
-

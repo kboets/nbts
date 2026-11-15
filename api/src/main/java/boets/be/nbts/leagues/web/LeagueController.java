@@ -34,6 +34,7 @@ public class LeagueController {
         return ResponseEntity.ok(leagueService.getCurrentSelectedLeaguesForCountry(countryCode));
     }
 
+
     @PostMapping("/league")
     public ResponseEntity<League> save(@RequestBody League league) {
         League savedLeague = leagueService.save(league);

@@ -1,10 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Forecasts</title>
-</head>
-<body>
+<div class="card">
+    <div class="card">
+        <p-accordion [value]="['0']" (valueChange)="onCountryOpenTab($event)">
+            @for (country of (selectedCountries() || []); track country.countryCode) {
+                <p-accordion-panel [value]="country.countryCode">
+                    <p-accordion-header>
+                            <span class="flex items-center gap-2">
+                                <img [src]="country.flagUrl" [alt]="country.nameNL" style="width: 20px; vertical-align: middle;" />
+                                <span>{{ country.nameNL }}</span>
+                            </span>
+                    </p-accordion-header>
+                    <p-accordion-content>
+                        @if (selectedLeaguesError()) {
+                            <p>{{ selectedLeaguesError() }}</p>
+                        }
+                        @if (treeMapForecastData().length > 0) {
+                            <p-treetable [value]="treeMapForecastData()" [scrollable]="true" [tableStyle]="{ 'min-width': '70rem' }">
+                                <ng-template #header>
+                                    <tr>
+                                        <th class="px-4 py-4 text-lg">Competitie</th>
+                                        <th class="px-4 py-4 text-lg">Team</th>
+                                        <th class="px-4 py-4 text-lg">Volgende wedstrijd</th>
+                                        <th class="px-4 py-4 text-lg">Datum</th>
+                                        <th class="px-4 py-4 text-lg">Totaal</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template #body let-rowNode let-rowData="rowData">
+                                    <tr [ttRow]="rowNode">
+                                        <td class="px-4 py-4 text-lg">
+                                            @if (rowData.league && rowNode.node?.children?.length) {
+                                                <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
+                                            }
+                                            <span>
+                                                {{ rowData.name }}
+                                                @if (rowData.league && rowData.round !== null) {
+                                                    -> <strong>Ronde {{ rowData.round }}</strong>
+                                                }
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-4 text-lg">{{ rowData.team }}</td>
+                                        <td class="px-4 py-4 text-lg">
+                                            @if (rowData.team) {
+                                                @if (rowData.nextMatchHomeTeam === rowData.team) {
+                                                    <strong>{{ rowData.team }}</strong> - {{ rowData.opponent }}
+                                                } @else {
+                                                    {{ rowData.opponent }} - <strong>{{ rowData.team }}</strong>
+                                                }
+                                            }
+                                        </td>
+                                        <td class="px-4 py-4 text-lg">{{ rowData.nextMatchDate | date:'dd/MM/yyyy' }}</td>
+                                        <td class="px-4 py-4 text-lg">{{ rowData.totalPoints }}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-treetable>
+                        }
+                    </p-accordion-content>
+                </p-accordion-panel>
+            }
+        </p-accordion>
+    </div>
 
-</body>
-</html>
+
+</div>

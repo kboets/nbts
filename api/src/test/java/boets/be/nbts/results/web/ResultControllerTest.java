@@ -1,5 +1,6 @@
 package boets.be.nbts.results.web;
 
+import boets.be.nbts.results.ResultForecastApi;
 import boets.be.nbts.results.domain.ResultService;
 import boets.be.nbts.results.domain.models.Result;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +26,9 @@ class ResultControllerTest {
 
     @MockitoBean
     private ResultService resultService;
+
+    @MockitoBean
+    private ResultForecastApi resultForecastApi;
 
     @Test
     @DisplayName("GET /api/results/{leagueId}/{season} - should return results for the given league and season")

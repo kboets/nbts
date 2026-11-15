@@ -1,10 +1,10 @@
-import {Component, inject} from '@angular/core';
-import {MenuItem} from 'primeng/api';
-import {RouterModule} from '@angular/router';
-import {CommonModule} from '@angular/common';
-import {StyleClassModule} from 'primeng/styleclass';
-import {LayoutService} from '@/app/layout/service/layout.service';
-import {AdminService} from '../../pages/service/admin.service';
+import { Component, inject } from '@angular/core';
+import { MenuItem } from 'primeng/api';
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { StyleClassModule } from 'primeng/styleclass';
+import { LayoutService } from '@/app/layout/service/layout.service';
+import { AdminService } from '../../pages/service/admin.service';
 
 @Component({
     selector: 'app-topbar',
@@ -36,7 +36,7 @@ import {AdminService} from '../../pages/service/admin.service';
                 </svg>
                 <div class="flex flex-col">
                     <span class="font-bold">NBTS</span>
-                    <small  style="font-size: 0.7rem; line-height: 1">v.{{ adminService.version() }}</small>
+                    <small style="font-size: 0.7rem; line-height: 1">v.{{ adminService.version() }}</small>
                 </div>
             </a>
         </div>
@@ -58,7 +58,7 @@ import {AdminService} from '../../pages/service/admin.service';
                     >
                         <i class="pi pi-palette"></i>
                     </button>
-<!--                    <app-configurator />-->
+                    <!--                    <app-configurator />-->
                 </div>
             </div>
 
@@ -91,8 +91,6 @@ export class AppTopbar {
     layoutService = inject(LayoutService);
 
     adminService = inject(AdminService);
-
-
 
     toggleDarkMode() {
         this.layoutService.layoutConfig.update((state) => ({
