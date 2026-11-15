@@ -12,26 +12,24 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {PaginatorModule, PaginatorState} from 'primeng/paginator';
 import {AccordionModule} from 'primeng/accordion';
 import {SplitterModule} from 'primeng/splitter';
-import {Country} from "../../shared/models/country";
+import {Country} from '../../shared/models/country';
 import {League} from '../../shared/models/league';
 import type {MatchResult} from '../../shared/models/matchResult';
 import {CountryStore} from '../../service/country.store';
 import {CountryService} from '../../service/country.service';
-import {LeagueService} from "../../service/league.service";
-import {LeagueStore} from "../../service/league.store";
+import {LeagueService} from '../../service/league.service';
+import {LeagueStore} from '../../service/league.store';
 import {ResultService} from '../../service/result.service';
-import {StandingService} from "../../service/standing.service";
-
+import {StandingService} from '../../service/standing.service';
 
 @Component({
     selector: 'app-results',
     templateUrl: './results.component.html',
     styleUrls: ['./results.components.scss'],
     standalone: true,
-    imports: [TabsModule, AccordionModule, AutoCompleteModule, FormsModule, DataViewModule, ButtonModule, TagModule, CommonModule, ToastModule, TableModule, ConfirmDialogModule, PaginatorModule, SplitterModule],
+    imports: [TabsModule, AccordionModule, AutoCompleteModule, FormsModule, DataViewModule, ButtonModule, TagModule, CommonModule, ToastModule, TableModule, ConfirmDialogModule, PaginatorModule, SplitterModule]
 })
 export class ResultsComponent implements OnInit {
-
     // data for the search box
     public selectedCountries = signal<Country[] | null>(null);
     filteredCountries: Country[] = [];
@@ -72,18 +70,11 @@ export class ResultsComponent implements OnInit {
         }
 
         const selectedTeamResults = results
-            .filter((result: MatchResult) =>
-                result.matchStatus === 'FT' &&
-                (result.homeTeam === team || result.awayTeam === team))
-            .sort((left: MatchResult, right: MatchResult) =>
-                new Date(right.matchDate).getTime() - new Date(left.matchDate).getTime()
-            );
+            .filter((result: MatchResult) => result.matchStatus === 'FT' && (result.homeTeam === team || result.awayTeam === team))
+            .sort((left: MatchResult, right: MatchResult) => new Date(right.matchDate).getTime() - new Date(left.matchDate).getTime());
 
-        return this.showAllSelectedTeamResults()
-            ? selectedTeamResults
-            : selectedTeamResults.slice(0, 6);
+        return this.showAllSelectedTeamResults() ? selectedTeamResults : selectedTeamResults.slice(0, 6);
     });
-
 
     constructor() {
         this.countryService.getSelectedCountries().subscribe((countriesList: Country[]) => {
@@ -106,16 +97,10 @@ export class ResultsComponent implements OnInit {
     }
 
     // create signal for the standing
-    public hasStanding4Country = computed(() =>
-        (this.standingData()?.length ?? 0) > 0 &&
-        !this.standingDataError()
-    );
+    public hasStanding4Country = computed(() => (this.standingData()?.length ?? 0) > 0 && !this.standingDataError());
 
     // create signal for the results
-    public hasResults4League = computed(() =>
-        (this.results4League()?.length ?? 0) > 0 &&
-        !this.results4LeagueError()
-    );
+    public hasResults4League = computed(() => (this.results4League()?.length ?? 0) > 0 && !this.results4LeagueError());
 
     // data for the round selection
     public availableRounds = computed(() => {
@@ -125,12 +110,10 @@ export class ResultsComponent implements OnInit {
             return [];
         }
 
-        return [...new Set(results.map((result) => result.round))]
-            .sort((left, right) => left - right);
+        return [...new Set(results.map((result) => result.round))].sort((left, right) => left - right);
     });
 
-    public currentRound = computed(() => this.results4League()
-        .find((result) => result.isCurrent)?.round);
+    public currentRound = computed(() => this.results4League().find((result) => result.isCurrent)?.round);
 
     public visibleRound = computed(() => {
         const rounds = this.availableRounds();
@@ -162,11 +145,13 @@ export class ResultsComponent implements OnInit {
             return [];
         }
 
-        return results
-            .filter((result) => result.round === visibleRound)
-            .sort((left, right) => new Date(left.matchDate).getTime() - new Date(right.matchDate).getTime());
+        return results.filter((result) => result.round === visibleRound).sort((left, right) => new Date(left.matchDate).getTime() - new Date(right.matchDate).getTime());
     });
 
+    onCountryOpenTab(event: any) {
+        this.leaguesService.resetCountryForSelectedLeagues();
+        this.leaguesService.selectCountryForSelectedLeagues(event);
+    }
 
     onSelectCountry(event: any) {
         const selected = event?.value || this.selectedCountry;
@@ -184,15 +169,7 @@ export class ResultsComponent implements OnInit {
         const query = (event.query || '').toLowerCase();
         const countryList = this.countryStore.selectedCountries() || [];
 
-        this.filteredCountries = countryList.filter(country =>
-            country.nameNL?.toLowerCase().includes(query) ||
-            country.nameEN?.toLowerCase().includes(query)
-        );
-    }
-
-    onCountryOpenTab(event: any) {
-        this.leaguesService.resetCountryForSelectedLeagues();
-        this.leaguesService.selectCountryForSelectedLeagues(event);
+        this.filteredCountries = countryList.filter((country) => country.nameNL?.toLowerCase().includes(query) || country.nameEN?.toLowerCase().includes(query));
     }
 
     selectLeague(league: League) {
@@ -232,8 +209,7 @@ export class ResultsComponent implements OnInit {
     getSelectedTeamResultColor(result: MatchResult): string {
         const team = this.selectedTeam();
         console.log(team);
-        if (!team || result.homeTeamScore === null || result.homeTeamScore === undefined ||
-            result.awayTeamScore === null || result.awayTeamScore === undefined) {
+        if (!team || result.homeTeamScore === null || result.homeTeamScore === undefined || result.awayTeamScore === null || result.awayTeamScore === undefined) {
             return '';
         }
 
@@ -241,9 +217,7 @@ export class ResultsComponent implements OnInit {
             return '#f97316';
         }
 
-        const selectedTeamWon =
-            (result.homeTeam === team && result.homeTeamScore > result.awayTeamScore) ||
-            (result.awayTeam === team && result.awayTeamScore > result.homeTeamScore);
+        const selectedTeamWon = (result.homeTeam === team && result.homeTeamScore > result.awayTeamScore) || (result.awayTeam === team && result.awayTeamScore > result.homeTeamScore);
 
         return selectedTeamWon ? '#22c55e' : '#ef4444';
     }
