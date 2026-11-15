@@ -5,8 +5,8 @@ import boets.be.nbts.datacollector.models.ForecastRawData;
 import boets.be.nbts.leagues.LeagueForecastApi;
 import boets.be.nbts.results.ResultForecastApi;
 import boets.be.nbts.results.domain.models.Result;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -14,15 +14,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class DataIngestionService {
 
     private final LeagueForecastApi leagueForecastApi;
     private final ResultForecastApi resultForecastApi;
     private final ApplicationEventPublisher eventPublisher;
+    private final Executor forecastIngestionExecutor;
+
+    public DataIngestionService(LeagueForecastApi leagueForecastApi, ResultForecastApi resultForecastApi,
+                                ApplicationEventPublisher eventPublisher,
+                                @Qualifier("forecastIngestionExecutor") Executor forecastIngestionExecutor) {
+        this.leagueForecastApi = leagueForecastApi;
+        this.resultForecastApi = resultForecastApi;
+        this.eventPublisher = eventPublisher;
+        this.forecastIngestionExecutor = forecastIngestionExecutor;
+    }
 
     /**
      * This method is scheduled to run every 10 minutes and triggers the data ingestion process for forecasting.
@@ -47,7 +57,7 @@ public class DataIngestionService {
                     var currentRound = resultForecastApi.getCurrentRound(league.leagueId(), league.season());
                     int currentRoundNumber = currentRound.map(Result::round).orElse(0);
                     return new ForecastRawData(league, results, standings, currentRoundNumber);
-                 })
+                 }, forecastIngestionExecutor)
                 ).toList();
 
         //3. Wait for all external calls to finish
