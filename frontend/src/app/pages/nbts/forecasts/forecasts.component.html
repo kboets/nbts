@@ -27,14 +27,13 @@
                                 <ng-template #body let-rowNode let-rowData="rowData">
                                     <tr [ttRow]="rowNode">
                                         <td class="px-4 py-4 text-lg">
-                                            @if (!rowNode.node?.leaf) {
+                                            @if (rowData.league && rowNode.node?.children?.length) {
                                                 <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
                                             }
                                             <span>
                                                 {{ rowData.name }}
                                                 @if (rowData.league && rowData.round !== null) {
-                                                    <br/>
-                                                    <small><strong>Ronde {{ rowData.round }}</strong></small>
+                                                    -> <strong>Ronde {{ rowData.round }}</strong>
                                                 }
                                             </span>
                                         </td>
