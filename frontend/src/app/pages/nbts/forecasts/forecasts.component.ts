@@ -1,34 +1,32 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { TabsModule } from 'primeng/tabs';
-import { TableModule } from 'primeng/table';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { TagModule } from 'primeng/tag';
-import { DataViewModule } from 'primeng/dataview';
-import { ButtonModule } from 'primeng/button';
-import { ToastModule } from 'primeng/toast';
-import { AccordionModule } from 'primeng/accordion';
-import { CountryStore } from '../../service/country.store';
-import { CountryService } from '../../service/country.service';
-import { LeagueStore } from '../../service/league.store';
-import { LeagueService } from '../../service/league.service';
-import { ForecastService } from '../../service/forecast.service';
-import { Country } from '@/app/pages/shared/models/country';
-import { ForecastDetail } from '../../shared/models/forecastDetail';
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {CommonModule} from '@angular/common';
+import {ConfirmationService, MessageService, TreeNode} from 'primeng/api';
+import {TabsModule} from 'primeng/tabs';
+import {TableModule} from 'primeng/table';
+import {AutoCompleteModule} from 'primeng/autocomplete';
+import {TagModule} from 'primeng/tag';
+import {DataViewModule} from 'primeng/dataview';
+import {ButtonModule} from 'primeng/button';
+import {ToastModule} from 'primeng/toast';
+import {AccordionModule} from 'primeng/accordion';
+import {TreeTableModule} from 'primeng/treetable';
+import {CountryStore} from '../../service/country.store';
+import {CountryService} from '../../service/country.service';
+import {LeagueStore} from '../../service/league.store';
+import {LeagueService} from '../../service/league.service';
+import {ForecastService} from '../../service/forecast.service';
+import {Country} from '@/app/pages/shared/models/country';
+import {ForecastDetail} from '../../shared/models/forecastDetail';
 
 @Component({
     selector: 'app-forecasts',
     standalone: true,
-    imports: [TabsModule, AccordionModule, AutoCompleteModule, FormsModule, DataViewModule, ButtonModule, TagModule, CommonModule, ToastModule, TableModule],
+    imports: [TabsModule, AccordionModule, AutoCompleteModule, FormsModule, DataViewModule, ButtonModule, TagModule, CommonModule, ToastModule, TableModule, TreeTableModule],
     providers: [MessageService, ConfirmationService],
     templateUrl: './forecasts.component.html'
 })
 export class ForecastsComponent implements OnInit {
-    // data for the accordion tabs
-    public selectedCountries = signal<Country[] | null>(null);
-    selectedCountry: Country | null = null;
 
     // stores and services
     public countryStore: CountryStore = inject(CountryStore);
@@ -36,6 +34,27 @@ export class ForecastsComponent implements OnInit {
     private leagueStore = inject(LeagueStore);
     private leaguesService = inject(LeagueService);
     private forecastService = inject(ForecastService);
+
+    // data for the accordion tabs
+    public selectedCountries = signal<Country[] | null>(null);
+    selectedCountry: Country | null = null;
+
+    // data for the tree map of the leagues in the country tab
+    public treeMapLeagueData = computed<TreeNode[]>(() =>
+        this.selectedLeagues()?.map(league => ({
+            key: String(league.leagueId),
+            label: league.name,
+            data: league,
+            leaf: true
+        })) || []
+    );
+
+    public treeMapLeagueColumns = computed(() => [
+        { field: 'name', header: 'Competitie' },
+        { field: 'team', header: 'Team' },
+        { field: 'nextMatch', header: 'Volgende match' },
+        { field: 'scoreMatch', header: 'score match' }
+    ]);
 
     // data for the selection of the league in the country tab
     public selectedLeagues = this.leaguesService.selectedLeagues;
@@ -45,24 +64,18 @@ export class ForecastsComponent implements OnInit {
     public forecastsForLeagueAndRound = this.forecastService.forecasts;
     public forecastsForLeagueAndRoundError = this.forecastService.forecastsError;
 
+
+
     constructor() {
         this.initForecastData();
     }
 
     onCountryOpenTab(event: any) {
-        console.log('Country tab opened:', event);
+        this.leaguesService.selectCountryForSelectedLeagues(event);
     }
 
-    onSelectCountry(event: any) {
-        const selected = event?.value || this.selectedCountry;
-        if (selected) {
-            this.selectedCountries.set([selected]);
-        }
-    }
-
-    onCountryUnselect() {
-        this.selectedCountry = null;
-        this.selectedCountries.set(this.countryStore.selectedCountries());
+    onCountryCloseTab(event: any) {
+        this.leaguesService.resetCountryForSelectedLeagues();
     }
 
     ngOnInit(): void {

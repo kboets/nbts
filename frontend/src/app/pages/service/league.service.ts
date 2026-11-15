@@ -29,13 +29,15 @@ export class LeagueService {
 
     /**  retrieve the selected leagues for a specific country */
     selectedCountryForSelectedLeagues = signal<string | undefined>(undefined);
+
     public selectCountryForSelectedLeagues(countryCode: string) {
-        //console.log('selectCountryForSelectedLeagues', countryCode);
         this.selectedCountryForSelectedLeagues.set(countryCode);
     }
+
     public resetCountryForSelectedLeagues() {
         this.selectedCountryForSelectedLeagues.set(undefined);
     }
+
     private selectedLeaguesForCountry$ = toObservable(this.selectedCountryForSelectedLeagues).pipe(
         debounceTime(500),
         distinctUntilChanged(),

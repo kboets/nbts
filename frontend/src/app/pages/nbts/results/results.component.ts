@@ -1,26 +1,26 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { TabsModule } from 'primeng/tabs';
-import { TableModule } from 'primeng/table';
-import { AutoCompleteCompleteEvent, AutoCompleteModule } from 'primeng/autocomplete';
-import { TagModule } from 'primeng/tag';
-import { DataViewModule } from 'primeng/dataview';
-import { ButtonModule } from 'primeng/button';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { AccordionModule } from 'primeng/accordion';
-import { SplitterModule } from 'primeng/splitter';
-import { Country } from '../../shared/models/country';
-import { League } from '../../shared/models/league';
-import type { MatchResult } from '../../shared/models/matchResult';
-import { CountryStore } from '../../service/country.store';
-import { CountryService } from '../../service/country.service';
-import { LeagueService } from '../../service/league.service';
-import { LeagueStore } from '../../service/league.store';
-import { ResultService } from '../../service/result.service';
-import { StandingService } from '../../service/standing.service';
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {CommonModule} from '@angular/common';
+import {TabsModule} from 'primeng/tabs';
+import {TableModule} from 'primeng/table';
+import {AutoCompleteCompleteEvent, AutoCompleteModule} from 'primeng/autocomplete';
+import {TagModule} from 'primeng/tag';
+import {DataViewModule} from 'primeng/dataview';
+import {ButtonModule} from 'primeng/button';
+import {ToastModule} from 'primeng/toast';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {PaginatorModule, PaginatorState} from 'primeng/paginator';
+import {AccordionModule} from 'primeng/accordion';
+import {SplitterModule} from 'primeng/splitter';
+import {Country} from '../../shared/models/country';
+import {League} from '../../shared/models/league';
+import type {MatchResult} from '../../shared/models/matchResult';
+import {CountryStore} from '../../service/country.store';
+import {CountryService} from '../../service/country.service';
+import {LeagueService} from '../../service/league.service';
+import {LeagueStore} from '../../service/league.store';
+import {ResultService} from '../../service/result.service';
+import {StandingService} from '../../service/standing.service';
 
 @Component({
     selector: 'app-results',
@@ -148,6 +148,11 @@ export class ResultsComponent implements OnInit {
         return results.filter((result) => result.round === visibleRound).sort((left, right) => new Date(left.matchDate).getTime() - new Date(right.matchDate).getTime());
     });
 
+    onCountryOpenTab(event: any) {
+        this.leaguesService.resetCountryForSelectedLeagues();
+        this.leaguesService.selectCountryForSelectedLeagues(event);
+    }
+
     onSelectCountry(event: any) {
         const selected = event?.value || this.selectedCountry;
         if (selected) {
@@ -165,11 +170,6 @@ export class ResultsComponent implements OnInit {
         const countryList = this.countryStore.selectedCountries() || [];
 
         this.filteredCountries = countryList.filter((country) => country.nameNL?.toLowerCase().includes(query) || country.nameEN?.toLowerCase().includes(query));
-    }
-
-    onCountryOpenTab(event: any) {
-        this.leaguesService.resetCountryForSelectedLeagues();
-        this.leaguesService.selectCountryForSelectedLeagues(event);
     }
 
     selectLeague(league: League) {
