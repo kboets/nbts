@@ -10,32 +10,50 @@
                             </span>
                     </p-accordion-header>
                     <p-accordion-content>
-                        <p-treetable [value]="treeMapLeagueData()" [scrollable]="true" [tableStyle]="{ 'min-width': '50rem' }">
-                            <ng-template #header>
-                                <tr>
-                                    <th>Competitie</th>
-                                    <th>Team</th>
-                                    <th>Volgende match</th>
-                                    <th>score match</th>
-                                </tr>
-                            </ng-template>
-                            <ng-template #body let-rowNode let-rowData="rowData" let-columns="columns">
-                                <tr [ttRow]="rowNode">
-                                    @for (col of treeMapLeagueColumns(); let first = $first; track col) {
-                                        <td>
-                                            @if (first) {
-                                                <div class="flex items-center gap-2">
-                                                    <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
-                                                    <span>{{ rowData[col.field] }}</span>
-                                                </div>
-                                            } @else {
-                                                {{ rowData[col.field] }}
+                        @if (selectedLeaguesError()) {
+                            <p>{{ selectedLeaguesError() }}</p>
+                        }
+                        @if (treeMapForecastData().length > 0) {
+                            <p-treetable [value]="treeMapForecastData()" [scrollable]="true" [tableStyle]="{ 'min-width': '70rem' }">
+                                <ng-template #header>
+                                    <tr>
+                                        <th class="px-4 py-4 text-lg">Competitie</th>
+                                        <th class="px-4 py-4 text-lg">Team</th>
+                                        <th class="px-4 py-4 text-lg">Volgende wedstrijd</th>
+                                        <th class="px-4 py-4 text-lg">Datum</th>
+                                        <th class="px-4 py-4 text-lg">Totaal</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template #body let-rowNode let-rowData="rowData">
+                                    <tr [ttRow]="rowNode">
+                                        <td class="px-4 py-4 text-lg">
+                                            @if (!rowNode.node?.leaf) {
+                                                <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
+                                            }
+                                            <span>
+                                                {{ rowData.name }}
+                                                @if (rowData.league && rowData.round !== null) {
+                                                    <br/>
+                                                    <small><strong>Ronde {{ rowData.round }}</strong></small>
+                                                }
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-4 text-lg">{{ rowData.team }}</td>
+                                        <td class="px-4 py-4 text-lg">
+                                            @if (rowData.team) {
+                                                @if (rowData.nextMatchHomeTeam === rowData.team) {
+                                                    <strong>{{ rowData.team }}</strong> - {{ rowData.opponent }}
+                                                } @else {
+                                                    {{ rowData.opponent }} - <strong>{{ rowData.team }}</strong>
+                                                }
                                             }
                                         </td>
-                                    }
-                                </tr>
-                            </ng-template>
-                        </p-treetable>
+                                        <td class="px-4 py-4 text-lg">{{ rowData.nextMatchDate | date:'dd/MM/yyyy' }}</td>
+                                        <td class="px-4 py-4 text-lg">{{ rowData.totalPoints }}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-treetable>
+                        }
                     </p-accordion-content>
                 </p-accordion-panel>
             }

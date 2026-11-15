@@ -75,6 +75,10 @@ export class ForecastService {
         return this.http.get<Forecast[]>(`${this.baseUrl}/forecasts/${leagueId}/${round}/${season}`);
     }
 
+    getCurrentRound(leagueId: number, season: number): Observable<number> {
+        return this.http.get<number>(`${this.baseUrl}/currentRound/${leagueId}/${season}`);
+    }
+
     private getDummyForecast4LeagueAndRound(leagueId: number, round: number, season: number): Observable<Forecast[]> {
         console.log('getDummyForecast4LeagueAndRound', leagueId, round, season);
         return of([
