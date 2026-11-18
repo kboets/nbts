@@ -53,6 +53,7 @@ export class ForecastsComponent implements OnInit {
     private forecastDetailsByLeague = signal<Record<string, ForecastDetail[]>>({});
     private forecastLoading = signal<Set<string>>(new Set());
     private forecastErrors = signal<Record<string, string>>({});
+    private collapsedForecastKeys = signal<Set<string>>(new Set());
     private requestedLeagueKeys = new Set<string>();
 
     // data for the tree map of the leagues in the country tab
@@ -61,6 +62,7 @@ export class ForecastsComponent implements OnInit {
         const roundsByLeague = this.forecastRoundByLeague();
         const loading = this.forecastLoading();
         const errors = this.forecastErrors();
+        const collapsedKeys = this.collapsedForecastKeys();
 
         return (this.selectedLeagues() ?? []).map(league => {
             const key = this.getLeagueKey(league);
@@ -106,9 +108,13 @@ export class ForecastsComponent implements OnInit {
                 },
                 children,
                 leaf: details !== undefined && details.length === 0,
-                expanded: false
+                expanded: !collapsedKeys.has(key)
             };
         }).filter(node => !!node.children?.length);
+    });
+    public allForecastsExpanded = computed(() => {
+        const nodes = this.treeMapForecastData();
+        return nodes.length > 0 && nodes.every(node => node.expanded === true);
     });
 
     constructor() {
@@ -126,15 +132,29 @@ export class ForecastsComponent implements OnInit {
         });
     }
 
-    // toggleForecasts() {
-    //     if (this.treeMapForecastData() && this.treeMapForecastData().length > 0) {
-    //         const newForecasts = [...this.treeMapForecastData()];
-    //         newForecasts[0] = {...newForecasts[0], expanded: !newForecasts[0].expanded};
-    //         this.treeMapForecastData.set(newForecasts);
-    //     }
-    //
-    //
-    // }
+    toggleAllForecasts() {
+        if (this.allForecastsExpanded()) {
+            this.collapsedForecastKeys.set(new Set(this.selectedLeagues().map(league => this.getLeagueKey(league))));
+        } else {
+            this.collapsedForecastKeys.set(new Set());
+        }
+    }
+
+    toggleForecasts(node: TreeNode<ForecastTreeRow>) {
+        const key = node.key;
+        if (!key) {
+            return;
+        }
+        this.collapsedForecastKeys.update(keys => {
+            const next = new Set(keys);
+            if (next.has(key)) {
+                next.delete(key);
+            } else {
+                next.add(key);
+            }
+            return next;
+        });
+    }
 
     private loadForecastsForLeague(league: League) {
         const key = this.getLeagueKey(league);

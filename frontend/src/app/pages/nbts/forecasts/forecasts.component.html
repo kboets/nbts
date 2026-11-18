@@ -3,6 +3,11 @@
         <p>{{ selectedLeaguesError() }}</p>
     }
     @if (treeMapForecastData().length > 0) {
+        <p-button
+            [label]="allForecastsExpanded() ? 'Alles inklappen' : 'Alles uitklappen'"
+            [icon]="allForecastsExpanded() ? 'pi pi-minus' : 'pi pi-plus'"
+            (onClick)="toggleAllForecasts()"
+        />
         <p-treetable [value]="treeMapForecastData()" [scrollable]="true" [tableStyle]="{ 'min-width': '70rem' }">
             <ng-template #header>
                 <tr>
@@ -17,7 +22,14 @@
                 <tr [ttRow]="rowNode">
                     <td class="px-4 py-4 text-lg">
                         @if (rowData.league && rowNode.node?.children?.length) {
-                            <p-treetable-toggler [rowNode]="rowNode"></p-treetable-toggler>
+                            <button
+                                type="button"
+                                class="p-treetable-toggler p-link mr-2"
+                                [attr.aria-label]="rowNode.node.expanded ? 'Voorspellingen inklappen' : 'Voorspellingen uitklappen'"
+                                (click)="toggleForecasts(rowNode.node)"
+                            >
+                                <i [class]="rowNode.node.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" aria-hidden="true"></i>
+                            </button>
                         }
                         <span>
                             {{ rowData.name }}
