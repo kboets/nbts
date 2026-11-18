@@ -9,14 +9,9 @@ import {TagModule} from 'primeng/tag';
 import {DataViewModule} from 'primeng/dataview';
 import {ButtonModule} from 'primeng/button';
 import {ToastModule} from 'primeng/toast';
-import {AccordionModule} from 'primeng/accordion';
 import {TreeTableModule} from 'primeng/treetable';
-import {CountryStore} from '../../service/country.store';
-import {CountryService} from '../../service/country.service';
-import {LeagueStore} from '../../service/league.store';
 import {LeagueService} from '../../service/league.service';
 import {ForecastService} from '../../service/forecast.service';
-import {Country} from '@/app/pages/shared/models/country';
 import {League} from '../../shared/models/league';
 import {ForecastDetail} from '../../shared/models/forecastDetail';
 
@@ -36,26 +31,19 @@ interface ForecastTreeRow {
 @Component({
     selector: 'app-forecasts',
     standalone: true,
-    imports: [TabsModule, AccordionModule, AutoCompleteModule, FormsModule, DataViewModule, ButtonModule, TagModule, CommonModule, ToastModule, TableModule, TreeTableModule],
+    imports: [TabsModule, AutoCompleteModule, FormsModule, DataViewModule, ButtonModule, TagModule, CommonModule, ToastModule, TableModule, TreeTableModule],
     providers: [MessageService, ConfirmationService],
     templateUrl: './forecasts.component.html'
 })
 export class ForecastsComponent implements OnInit {
 
-    // stores and services
-    public countryStore: CountryStore = inject(CountryStore);
-    private countryService = inject(CountryService);
-    private leagueStore = inject(LeagueStore);
+    // services
     private leaguesService = inject(LeagueService);
     private forecastService = inject(ForecastService);
 
-    // data for the accordion tabs
-    public selectedCountries = signal<Country[] | null>(null);
-    selectedCountry: Country | null = null;
-
-    // data for the selection of the league in the country tab
-    public selectedLeagues = this.leaguesService.selectedLeagues;
-    public selectedLeaguesError = this.leaguesService.selectedLeaguesError;
+    // persisted current leagues
+    public selectedLeagues = signal<League[]>([]);
+    public selectedLeaguesError = signal<string | null>(null);
 
     // data for the forecast in each round in the league tab
     public selectedRound = signal<number | undefined>(undefined);
@@ -65,6 +53,7 @@ export class ForecastsComponent implements OnInit {
     private forecastDetailsByLeague = signal<Record<string, ForecastDetail[]>>({});
     private forecastLoading = signal<Set<string>>(new Set());
     private forecastErrors = signal<Record<string, string>>({});
+    private collapsedForecastKeys = signal<Set<string>>(new Set());
     private requestedLeagueKeys = new Set<string>();
 
     // data for the tree map of the leagues in the country tab
@@ -73,6 +62,7 @@ export class ForecastsComponent implements OnInit {
         const roundsByLeague = this.forecastRoundByLeague();
         const loading = this.forecastLoading();
         const errors = this.forecastErrors();
+        const collapsedKeys = this.collapsedForecastKeys();
 
         return (this.selectedLeagues() ?? []).map(league => {
             const key = this.getLeagueKey(league);
@@ -118,9 +108,13 @@ export class ForecastsComponent implements OnInit {
                 },
                 children,
                 leaf: details !== undefined && details.length === 0,
-                expanded: details !== undefined || loading.has(key) || !!errors[key]
+                expanded: !collapsedKeys.has(key)
             };
         }).filter(node => !!node.children?.length);
+    });
+    public allForecastsExpanded = computed(() => {
+        const nodes = this.treeMapForecastData();
+        return nodes.length > 0 && nodes.every(node => node.expanded === true);
     });
 
     constructor() {
@@ -131,21 +125,34 @@ export class ForecastsComponent implements OnInit {
         });
     }
 
-    onCountryOpenTab(event: any) {
-        this.leaguesService.selectCountryForSelectedLeagues(event);
-    }
-
-    onCountryCloseTab(event: any) {
-        this.leaguesService.resetCountryForSelectedLeagues();
-    }
-
     ngOnInit(): void {
-        this.initForecastData();
+        this.leaguesService.getCurrentLeagues().subscribe({
+            next: leagues => this.selectedLeagues.set(leagues),
+            error: error => this.selectedLeaguesError.set(`Could not load leagues: ${error.message ?? error}`)
+        });
     }
 
-    private initForecastData() {
-        this.countryService.getSelectedCountries().subscribe((countriesList: Country[]) => {
-            this.selectedCountries.set(countriesList);
+    toggleAllForecasts() {
+        if (this.allForecastsExpanded()) {
+            this.collapsedForecastKeys.set(new Set(this.selectedLeagues().map(league => this.getLeagueKey(league))));
+        } else {
+            this.collapsedForecastKeys.set(new Set());
+        }
+    }
+
+    toggleForecasts(node: TreeNode<ForecastTreeRow>) {
+        const key = node.key;
+        if (!key) {
+            return;
+        }
+        this.collapsedForecastKeys.update(keys => {
+            const next = new Set(keys);
+            if (next.has(key)) {
+                next.delete(key);
+            } else {
+                next.add(key);
+            }
+            return next;
         });
     }
 
