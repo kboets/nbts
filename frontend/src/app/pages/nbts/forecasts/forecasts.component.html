@@ -8,7 +8,7 @@
             [icon]="allForecastsExpanded() ? 'pi pi-minus' : 'pi pi-plus'"
             (onClick)="toggleAllForecasts()"
         />
-        <p-treetable [value]="treeMapForecastData()" [scrollable]="true" [tableStyle]="{ 'min-width': '70rem' }">
+        <p-treetable [value]="treeMapForecastData()" [scrollable]="true" [tableStyle]="{ 'min-width': '70rem' }" size="Large">
             <ng-template #header>
                 <tr>
                     <th class="px-4 py-4 text-lg">Competitie</th>
