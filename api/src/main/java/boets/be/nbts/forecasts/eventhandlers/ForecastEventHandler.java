@@ -28,8 +28,6 @@ public class ForecastEventHandler {
 
     @ApplicationModuleListener
     public void onForecastDataCollected(ForecastCollectedEvent event) {
-        log.info("[FORECASTS] Received forecast event");
-
         var rawDataList = event.forecastRawData();
         var updatedForecastList = new ArrayList<ForecastRawData>();
 
@@ -75,6 +73,7 @@ public class ForecastEventHandler {
            forecasts.add(forecast);
            //C. save the forecast results
            ForecastRound forecastRound = new ForecastRound(calculationContexts.getFirst().nextMatch().round(), rawData.league().leagueId(), rawData.league().season());
+           log.info("[FORECASTS] Forecast successful created for league and round : {}, {}", rawData.league().name(), rawData.league().season());
            forecastService.saveForecastCache(forecastRound, forecasts);
         }
     }
