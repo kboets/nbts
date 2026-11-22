@@ -108,7 +108,7 @@ public class ForecastService {
             lastResults.addAll(lastAwayResults);
 
             var nextMatch = rawData.results().stream()
-                    .filter(result -> result.round() == rawData.currentRound() + 1)
+                    .filter(result -> result.round() == rawData.currentRound())
                     .filter(result -> result.homeTeam().equals(team) || result.awayTeam().equals(team))
                     .findFirst()
                     .orElse(null);
