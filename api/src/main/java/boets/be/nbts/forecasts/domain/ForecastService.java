@@ -105,6 +105,7 @@ public class ForecastService {
             lastResults.addAll(lastHomeResults);
             lastResults.addAll(lastAwayResults);
 
+            // next match is the current round match for the team, if it exists
             var nextMatch = rawData.results().stream()
                     .filter(result -> result.round() == rawData.currentRound())
                     .filter(result -> result.homeTeam().equals(team) || result.awayTeam().equals(team))
@@ -128,10 +129,10 @@ public class ForecastService {
         return currentRound.filter(result -> result.round() >= 7).isPresent();
     }
 
-//    private Optional<Result> getNextRound(List<Result> results) {
-//        var currentRound = results.stream().filter(Result::isCurrent).findFirst();
-//        return currentRound.flatMap(result -> results.stream().filter(r -> r.round() == result.round() + 1).findFirst());
-//    }
+    private Optional<Result> getNextRound(List<Result> results) {
+        var currentRound = results.stream().filter(Result::isCurrent).findFirst();
+        return currentRound.flatMap(result -> results.stream().filter(r -> r.round() == result.round() + 1).findFirst());
+    }
 
 
 }
