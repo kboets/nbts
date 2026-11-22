@@ -52,9 +52,8 @@ public class ForecastService {
         List<Result> currentRoundResults = rawData.results().stream()
                 .filter(result -> result.round() == rawData.currentRound())
                 .toList();
-
-        return currentRoundResults.stream()
-                .anyMatch(result -> result.matchStatus().equals("NS"));
+        // if any of the results has not status NS, then the current round has already started and we should not forecast for this round.
+        return currentRoundResults.stream().anyMatch(result -> !result.matchStatus().equals("NS"));
     }
 
     /**
