@@ -36,10 +36,10 @@ public class MockResultClientService implements ResultClient {
             String contentAsString = resource.getContentAsString(UTF_8);
             // map the content to a list of Result objects using your preferred JSON library
             ResultApiResponse apiResponse = jsonMapper.readValue(contentAsString, new TypeReference<>() {});
-            List<Result> results = apiResponse.response().stream()
+            return apiResponse.response().stream()
                     .map(this::mapToResult)
                     .toList();
-            return markCurrentRound(results);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

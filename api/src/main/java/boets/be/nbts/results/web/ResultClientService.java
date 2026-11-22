@@ -27,11 +27,9 @@ public class ResultClientService extends RapidApiClient implements ResultClient 
                 "season", season
         ));
 
-        var results = apiResponse.response()
+        return apiResponse.response()
                 .stream()
                 .map(this::mapToResult)
                 .toList();
-
-        return markCurrentRound(results);
     }
 }
