@@ -7,7 +7,6 @@ import boets.be.nbts.forecasts.domain.models.ForecastRound;
 import boets.be.nbts.results.domain.models.Result;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -15,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Slf4j
 @Service
 @Getter
 @RequiredArgsConstructor
@@ -130,10 +128,10 @@ public class ForecastService {
         return currentRound.filter(result -> result.round() >= 7).isPresent();
     }
 
-    private Optional<Result> getNextRound(List<Result> results) {
-        var currentRound = results.stream().filter(Result::isCurrent).findFirst();
-        return currentRound.flatMap(result -> results.stream().filter(r -> r.round() == result.round() + 1).findFirst());
-    }
+//    private Optional<Result> getNextRound(List<Result> results) {
+//        var currentRound = results.stream().filter(Result::isCurrent).findFirst();
+//        return currentRound.flatMap(result -> results.stream().filter(r -> r.round() == result.round() + 1).findFirst());
+//    }
 
 
 }
