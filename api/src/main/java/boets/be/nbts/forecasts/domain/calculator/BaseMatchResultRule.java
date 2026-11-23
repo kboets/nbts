@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 @Order(1)
 public class BaseMatchResultRule implements PointsCalculationRule {
 
-    private static final int HOME_WIN_POINTS = 20;
-    private static final int HOME_DRAW_POINTS = 5;
-    private static final int HOME_LOSS_POINTS = -10;
+    protected static final int HOME_WIN_POINTS = 20;
+    protected static final int HOME_DRAW_POINTS = 5;
+    protected static final int HOME_LOSS_POINTS = -10;
 
-    private static final int AWAY_WIN_POINTS = 30;
-    private static final int AWAY_DRAW_POINTS = 10;
-    private static final int AWAY_LOSS_POINTS = -5;
+    protected static final int AWAY_WIN_POINTS = 30;
+    protected static final int AWAY_DRAW_POINTS = 10;
+    protected static final int AWAY_LOSS_POINTS = -5;
 
     @Override
     public CalculationContext calculatePoints(CalculationContext context) {
