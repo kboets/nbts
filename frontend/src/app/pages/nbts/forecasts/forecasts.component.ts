@@ -168,14 +168,13 @@ export class ForecastsComponent implements OnInit {
 
         this.forecastService.getCurrentRound(league.leagueId, season).subscribe({
             next: currentRound => {
-                const nextRound = currentRound + 1;
-                this.forecastRoundByLeague.update(rounds => ({...rounds, [key]: nextRound}));
+                this.forecastRoundByLeague.update(rounds => ({...rounds, [key]: currentRound}));
                 this.forecastService.selectLeagueForForecast(league.leagueId);
-                this.forecastService.selectRoundForForecast(nextRound);
+                this.forecastService.selectRoundForForecast(currentRound);
                 this.forecastService.selectSeasonForForecast(season);
-                this.selectedRound.set(nextRound);
+                this.selectedRound.set(currentRound);
 
-                this.forecastService.getForecasts(league.leagueId, nextRound, season).subscribe({
+                this.forecastService.getForecasts(league.leagueId, currentRound, season).subscribe({
                     next: forecasts => {
                         const details = forecasts
                             .flatMap(forecast => forecast.forecastDetails)

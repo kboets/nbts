@@ -7,7 +7,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,9 +22,5 @@ class MockResultClientServiceTest {
         List<Result> results = resultClient.getResultsByLeagueAndSeason(144, 2026);
         assertThat(results).isNotNull();
         assertThat(results.size()).isEqualTo(306);
-        // current round should be 10
-        Optional<Result> result = results.stream().filter(Result::isCurrent).findFirst();
-        assertThat(result).isPresent();
-        assertThat(result.get().round()).isEqualTo(10);
     }
 }

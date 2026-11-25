@@ -7,7 +7,6 @@ import boets.be.nbts.forecasts.domain.models.ForecastRound;
 import boets.be.nbts.results.domain.models.Result;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -15,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Slf4j
 @Service
 @Getter
 @RequiredArgsConstructor
@@ -54,9 +52,8 @@ public class ForecastService {
         List<Result> currentRoundResults = rawData.results().stream()
                 .filter(result -> result.round() == rawData.currentRound())
                 .toList();
-
-        return currentRoundResults.stream()
-                .anyMatch(result -> result.matchStatus().equals("NS"));
+        // if any of the results has not status NS, then the current round has already started and we should not forecast for this round.
+        return currentRoundResults.stream().anyMatch(result -> !result.matchStatus().equals("NS"));
     }
 
     /**
@@ -107,8 +104,9 @@ public class ForecastService {
             lastResults.addAll(lastHomeResults);
             lastResults.addAll(lastAwayResults);
 
+            // next match is the current round match for the team, if it exists
             var nextMatch = rawData.results().stream()
-                    .filter(result -> result.round() == rawData.currentRound() + 1)
+                    .filter(result -> result.round() == rawData.currentRound())
                     .filter(result -> result.homeTeam().equals(team) || result.awayTeam().equals(team))
                     .findFirst()
                     .orElse(null);

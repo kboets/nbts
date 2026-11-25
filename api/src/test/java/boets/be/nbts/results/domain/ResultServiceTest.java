@@ -3,6 +3,7 @@ package boets.be.nbts.results.domain;
 import boets.be.nbts.config.NbtsCacheConfiguration;
 import boets.be.nbts.results.domain.models.Result;
 import boets.be.nbts.results.web.ResultClient;
+import boets.be.nbts.results.web.RoundClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -25,8 +26,13 @@ class ResultServiceTest {
     @MockitoBean
     private ResultClient resultClientService;
 
+    @MockitoBean
+    private RoundClient roundClientService;
+
     @Test
     void getResultsByLeagueAndSeason_shouldUseCacheForSameLeagueAndSeason() {
+        int expectedRound = 5;
+        when(roundClientService.getRoundByLeagueAndSeason(113, 2026)).thenReturn(expectedRound);
         List<Result> expectedResults = List.of(new Result(
                 1494118,
                 "Allsvenskan",
@@ -38,7 +44,7 @@ class ResultServiceTest {
                 "FT",
                 true,
                 false,
-                1,
+                expectedRound,
                 true
         ));
         when(resultClientService.getResultsByLeagueAndSeason(113, 2026)).thenReturn(expectedResults);
@@ -48,5 +54,6 @@ class ResultServiceTest {
 
         assertThat(secondCall).isEqualTo(firstCall);
         verify(resultClientService, times(1)).getResultsByLeagueAndSeason(113, 2026);
+        verify(roundClientService, times(1)).getRoundByLeagueAndSeason(113, 2026);
     }
 }
