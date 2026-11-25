@@ -2,8 +2,6 @@ package boets.be.nbts.results.web;
 
 import boets.be.nbts.results.domain.models.Result;
 
-import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
 
 public interface ResultClient {
@@ -27,19 +25,7 @@ public interface ResultClient {
         );
     }
 
-    default List<Result> markCurrentRound(List<Result> results) {
-        LocalDate currentDate = LocalDate.now();
-        List<Result> finishedResults = results.stream()
-                .filter(result -> "FT".equalsIgnoreCase(result.matchStatus()))
-                .filter(result -> result.matchDate().isBefore(currentDate))
-                .sorted(Comparator.comparing(Result::matchDate).reversed())
-                .toList();
-
-        if (results.isEmpty()) {
-            return results;
-        }
-        Result latestResult = finishedResults.isEmpty() ? results.getFirst() : finishedResults.get(1);
-        int currentRound = latestResult.round();
+    default List<Result> markCurrentRound(List<Result> results, int currentRound) {
         return results.stream()
                 .map(result -> result.withCurrentRound(result.round() == currentRound))
                 .toList();

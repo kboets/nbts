@@ -81,7 +81,7 @@ class ForecastEventHandlerIT {
         ForecastLeague forecastLeague = new ForecastLeague(144, "Jupiler Pro League", 2026, "BE");
         List<Result> resultsByLeagueAndSeason = resultService.getResultsByLeagueAndSeason(144, 2026);
         List<Standing> standingsByLeagueAndSeason = standingService.getStandingsByLeagueAndSeason(144, 2026);
-        ForecastRawData forecastRawData = new ForecastRawData(forecastLeague, resultsByLeagueAndSeason, standingsByLeagueAndSeason, 10);
+        ForecastRawData forecastRawData = new ForecastRawData(forecastLeague, resultsByLeagueAndSeason, standingsByLeagueAndSeason, 11);
         return new ForecastCollectedEvent(List.of(forecastRawData));
     }
 }
