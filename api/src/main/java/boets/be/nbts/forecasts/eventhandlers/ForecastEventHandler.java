@@ -73,7 +73,7 @@ public class ForecastEventHandler {
            forecasts.add(forecast);
            //C. save the forecast results
            ForecastRound forecastRound = new ForecastRound(calculationContexts.getFirst().nextMatch().round(), rawData.league().leagueId(), rawData.league().season());
-           log.info("[FORECASTS] Forecast successful created for league and round : {}, {}", rawData.league().name(), rawData.league().season());
+           log.info("[FORECASTS] Forecast successful created for league and round : {}, {}", rawData.league().name(), rawData.currentRound());
            forecastService.saveForecastCache(forecastRound, forecasts);
         }
     }
