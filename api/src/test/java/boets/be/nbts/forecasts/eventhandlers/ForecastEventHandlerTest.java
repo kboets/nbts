@@ -58,8 +58,8 @@ class ForecastEventHandlerTest {
         assertThat(forecasts.getFirst().forecastDetails()).singleElement().satisfies(detail -> {
             assertThat(detail.totalPoints()).isEqualTo(130);
             assertThat(detail.calculationHtml())
-                    .containsSubsequence("Berekening thuiswedstrijden", "Eind score thuis wedstrijden : 55",
-                            "Berekening uitwedstrijden", "Eind score uit wedstrijden : 65",
+                    .containsSubsequence("Berekening thuiswedstrijden", "Eind score thuis wedstrijd : 55",
+                            "Berekening uitwedstrijden", "Eind score uit wedstrijd : 65",
                             "Volgende wedstrijd is thuis", ">Eind score</span>")
                     .contains("Score: 20 + (18 - 3) + 20 (booster) = 55",
                             "Score: 30 + (18 - 3) + 20 (booster) = 65",

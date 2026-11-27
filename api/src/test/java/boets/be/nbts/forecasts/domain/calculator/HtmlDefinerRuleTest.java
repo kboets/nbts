@@ -71,8 +71,8 @@ class HtmlDefinerRuleTest {
         CalculationContext scored = engine.calculateTotalPoints(context);
 
         assertThat(scored.calculationHtml())
-                .containsSubsequence("Berekening thuiswedstrijden", "Eind score thuis wedstrijden : 55",
-                        "Berekening uitwedstrijden", "Eind score uit wedstrijden : -28",
+                .containsSubsequence("Berekening thuiswedstrijden", "Eind score thuis wedstrijd : 55",
+                        "Berekening uitwedstrijden", "Eind score uit wedstrijd : -28",
                         "Volgende wedstrijd is thuis", ">Eind score</span>")
                 .contains("<h3 class=\"aligncenter\" style=\"color: #5e9ca0; text-align: left;\"><span style=\"color: #333300;\">Eind score</span></h3>")
                 .endsWith("<p>55 - 28 + 10 = <b>37</b></p>");
@@ -99,11 +99,11 @@ class HtmlDefinerRuleTest {
         CalculationContext result = new HtmlDefinerRule().calculatePoints(context);
 
         assertThat(result.calculationHtml())
-                .contains("<p><small><b>1 Winst tegen B &amp; C (2026-01-01)</b></small></p>")
+                .contains("<p><small><b>1. Winst tegen B &amp; C (2026-01-01)</b></small></p>")
                 .contains("Score: 20 + (18 - 3) + 20 (booster) = 55")
                 .contains("Score: 20 + (18 - 5) + 10 (booster) = 43")
                 .contains("Score: 20 + (18 - 8) = 30")
-                .contains("<p><b>Eind score thuis wedstrijden : 128</b></p>");
+                .contains("<p><b>Eind score thuis wedstrijd : 128</b></p>");
         assertThat(result.teamScore()).isEqualTo(context.teamScore());
         assertThat(result.opponentRankScore()).isEqualTo(context.opponentRankScore());
     }
@@ -120,7 +120,7 @@ class HtmlDefinerRuleTest {
                 .contains("Score: -10 - 3 - 20 (booster) = -33")
                 .contains("Score: 5 + (18 - 5) = 18")
                 .contains("Score: -10 - 8 = -18")
-                .contains("<p><b>Eind score thuis wedstrijden : -33</b></p>");
+                .contains("<p><b>Eind score thuis wedstrijd : -33</b></p>");
     }
 
     @Test
@@ -141,7 +141,7 @@ class HtmlDefinerRuleTest {
                 .contains("Score: -10 - 5 - 10 (booster) = -25");
         assertThat(new HtmlDefinerRule().calculatePoints(context(List.of(), List.of())).calculationHtml())
                 .contains("Berekening thuiswedstrijden")
-                .contains("<p><b>Eind score thuis wedstrijden : 0</b></p>")
+                .contains("<p><b>Eind score thuis wedstrijd : 0</b></p>")
                 .doesNotContain("Score:");
     }
 
@@ -157,11 +157,11 @@ class HtmlDefinerRuleTest {
         CalculationContext scored = new HtmlDefinerRule().calculatePoints(context);
 
         assertThat(scored.calculationHtml())
-                .contains("<p><small><b>1 Verlies tegen B &amp; C (2026-01-01)</b></small></p>")
+                .contains("<p><small><b>1. Verlies tegen B &amp; C (2026-01-01)</b></small></p>")
                 .contains("Score: -5 - 3 - 20 (booster) = -28")
                 .contains("Score: -5 - 5 - 10 (booster) = -20")
                 .contains("Score: 30 + (18 - 8) = 40")
-                .contains("<p><b>Eind score uit wedstrijden : -8</b></p>");
+                .contains("<p><b>Eind score uit wedstrijd : -8</b></p>");
         assertThat(scored.teamScore()).isEqualTo(context.teamScore());
         assertThat(scored.opponentRankScore()).isEqualTo(context.opponentRankScore());
     }
@@ -176,7 +176,7 @@ class HtmlDefinerRuleTest {
                 .contains("Score: 10 + (18 - 5) = 23");
         assertThat(new HtmlDefinerRule().calculatePoints(context(List.of(), List.of())).calculationHtml())
                 .contains("Berekening uitwedstrijden")
-                .endsWith("<p><b>Eind score uit wedstrijden : 0</b></p>")
+                .contains("<p><b>Eind score uit wedstrijd : 0</b></p>")
                 .doesNotContain("Score:");
     }
 

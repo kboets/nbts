@@ -85,20 +85,20 @@ class HomeMatchFixtureTest {
         CalculationContext scored = engine.calculateTotalPoints(context);
 
         assertThat(scored.calculationHtml())
-                .contains("<p><small><b>1 Winst tegen BK Hacken (2026-08-09)</b></small></p><p>Score: 20 + (16 - 4) + 20 (booster) = 52</p>")
-                .contains("<p><small><b>2 Winst tegen Degerfors IF (2026-07-19)</b></small></p><p>Score: 20 + (16 - 7) + 10 (booster) = 39</p>")
-                .contains("<p><small><b>3 Winst tegen Kalmar FF (2026-07-12)</b></small></p><p>Score: 20 + (16 - 10) = 26</p>")
-                .contains("<p><b>Eind score thuis wedstrijden : 117</b></p>");
+                .contains("<p><small><b>1. Winst tegen BK Hacken (2026-08-09)</b></small></p><p>Score: 20 + (16 - 4) + 20 (booster) = 52</p>")
+                .contains("<p><small><b>2. Winst tegen Degerfors IF (2026-07-19)</b></small></p><p>Score: 20 + (16 - 7) + 10 (booster) = 39</p>")
+                .contains("<p><small><b>3. Winst tegen Kalmar FF (2026-07-12)</b></small></p><p>Score: 20 + (16 - 10) = 26</p>")
+                .contains("<p><b>Eind score thuis wedstrijd : 117</b></p>");
         assertThat(scored.calculationHtml())
-                .contains("<p><small><b>1 Gelijkspel tegen IF Brommapojkarna (2026-07-26)</b></small></p><p>Score: 10 + (16 - 6) = 20</p>")
-                .contains("<p><small><b>2 Winst tegen IF Elfsborg (2026-07-05)</b></small></p><p>Score: 30 + (16 - 8) + 10 (booster) = 48</p>")
-                .contains("<p><small><b>3 Verlies tegen BK Hacken (2026-05-31)</b></small></p><p>Score: -5 - 4 = -9</p>")
-                .contains("<p><b>Eind score uit wedstrijden : 59</b></p>");
+                .contains("<p><small><b>1. Gelijkspel tegen IF Brommapojkarna (2026-07-26)</b></small></p><p>Score: 10 + (16 - 6) = 20</p>")
+                .contains("<p><small><b>2. Winst tegen IF Elfsborg (2026-07-05)</b></small></p><p>Score: 30 + (16 - 8) + 10 (booster) = 48</p>")
+                .contains("<p><small><b>3. Verlies tegen BK Hacken (2026-05-31)</b></small></p><p>Score: -5 - 4 = -9</p>")
+                .contains("<p><b>Eind score uit wedstrijd : 59</b></p>");
         assertThat(scored.calculationHtml()).contains(
                 "<p>Volgende wedstrijd is uit</p><p>Kalmar FF - <b>Hammarby FF</b>: verminder met malus punten: 10</p>");
         assertThat(scored.calculationHtml())
-                .containsSubsequence("Berekening thuiswedstrijden", "Eind score thuis wedstrijden : 117",
-                        "Berekening uitwedstrijden", "Eind score uit wedstrijden : 59", "Volgende wedstrijd is uit",
+                .containsSubsequence("Berekening thuiswedstrijden", "Eind score thuis wedstrijd : 117",
+                        "Berekening uitwedstrijden", "Eind score uit wedstrijd : 59", "Volgende wedstrijd is uit",
                         ">Eind score</span>", "117 + 59 - 10 = <b>166</b>")
                 .endsWith("<p>117 + 59 - 10 = <b>166</b></p>");
         assertThat(scored.teamScore() + scored.opponentRankScore()).isEqualTo(166);
@@ -135,20 +135,20 @@ class HomeMatchFixtureTest {
                 .filter(item -> item.team().equals("Kalmar FF"))
                 .findFirst().orElseThrow();
         assertThat(detail.calculationHtml())
-                .contains("<p><small><b>1 Winst tegen Mjallby AIF (2026-07-25)</b></small></p><p>Score: 20 + (16 - 2) + 20 (booster) = 54</p>")
-                .contains("<p><small><b>2 Gelijkspel tegen Malmo FF (2026-07-20)</b></small></p><p>Score: 5 + (16 - 5) = 16</p>")
-                .contains("<p><small><b>3 Winst tegen Orgryte IS (2026-07-05)</b></small></p><p>Score: 20 + (16 - 12) = 24</p>")
-                .contains("<p><b>Eind score thuis wedstrijden : 94</b></p>");
+                .contains("<p><small><b>1. Winst tegen Mjallby AIF (2026-07-25)</b></small></p><p>Score: 20 + (16 - 2) + 20 (booster) = 54</p>")
+                .contains("<p><small><b>2. Gelijkspel tegen Malmo FF (2026-07-20)</b></small></p><p>Score: 5 + (16 - 5) = 16</p>")
+                .contains("<p><small><b>3. Winst tegen Orgryte IS (2026-07-05)</b></small></p><p>Score: 20 + (16 - 12) = 24</p>")
+                .contains("<p><b>Eind score thuis wedstrijd : 94</b></p>");
         assertThat(detail.calculationHtml())
-                .contains("<p><small><b>1 Verlies tegen IFK Goteborg (2026-08-09)</b></small></p><p>Score: -5 - 9 - 20 (booster) = -34</p>")
-                .contains("<p><small><b>2 Gelijkspel tegen BK Hacken (2026-08-01)</b></small></p><p>Score: 10 + (16 - 4) = 22</p>")
-                .contains("<p><small><b>3 Verlies tegen Hammarby FF (2026-07-12)</b></small></p><p>Score: -5 - 1 = -6</p>")
-                .contains("<p><b>Eind score uit wedstrijden : -18</b></p>");
+                .contains("<p><small><b>1. Verlies tegen IFK Goteborg (2026-08-09)</b></small></p><p>Score: -5 - 9 - 20 (booster) = -34</p>")
+                .contains("<p><small><b>2. Gelijkspel tegen BK Hacken (2026-08-01)</b></small></p><p>Score: 10 + (16 - 4) = 22</p>")
+                .contains("<p><small><b>3. Verlies tegen Hammarby FF (2026-07-12)</b></small></p><p>Score: -5 - 1 = -6</p>")
+                .contains("<p><b>Eind score uit wedstrijd : -18</b></p>");
         assertThat(detail.calculationHtml()).contains(
                 "<p>Volgende wedstrijd is thuis</p><p><b>Kalmar FF</b> - Hammarby FF: voeg extra punten toe: 10</p>");
         assertThat(detail.calculationHtml())
-                .containsSubsequence("Berekening thuiswedstrijden", "Eind score thuis wedstrijden : 94",
-                        "Berekening uitwedstrijden", "Eind score uit wedstrijden : -18",
+                .containsSubsequence("Berekening thuiswedstrijden", "Eind score thuis wedstrijd : 94",
+                        "Berekening uitwedstrijden", "Eind score uit wedstrijd : -18",
                         "Volgende wedstrijd is thuis", ">Eind score</span>")
                 .contains("<h3 class=\"aligncenter\" style=\"color: #5e9ca0; text-align: left;\"><span style=\"color: #333300;\">Eind score</span></h3>")
                 .endsWith("<p>94 - 18 + 10 = <b>86</b></p>");
