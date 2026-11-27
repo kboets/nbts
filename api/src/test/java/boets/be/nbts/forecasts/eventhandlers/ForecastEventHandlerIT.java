@@ -74,6 +74,9 @@ class ForecastEventHandlerIT {
         ForecastDetail gentForecastDetail = gentOptional.get();
         assertThat(gentForecastDetail.opponent()).isEqualTo("Kortrijk");
         assertThat(gentForecastDetail.totalPoints()).isEqualTo(165);
+        assertThat(gentForecastDetail.calculationHtml())
+                .contains("Berekening thuiswedstrijden", "Berekening uitwedstrijden", "Score:",
+                        "Volgende wedstrijd is", "<b>Gent</b>", "Eind score", "<b>165</b>");
     }
 
 

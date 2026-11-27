@@ -19,12 +19,15 @@ public class NextMatchRule implements PointsCalculationRule {
 
     @Override
     public CalculationContext calculatePoints(CalculationContext context) {
-        Result nextMatch = context.nextMatch();
-        if (isHomeMatch(nextMatch, context.team())) {
-            return context.withTeamScore(HOME_MATCH_POINTS);
-        } else if (nextMatch.awayTeam().equals(context.team())) {
-            return context.withTeamScore(AWAY_MATCH_POINTS);
+        return context.withTeamScore(calculateNextMatchPoints(context.nextMatch(), context.team()));
+    }
+
+    static int calculateNextMatchPoints(Result nextMatch, String team) {
+        if (nextMatch.homeTeam().equals(team)) {
+            return HOME_MATCH_POINTS;
+        } else if (nextMatch.awayTeam().equals(team)) {
+            return AWAY_MATCH_POINTS;
         }
-        return context;
+        return 0;
     }
 }

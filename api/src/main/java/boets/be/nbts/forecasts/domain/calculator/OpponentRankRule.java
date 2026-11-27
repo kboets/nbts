@@ -22,23 +22,23 @@ public class OpponentRankRule implements PointsCalculationRule {
         for (Result match : context.previousResults()) {
             int opponentRank = getOpponentRankFromMatch(match, context);
             if (isHomeMatch(match, context.team())) {
-                if (match.homeTeamHasWon() || !match.homeTeamHasLost()) {
-                    points += (totalTeams - opponentRank);
-                } else {
-                    points -= opponentRank;
-                }
+                points += calculateHomeRankPoints(match, totalTeams, opponentRank);
             } else {
-                if (match.homeTeamHasLost() || !match.homeTeamHasWon()) {
-                    points += (totalTeams - opponentRank);
-                } else {
-                    points -= opponentRank;
-                }
+                points += calculateAwayRankPoints(match, totalTeams, opponentRank);
             }
         }
         return context.withOpponentRankScore(points);
     }
 
-    private int getOpponentRankFromMatch(Result match, CalculationContext context) {
+    static int calculateHomeRankPoints(Result match, int totalTeams, int opponentRank) {
+        return match.homeTeamHasLost() ? -opponentRank : totalTeams - opponentRank;
+    }
+
+    static int calculateAwayRankPoints(Result match, int totalTeams, int opponentRank) {
+        return match.homeTeamHasLost() || !match.homeTeamHasWon() ? totalTeams - opponentRank : -opponentRank;
+    }
+
+    static int getOpponentRankFromMatch(Result match, CalculationContext context) {
         String opponentTeam = match.awayTeam().equals(context.team()) ? match.homeTeam() : match.awayTeam();
         for (var standing : context.standings()) {
             if (standing.teamName().equals(opponentTeam)) {
