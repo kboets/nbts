@@ -49,9 +49,34 @@
                         }
                     </td>
                     <td class="px-4 py-4 text-lg">{{ rowData.nextMatchDate | date:'dd/MM/yyyy' }}</td>
-                    <td class="px-4 py-4 text-lg">{{ rowData.totalPoints }}</td>
+                    <td class="px-4 py-4 text-lg">
+                        @if (rowData.calculationHtml) {
+                            <button
+                                type="button"
+                                class="p-link mr-2"
+                                [attr.aria-label]="'Toon scoreberekening voor ' + rowData.team"
+                                (click)="showCalculation(rowData.team, rowData.calculationHtml)"
+                            >
+                                <i class="pi pi-question-circle" aria-hidden="true"></i>
+                            </button>
+                        }
+                        {{ rowData.totalPoints }}
+                    </td>
                 </tr>
             </ng-template>
         </p-treetable>
     }
+    <p-dialog
+        [(visible)]="calculationVisible"
+        [header]="'Scoreberekening ' + selectedCalculationTeam"
+        [modal]="true"
+        [dismissableMask]="true"
+        [draggable]="false"
+        [resizable]="false"
+        [style]="{ width: 'min(60rem, 94vw)', maxHeight: '90vh' }"
+        closeAriaLabel="Sluiten"
+        appendTo="body"
+    >
+        <div class="forecast-calculation" [innerHTML]="selectedCalculationHtml"></div>
+    </p-dialog>
 </div>
