@@ -6,4 +6,5 @@ export interface ForecastDetail {
     teamScore?: number;
     opponentRankScore?: number;
     totalPoints: number;
+    calculationHtml?: string;
 }

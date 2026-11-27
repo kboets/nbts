@@ -10,6 +10,7 @@ import {DataViewModule} from 'primeng/dataview';
 import {ButtonModule} from 'primeng/button';
 import {ToastModule} from 'primeng/toast';
 import {TreeTableModule} from 'primeng/treetable';
+import {DialogModule} from 'primeng/dialog';
 import {LeagueService} from '../../service/league.service';
 import {ForecastService} from '../../service/forecast.service';
 import {League} from '../../shared/models/league';
@@ -26,12 +27,13 @@ interface ForecastTreeRow {
     teamScore: number | null;
     opponentRankScore: number | null;
     totalPoints: number | null;
+    calculationHtml: string;
 }
 
 @Component({
     selector: 'app-forecasts',
     standalone: true,
-    imports: [TabsModule, AutoCompleteModule, FormsModule, DataViewModule, ButtonModule, TagModule, CommonModule, ToastModule, TableModule, TreeTableModule],
+    imports: [TabsModule, AutoCompleteModule, FormsModule, DataViewModule, ButtonModule, TagModule, CommonModule, ToastModule, TableModule, TreeTableModule, DialogModule],
     providers: [MessageService, ConfirmationService],
     templateUrl: './forecasts.component.html'
 })
@@ -44,6 +46,9 @@ export class ForecastsComponent implements OnInit {
     // persisted current leagues
     public selectedLeagues = signal<League[]>([]);
     public selectedLeaguesError = signal<string | null>(null);
+    public calculationVisible = false;
+    public selectedCalculationHtml = '';
+    public selectedCalculationTeam = '';
 
     // data for the forecast in each round in the league tab
     public selectedRound = signal<number | undefined>(undefined);
@@ -86,7 +91,8 @@ export class ForecastsComponent implements OnInit {
                         nextMatchDate: detail.nextMatchDate,
                         teamScore: detail.teamScore ?? null,
                         opponentRankScore: detail.opponentRankScore ?? null,
-                        totalPoints: detail.totalPoints
+                        totalPoints: detail.totalPoints,
+                        calculationHtml: detail.calculationHtml ?? ''
                     },
                     leaf: true
                 }));
@@ -104,7 +110,8 @@ export class ForecastsComponent implements OnInit {
                     nextMatchDate: '',
                     teamScore: null,
                     opponentRankScore: null,
-                    totalPoints: null
+                    totalPoints: null,
+                    calculationHtml: ''
                 },
                 children,
                 leaf: details !== undefined && details.length === 0,
@@ -130,6 +137,12 @@ export class ForecastsComponent implements OnInit {
             next: leagues => this.selectedLeagues.set(leagues),
             error: error => this.selectedLeaguesError.set(`Could not load leagues: ${error.message ?? error}`)
         });
+    }
+
+    showCalculation(team: string, html: string) {
+        this.selectedCalculationTeam = team;
+        this.selectedCalculationHtml = html;
+        this.calculationVisible = true;
     }
 
     toggleAllForecasts() {
@@ -168,7 +181,7 @@ export class ForecastsComponent implements OnInit {
 
         this.forecastService.getCurrentRound(league.leagueId, season).subscribe({
             next: currentRound => {
-                const nextRound = currentRound + 1;
+                const nextRound = currentRound ;
                 this.forecastRoundByLeague.update(rounds => ({...rounds, [key]: nextRound}));
                 this.forecastService.selectLeagueForForecast(league.leagueId);
                 this.forecastService.selectRoundForForecast(nextRound);
@@ -225,7 +238,8 @@ export class ForecastsComponent implements OnInit {
                 nextMatchDate: '',
                 teamScore: null,
                 opponentRankScore: null,
-                totalPoints: null
+                totalPoints: null,
+                calculationHtml: ''
             },
             leaf: true
         };
