@@ -114,7 +114,7 @@ public class HtmlDefinerRule implements PointsCalculationRule {
                 <h3 class="aligncenter" style="color: #5e9ca0; text-align: left;"><span style="color: #333300;">Berekening thuiswedstrijden</span></h3>
                 <p><span style="color: #333300;">Winst:   20 punten + (aantal teams - rank tegenstrever)   +  booster (booster 1=20,  booster 2=10)</span></p>
                 <p><span style="color: #333300;">Verlies : -10 punten -  (rank tegenstrever)  -  negatieve booster (</span><span style="color: #333300;">booster 1=20, booster 2=10)</span></p>
-                <p><span style="color: #333300;">gelijkspel: 5 punten + (aantal teams - rank tegenstrever) </span></p>                
+                <p><span style="color: #333300;">gelijkspel: 5 punten + (aantal teams - rank tegenstrever) </span></p>
                 """;
     }
 
