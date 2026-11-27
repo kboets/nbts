@@ -5,7 +5,11 @@ import boets.be.nbts.results.domain.models.Standing;
 
 import java.util.List;
 
-public record CalculationContext(int totalTeams, String team, String opponent, int teamScore, int opponentRankScore, Result nextMatch, List<Result> previousResults, List<Standing> standings) {
+public record CalculationContext(int totalTeams, String team, String opponent, int teamScore, int opponentRankScore, Result nextMatch, List<Result> previousResults, List<Standing> standings, String calculationHtml) {
+
+    public CalculationContext(int totalTeams, String team, String opponent, int teamScore, int opponentRankScore, Result nextMatch, List<Result> previousResults, List<Standing> standings) {
+        this(totalTeams, team, opponent, teamScore, opponentRankScore, nextMatch, previousResults, standings, "");
+    }
 
     public CalculationContext withTeamScore(int teamScore) {
         return new CalculationContext(
@@ -16,7 +20,8 @@ public record CalculationContext(int totalTeams, String team, String opponent, i
                 opponentRankScore,
                 nextMatch,
                 previousResults,
-                standings
+                standings,
+                calculationHtml
         );
     }
 
@@ -29,9 +34,13 @@ public record CalculationContext(int totalTeams, String team, String opponent, i
                 opponentRankScore + this.opponentRankScore,
                 nextMatch,
                 previousResults,
-                standings
+                standings,
+                calculationHtml
         );
     }
 
-
+    public CalculationContext withCalculationHtml(String calculationHtml) {
+        return new CalculationContext(totalTeams, team, opponent, teamScore, opponentRankScore,
+                nextMatch, previousResults, standings, calculationHtml);
+    }
 }

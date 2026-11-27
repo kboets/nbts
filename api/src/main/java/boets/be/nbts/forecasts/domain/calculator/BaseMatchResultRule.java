@@ -30,7 +30,7 @@ public class BaseMatchResultRule implements PointsCalculationRule {
         return context.withTeamScore(points);
     }
 
-    private int calculateHomeMatchPoints(Result result) {
+    static int calculateHomeMatchPoints(Result result) {
         if (result.homeTeamHasWon()) {
             return HOME_WIN_POINTS;
         } else if (result.homeTeamHasLost()) {
@@ -40,7 +40,7 @@ public class BaseMatchResultRule implements PointsCalculationRule {
         }
     }
 
-    private int calculateAwayMatchPoints(Result result) {
+    static int calculateAwayMatchPoints(Result result) {
         if (result.homeTeamHasWon()) {
             return AWAY_LOSS_POINTS;
         } else if (result.homeTeamHasLost()) {

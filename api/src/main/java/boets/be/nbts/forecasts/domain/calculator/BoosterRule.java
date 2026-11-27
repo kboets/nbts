@@ -37,7 +37,7 @@ public class BoosterRule implements PointsCalculationRule {
         return context.withTeamScore(points);
     }
 
-    private int calculateHomeBoosterPoints(Result result, int index) {
+    static int calculateHomeBoosterPoints(Result result, int index) {
         if (result.homeTeamHasWon()) {
             if (index == 1) {
                 return FIRST_BOOSTER_POINTS;
@@ -54,7 +54,7 @@ public class BoosterRule implements PointsCalculationRule {
         return 0;
     }
 
-    private int calculateAwayBoosterPoints(Result result, int index) {
+    static int calculateAwayBoosterPoints(Result result, int index) {
         if (result.homeTeamHasLost()) {
             if (index == 1) {
                 return FIRST_BOOSTER_POINTS;
