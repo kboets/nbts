@@ -99,7 +99,7 @@ class HtmlDefinerRuleTest {
         CalculationContext result = new HtmlDefinerRule().calculatePoints(context);
 
         assertThat(result.calculationHtml())
-                .contains("<p><small><b>1. Winst tegen B &amp; C (2026-01-01)</b></small></p>")
+                .contains("<p><small><b>1. Winst tegen B &amp; C (01/01/2026)</b></small></p>")
                 .contains("Score: 20 + (18 - 3) + 20 (booster) = 55")
                 .contains("Score: 20 + (18 - 5) + 10 (booster) = 43")
                 .contains("Score: 20 + (18 - 8) = 30")
@@ -157,7 +157,7 @@ class HtmlDefinerRuleTest {
         CalculationContext scored = new HtmlDefinerRule().calculatePoints(context);
 
         assertThat(scored.calculationHtml())
-                .contains("<p><small><b>1. Verlies tegen B &amp; C (2026-01-01)</b></small></p>")
+                .contains("<p><small><b>1. Verlies tegen B &amp; C (01/01/2026)</b></small></p>")
                 .contains("Score: -5 - 3 - 20 (booster) = -28")
                 .contains("Score: -5 - 5 - 10 (booster) = -20")
                 .contains("Score: 30 + (18 - 8) = 40")

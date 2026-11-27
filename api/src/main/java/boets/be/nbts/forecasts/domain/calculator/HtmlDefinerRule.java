@@ -5,11 +5,14 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Component
 @Order(5)
 public class HtmlDefinerRule implements PointsCalculationRule {
+
+    private static final DateTimeFormatter MATCH_DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @Override
     public CalculationContext calculatePoints(CalculationContext context) {
@@ -103,7 +106,7 @@ public class HtmlDefinerRule implements PointsCalculationRule {
                 .append(" tegen ")
                 .append(HtmlUtils.htmlEscape(home ? match.awayTeam() : match.homeTeam()))
                 .append(" (")
-                .append(match.matchDate())
+                .append(match.matchDate().format(MATCH_DATE_FORMAT))
                 .append(")")
                 .append("</b></small></p>");
 
